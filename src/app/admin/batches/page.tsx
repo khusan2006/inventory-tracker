@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/admin/Header';
 import { Calendar, Truck, Filter, Search, Package, Database, Download, X } from 'lucide-react';
+import { format } from 'date-fns';
+import { getTimeAgo } from '@/hooks/useSalesData';
 
 interface Batch {
   id: string;
@@ -17,6 +19,9 @@ interface Batch {
   supplier: string;
   invoiceNumber: string;
   category?: string;
+  createdAt: string;
+  expirationDate: string | null;
+  sku: string;
 }
 
 export default function BatchHistoryPage() {
@@ -164,6 +169,23 @@ export default function BatchHistoryPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+  
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return format(date, 'MMM d, yyyy');
+  };
+
+  // Format expiration date or show "Not set"
+  const formatExpirationDate = (dateString: string | null) => {
+    if (!dateString) return "Not set";
+    return formatDate(dateString);
+  };
+
+  // Get time ago for display
+  const getRelativeTime = (dateString: string) => {
+    return getTimeAgo(new Date(dateString));
   };
   
   return (
@@ -356,7 +378,8 @@ export default function BatchHistoryPage() {
               </div>
             ) : (
               <>
-                <div className="overflow-x-auto">
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead className="bg-gray-50 dark:bg-slate-700">
                       <tr>
@@ -389,8 +412,9 @@ export default function BatchHistoryPage() {
                           key={batch.id}
                           className="hover:bg-gray-50 dark:hover:bg-slate-700"
                         >
-                          <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            {new Date(batch.purchaseDate).toLocaleDateString()}
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            <div>{formatDate(batch.purchaseDate)}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{getRelativeTime(batch.purchaseDate)}</div>
                           </td>
                           <td className="px-3 py-2.5 max-w-[150px] truncate text-sm text-gray-900 dark:text-gray-100">
                             {batch.productName}
@@ -420,6 +444,52 @@ export default function BatchHistoryPage() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+                
+                {/* Mobile Card View */}
+                <div className="md:hidden">
+                  {currentBatches.map((batch) => (
+                    <div
+                      key={batch.id}
+                      className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 mb-3"
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-sm font-medium text-gray-900 dark:text-white">{batch.productName}</h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{batch.supplier || 'No supplier'}</p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            batch.status === 'active' 
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                          }`}>
+                            {batch.status === 'active' ? 'Active' : 'Depleted'}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Purchase Date</p>
+                            <p className="text-sm text-gray-900 dark:text-gray-100">{formatDate(batch.purchaseDate)}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{getRelativeTime(batch.purchaseDate)}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Price</p>
+                            <p className="text-sm text-gray-900 dark:text-gray-100">${batch.purchasePrice.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Initial</p>
+                            <p className="text-sm text-gray-900 dark:text-gray-100">{batch.initialQuantity} units</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current</p>
+                            <p className="text-sm text-gray-900 dark:text-gray-100">{batch.currentQuantity} units</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 
                 {/* Pagination */}

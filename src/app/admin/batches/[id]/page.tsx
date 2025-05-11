@@ -18,6 +18,7 @@ interface BatchDetails {
   supplier: string | null;
   invoiceNumber: string | null;
   category: string | null;
+  expirationDate?: string;
 }
 
 interface Sale {
@@ -97,6 +98,38 @@ export default function BatchDetailsPage() {
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+  
+  // Get relative time
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diff < 60) {
+      return 'Just now';
+    } else if (diff < 3600) {
+      return `${Math.floor(diff / 60)} minutes ago`;
+    } else if (diff < 86400) {
+      return `${Math.floor(diff / 3600)} hours ago`;
+    } else if (diff < 2592000) {
+      return `${Math.floor(diff / 86400)} days ago`;
+    } else if (diff < 31536000) {
+      return `${Math.floor(diff / 2592000)} months ago`;
+    } else {
+      return `${Math.floor(diff / 31536000)} years ago`;
+    }
+  };
+  
+  // Format expiration date
+  const formatExpirationDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

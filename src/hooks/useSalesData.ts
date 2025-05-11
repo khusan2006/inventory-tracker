@@ -27,6 +27,28 @@ export const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+// Helper function to calculate relative time
+export function getTimeAgo(date: Date) {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.round(diffMs / 1000);
+  const diffMin = Math.round(diffSec / 60);
+  const diffHour = Math.round(diffMin / 60);
+  const diffDay = Math.round(diffHour / 24);
+
+  if (diffSec < 60) {
+    return `${diffSec} seconds ago`;
+  } else if (diffMin < 60) {
+    return `${diffMin} minute${diffMin === 1 ? '' : 's'} ago`;
+  } else if (diffHour < 24) {
+    return `${diffHour} hour${diffHour === 1 ? '' : 's'} ago`;
+  } else if (diffDay < 30) {
+    return `${diffDay} day${diffDay === 1 ? '' : 's'} ago`;
+  } else {
+    return date.toLocaleDateString();
+  }
+}
+
 // Get total sales from the last 30 days
 export function useRecentSalesData() {
   return useQuery({
@@ -192,26 +214,4 @@ export function useRecentActivity() {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-}
-
-// Helper function to calculate relative time
-function getTimeAgo(date: Date) {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSec = Math.round(diffMs / 1000);
-  const diffMin = Math.round(diffSec / 60);
-  const diffHour = Math.round(diffMin / 60);
-  const diffDay = Math.round(diffHour / 24);
-
-  if (diffSec < 60) {
-    return `${diffSec} seconds ago`;
-  } else if (diffMin < 60) {
-    return `${diffMin} minute${diffMin === 1 ? '' : 's'} ago`;
-  } else if (diffHour < 24) {
-    return `${diffHour} hour${diffHour === 1 ? '' : 's'} ago`;
-  } else if (diffDay < 30) {
-    return `${diffDay} day${diffDay === 1 ? '' : 's'} ago`;
-  } else {
-    return date.toLocaleDateString();
-  }
 } 
