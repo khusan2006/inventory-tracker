@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/admin/Header';
-import { Calendar, ArrowDownUp, DollarSign, Search, X, Loader2, FileText, Tag, Package } from 'lucide-react';
+import { Calendar, ArrowDownUp, DollarSign, Search, X, Loader2, FileText, Tag, Package, ShoppingCart } from 'lucide-react';
+import Link from 'next/link';
 
 interface Sale {
   id: string;
@@ -35,6 +36,12 @@ export default function SalesHistoryPage() {
   // Sorting
   const [sortBy, setSortBy] = useState<string>('saleDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [indexOfFirstItem, setIndexOfFirstItem] = useState(0);
+  const [indexOfLastItem, setIndexOfLastItem] = useState(0);
   
   // Initialize date range filter to last 30 days
   useEffect(() => {
@@ -94,34 +101,89 @@ export default function SalesHistoryPage() {
   };
   
   // Filter and sort sales
-  const filteredSales = sales.filter(sale => 
-    sale.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (sale.category && sale.category.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-  
-  const sortedSales = [...filteredSales].sort((a, b) => {
-    let comparison = 0;
+  const filteredSales = sales.filter(sale => {
+    // Date range filter
+    const saleDate = new Date(sale.saleDate);
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+    endDateTime.setHours(23, 59, 59, 999);
     
-    if (sortBy === 'saleDate') {
-      comparison = new Date(a.saleDate).getTime() - new Date(b.saleDate).getTime();
-    } else if (sortBy === 'productName') {
-      comparison = a.productName.localeCompare(b.productName);
-    } else if (sortBy === 'category') {
-      comparison = (a.category || '').localeCompare(b.category || '');
-    } else if (sortBy === 'quantity') {
-      comparison = a.quantity - b.quantity;
-    } else if (sortBy === 'salePrice') {
-      comparison = a.salePrice - b.salePrice;
-    } else if (sortBy === 'profit') {
-      comparison = a.profit - b.profit;
-    } else if (sortBy === 'profitMargin') {
-      comparison = a.profitMargin - b.profitMargin;
+    if (saleDate < startDateTime || saleDate > endDateTime) {
+      return false;
     }
     
-    return sortDirection === 'asc' ? comparison : -comparison;
+    // Search term filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      if (
+        !sale.productName.toLowerCase().includes(searchLower) &&
+        !sale.category?.toLowerCase().includes(searchLower)
+      ) {
+        return false;
+      }
+    }
+    
+    return true;
   });
   
-  // Calculate totals
+  // Sort sales based on sort criteria
+  const sortedSales = [...filteredSales].sort((a, b) => {
+    if (sortBy === 'saleDate') {
+      return sortDirection === 'asc'
+        ? new Date(a.saleDate).getTime() - new Date(b.saleDate).getTime()
+        : new Date(b.saleDate).getTime() - new Date(a.saleDate).getTime();
+    } else if (sortBy === 'productName') {
+      return sortDirection === 'asc'
+        ? a.productName.localeCompare(b.productName)
+        : b.productName.localeCompare(a.productName);
+    } else if (sortBy === 'category') {
+      const aCategory = a.category || '';
+      const bCategory = b.category || '';
+      return sortDirection === 'asc'
+        ? aCategory.localeCompare(bCategory)
+        : bCategory.localeCompare(aCategory);
+    } else if (sortBy === 'quantity') {
+      return sortDirection === 'asc'
+        ? a.quantity - b.quantity
+        : b.quantity - a.quantity;
+    } else if (sortBy === 'salePrice') {
+      return sortDirection === 'asc'
+        ? a.salePrice - b.salePrice
+        : b.salePrice - a.salePrice;
+    } else if (sortBy === 'profit') {
+      return sortDirection === 'asc'
+        ? a.profit - b.profit
+        : b.profit - a.profit;
+    } else if (sortBy === 'profitMargin') {
+      return sortDirection === 'asc'
+        ? a.profitMargin - b.profitMargin
+        : b.profitMargin - a.profitMargin;
+    }
+    return 0;
+  });
+  
+  // Items to display for the current page
+  const itemsPerPage = 10;
+  const currentSales = sortedSales.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Calculate pagination info when filtered sales change
+  useEffect(() => {
+    const pageSize = 10;
+    const calculatedTotalPages = Math.ceil(filteredSales.length / pageSize);
+    setTotalPages(calculatedTotalPages || 1);
+    
+    // Reset to first page when filters change
+    if (currentPage > calculatedTotalPages) {
+      setCurrentPage(1);
+      setIndexOfFirstItem(0);
+      setIndexOfLastItem(pageSize);
+    } else {
+      setIndexOfFirstItem((currentPage - 1) * pageSize);
+      setIndexOfLastItem(currentPage * pageSize);
+    }
+  }, [filteredSales, currentPage]);
+  
+  // Calculate totals for the stats cards
   const totalSales = filteredSales.length;
   const totalRevenue = filteredSales.reduce((sum, sale) => sum + (sale.salePrice * sale.quantity), 0);
   const totalProfit = filteredSales.reduce((sum, sale) => sum + sale.profit, 0);
@@ -157,274 +219,302 @@ export default function SalesHistoryPage() {
     setSearchTerm('');
   };
   
+  // Pagination
+  const changePage = (newPage: number) => {
+    setCurrentPage(newPage);
+    const pageSize = 10; // Define pageSize
+    setIndexOfFirstItem((newPage - 1) * pageSize);
+    setIndexOfLastItem(newPage * pageSize);
+  };
+  
   return (
     <>
       <Header />
-      <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900 p-6">
+      <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900 p-3 sm:p-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
             Sales History
           </h1>
           
           {/* Stats cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mr-4">
-                  <FileText size={20} />
+                <div className="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mr-3 sm:mr-4">
+                  <FileText size={18} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Transactions</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalSales}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Transactions</p>
+                  <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{totalSales}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 mr-4">
-                  <DollarSign size={20} />
+                <div className="p-2 sm:p-3 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 mr-3 sm:mr-4">
+                  <DollarSign size={18} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalRevenue)}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+                  <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalRevenue)}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 mr-4">
-                  <DollarSign size={20} />
+                <div className="p-2 sm:p-3 rounded-full bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 mr-3 sm:mr-4">
+                  <DollarSign size={18} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Profit</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalProfit)}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Profit</p>
+                  <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalProfit)}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 mr-4">
-                  <ArrowDownUp size={20} />
+                <div className="p-2 sm:p-3 rounded-full bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 mr-3 sm:mr-4">
+                  <Tag size={18} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Avg. Profit Margin</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{averageMargin.toFixed(1)}%</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Avg. Profit Margin</p>
+                  <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{averageMargin.toFixed(1)}%</p>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Filters */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Search
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search size={16} className="text-gray-400" />
+          {/* Filters and Search */}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 mb-4 sm:mb-6">
+            <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-slate-700">
+              <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                {/* Date Range Filter */}
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-4">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                        <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                      </div>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="block w-full pl-8 pr-2 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search by product or category..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                  />
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm('')}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
+                  
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                        <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                      </div>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="block w-full pl-8 pr-2 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Search Input */}
+                <div className="w-full sm:max-w-[230px]">
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Search</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Search size={16} className="text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search product name..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="block w-full pl-9 pr-8 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {searchTerm && (
+                      <button
+                        className="absolute inset-y-0 right-0 flex items-center pr-2"
+                        onClick={() => setSearchTerm('')}
+                      >
+                        <X size={16} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={resetFilters}
-                className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-              >
-                Reset Filters
-              </button>
-            </div>
-          </div>
-          
-          {/* Sales Table */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
-            {isLoading ? (
-              <div className="flex justify-center items-center p-12">
-                <Loader2 size={36} className="animate-spin text-blue-500" />
-                <p className="ml-4 text-gray-600 dark:text-gray-400">Loading sales data...</p>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col justify-center items-center p-12">
-                <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  Retry
-                </button>
-              </div>
-            ) : sortedSales.length === 0 ? (
-              <div className="flex flex-col justify-center items-center p-12">
-                <Package size={48} className="text-gray-400 mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 mb-2">No sales found</p>
-                <p className="text-gray-500 dark:text-gray-500 text-sm mb-4">
-                  Try adjusting your filters or adding some sales
-                </p>
+              
+              <div className="flex justify-between items-center mt-3">
                 <button
                   onClick={resetFilters}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   Reset Filters
                 </button>
+                
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  Found {filteredSales.length} sales
+                </div>
+              </div>
+            </div>
+            
+            {isLoading ? (
+              <div className="p-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">Loading sales data...</p>
+              </div>
+            ) : error ? (
+              <div className="p-8 text-center">
+                <p className="text-red-500 dark:text-red-400 mb-2">{error}</p>
+              </div>
+            ) : filteredSales.length === 0 ? (
+              <div className="p-8 text-center">
+                <ShoppingCart size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
+                <p className="text-gray-600 dark:text-gray-300">No sales found</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">Try adjusting your filters or selecting a different date range</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 dark:bg-slate-700 text-left">
-                    <tr>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('saleDate')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Date</span>
-                          {sortBy === 'saleDate' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('productName')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Product</span>
-                          {sortBy === 'productName' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('category')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Category</span>
-                          {sortBy === 'category' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('quantity')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Qty</span>
-                          {sortBy === 'quantity' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('salePrice')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Sale Price</span>
-                          {sortBy === 'salePrice' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('profit')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Profit</span>
-                          {sortBy === 'profit' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                      <th 
-                        className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('profitMargin')}
-                      >
-                        <div className="flex items-center space-x-1">
-                          <span>Margin</span>
-                          {sortBy === 'profitMargin' && (
-                            <ArrowDownUp size={14} className={`${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                          )}
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
-                    {sortedSales.map((sale) => (
-                      <tr key={sale.id} className="hover:bg-gray-50 dark:hover:bg-slate-700">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                          {formatDate(sale.saleDate)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                          {sale.productName}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                          {sale.category || 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                          {sale.quantity}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                          {formatCurrency(sale.salePrice)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
-                          {formatCurrency(sale.profit)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                          {sale.profitMargin.toFixed(1)}%
-                        </td>
+              <>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                      <tr>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Date
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Product
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Qty
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Price
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Total
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Profit
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Margin
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Batch
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                      {currentSales.map((sale) => (
+                        <tr 
+                          key={sale.id}
+                          className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                        >
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            {formatDate(sale.saleDate)}
+                          </td>
+                          <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100 max-w-[150px] truncate">
+                            {sale.productName}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            {sale.quantity}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            ${sale.salePrice.toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            ${(sale.salePrice * sale.quantity).toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm font-medium text-green-600 dark:text-green-400">
+                            ${sale.profit.toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                            {sale.profitMargin.toFixed(1)}%
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                            <Link href={`/admin/batches/${sale.batchId}`}>View</Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="px-3 py-3 flex items-center justify-between border-t border-gray-200 dark:border-slate-700">
+                    <div className="flex-1 flex justify-between sm:hidden">
+                      <button
+                        onClick={() => changePage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => changePage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredSales.length)}</span> of <span className="font-medium">{filteredSales.length}</span> results
+                        </p>
+                      </div>
+                      <div>
+                        <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                          <button
+                            onClick={() => changePage(1)}
+                            disabled={currentPage === 1}
+                            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">First</span>
+                            <span>«</span>
+                          </button>
+                          <button
+                            onClick={() => changePage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="relative inline-flex items-center px-2 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Previous</span>
+                            <span>‹</span>
+                          </button>
+                          <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Page {currentPage} of {totalPages}
+                          </span>
+                          <button
+                            onClick={() => changePage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="relative inline-flex items-center px-2 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Next</span>
+                            <span>›</span>
+                          </button>
+                          <button
+                            onClick={() => changePage(totalPages)}
+                            disabled={currentPage === totalPages}
+                            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Last</span>
+                            <span>»</span>
+                          </button>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

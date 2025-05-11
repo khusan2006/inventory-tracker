@@ -200,25 +200,31 @@ export default function ProductsPage() {
   }, [refetchInventory]);
   
   // Calculate monthly quantities for all products with batches
+  // Using useRef to prevent unnecessary re-calculations
+  const calculatedMonthlyDataRef = useRef(false);
+  
   useEffect(() => {
-    const calculateMonthlyData = async () => {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
+    // Only calculate once per component lifecycle to prevent infinite loops
+    if (!calculatedMonthlyDataRef.current && !isLoading && products.length > 0) {
+      const calculateMonthlyData = async () => {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+        
+        // We'll only calculate this for products that have batches to save API calls
+        const productsWithBatches = products.filter(p => p.batchCount > 0);
+        
+        // No longer directly calling hooks inside useEffect
+        // This was causing the "Invalid hook call" error
+        
+        // Mark as calculated
+        calculatedMonthlyDataRef.current = true;
+      };
       
-      // We'll only calculate this for products that have batches to save API calls
-      const productsWithBatches = products.filter(p => p.batchCount > 0);
-      
-      // No longer directly calling hooks inside useEffect
-      // This was causing the "Invalid hook call" error
-      
-      // Additional computation or state updates could go here if needed
-    };
-    
-    if (products.length > 0 && !isLoading) {
       calculateMonthlyData();
     }
-  }, [products, isLoading]);
+  // Depend only on loading state, not products array
+  }, [isLoading]);
   
   // Load saved filters from localStorage on initial render
   useEffect(() => {
@@ -240,9 +246,10 @@ export default function ProductsPage() {
         const savedItemsPerPage = localStorage.getItem('itemsPerPage');
         if (savedItemsPerPage) {
           const value = Number(savedItemsPerPage);
-          // If "All" is selected (value of 0), use the total number of products
+          // If "All" is selected (value of 0), use a large number instead of products.length
+          // This prevents the infinite loop caused by dependency on products.length
           if (value === 0) {
-            setItemsPerPage(products.length);
+            setItemsPerPage(1000); // Use a large number instead of products.length
           } else {
             setItemsPerPage(value);
           }
@@ -251,7 +258,8 @@ export default function ProductsPage() {
         console.error('Error loading saved filters:', error);
       }
     }
-  }, [products.length]);
+  // Remove products.length from the dependency array to prevent infinite loops
+  }, []);
 
   // Save filter preferences to localStorage when they change
   useEffect(() => {
@@ -272,11 +280,53 @@ export default function ProductsPage() {
     router.push(`/admin/products/${id}`);
   };
   
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Add this useEffect to detect mobile screens
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   const handleViewBatches = (product: {id: string, name: string}, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent row click navigation
-    setSelectedProduct(product);
+    
+    // Use the isMobile state instead of checking window.innerWidth directly
+    if (isMobile) {
+      // Redirect to dedicated batch page on mobile
+      router.push(`/admin/products/${product.id}/add-batch`);
+    } else {
+      // Show modal on desktop
+      setSelectedProduct(product);
+    }
   };
   
+  // Handle quick sell
+  const handleQuickSell = (product: {id: string, name: string}, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click navigation
+    
+    // Use the isMobile state instead of checking window.innerWidth directly
+    if (isMobile) {
+      // Redirect to dedicated sale page on mobile
+      router.push(`/admin/products/${product.id}/record-sale`);
+    } else {
+      // Show modal on desktop
+      setQuickSellProduct(product);
+    }
+  };
+
   // Handle modal close with data refresh
   const closeModal = () => {
     setSelectedProduct(null);
@@ -297,10 +347,6 @@ export default function ProductsPage() {
     }
   }, [currentPage, itemsPerPage]);
 
-  // Add this state near the beginning of the ProductsPage component, where other state is defined
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
   // Add this useEffect to close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -319,31 +365,37 @@ export default function ProductsPage() {
     <>
       <Header />
       <main className="flex-1 overflow-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Auto Parts Inventory</h1>
+        <div className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
+            <div className="md:block hidden">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Auto Parts Inventory</h1>
               <p className="text-gray-600 dark:text-gray-300">
                 {filteredProducts.length} {filteredProducts.length === 1 ? 'part' : 'parts'} found
               </p>
             </div>
             
-            <Link href="/admin/products/new" className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors">
+            <Link href="/admin/products/new" className="hidden sm:flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors">
               <Plus size={18} className="mr-2" />
               Add Auto Part
             </Link>
           </div>
           
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 dark:border-slate-700">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="relative w-full md:w-64">
-                  <input
-                    type="text"
-                    placeholder="Search by name, SKU..."
+            <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-slate-700">
+              <div className="space-y-3">
+                {/* Search bar - full width on mobile */}
+                <div className="relative w-full">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+        </div>
+                <input
+                  type="text"
+                    placeholder="Search parts..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2 border border-gray-300 dark:border-slate-600 
+                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-slate-600 
                              text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
                              rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
                     ref={searchInputRef}
@@ -356,56 +408,63 @@ export default function ProductsPage() {
                       <X size={16} />
                     </button>
                   )}
-                </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  <select 
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="border border-gray-300 dark:border-slate-600 
-                             text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  >
-                    <option value="">All Categories</option>
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
+              </div>
+              
+                {/* Filter controls - scrollable horizontal row on mobile */}
+                <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+                  <div className="flex-shrink-0">
+                    <select 
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                      className="border border-gray-300 dark:border-slate-600 
+                               text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
+                               rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
+                    >
+                  <option value="">All Categories</option>
+                      {categories.map(category => (
+                        <option key={category} value={category}>{category}</option>
+                      ))}
+                    </select>
+                  </div>
                   
-                  <select 
-                    value={stockFilter}
-                    onChange={(e) => setStockFilter(e.target.value)}
-                    className="border border-gray-300 dark:border-slate-600 
-                             text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  >
-                    <option value="all">All Stock Levels</option>
-                    <option value="inStock">In Stock</option>
-                    <option value="lowStock">Low Stock</option>
-                    <option value="outOfStock">Out of Stock</option>
-                  </select>
+                  <div className="flex-shrink-0">
+                    <select 
+                      value={stockFilter}
+                      onChange={(e) => setStockFilter(e.target.value)}
+                      className="border border-gray-300 dark:border-slate-600 
+                               text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
+                               rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
+                    >
+                      <option value="all">All Stock</option>
+                      <option value="inStock">In Stock</option>
+                      <option value="lowStock">Low Stock</option>
+                      <option value="outOfStock">Out of Stock</option>
+                </select>
+                  </div>
                   
-                  <select 
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="border border-gray-300 dark:border-slate-600 
-                             text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  >
-                    <option value="name">Sort by Name</option>
-                    <option value="stock">Sort by Stock</option>
-                    <option value="price">Sort by Price</option>
-                    <option value="category">Sort by Category</option>
-                    <option value="sold">Sort by Sales</option>
-                  </select>
+                  <div className="flex-shrink-0">
+                    <select 
+                      value={sortBy}
+                      onChange={(e) => handleSortChange(e.target.value)}
+                      className="border border-gray-300 dark:border-slate-600 
+                               text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
+                               rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
+                    >
+                      <option value="name">Sort: Name</option>
+                      <option value="stock">Sort: Stock</option>
+                      <option value="price">Sort: Price</option>
+                      <option value="category">Sort: Category</option>
+                      <option value="sold">Sort: Sales</option>
+                </select>
+                  </div>
                   
                   <button
                     onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
-                    className="border border-gray-300 dark:border-slate-600 
+                    className="flex-shrink-0 border border-gray-300 dark:border-slate-600 
                              text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
                   >
-                    {sortDirection === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                    {sortDirection === 'asc' ? '↑ Asc' : '↓ Desc'}
                   </button>
                 </div>
               </div>
@@ -437,218 +496,294 @@ export default function ProductsPage() {
                     Clear Filters
                   </button>
                 ) : null}
-              </div>
+          </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full table-fixed">
-                  <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0 z-10">
-                    <tr>
-                      <th 
-                        className="w-48 px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('name')}
-                      >
-                        <span className="flex items-center">
-                          Part
-                          {sortBy === 'name' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th 
-                        className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('category')}
-                      >
-                        <span className="flex items-center">
-                          Category
-                          {sortBy === 'category' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th 
-                        className="w-16 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('stock')}
-                      >
-                        <span className="flex items-center">
-                          Stock
-                          {sortBy === 'stock' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th 
-                        className="w-16 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('sold')}
-                      >
-                        <span className="flex items-center">
-                          Sold
-                          {sortBy === 'sold' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th className="w-20 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Batches
-                      </th>
-                      <th className="w-32 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Avg. Price
-                      </th>
-                      <th className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Monthly
-                      </th>
-                      <th 
-                        className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSortChange('price')}
-                      >
-                        <span className="flex items-center">
-                          Price
-                          {sortBy === 'price' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th className="w-28 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        SKU
-                      </th>
-                      <th className="w-24 px-3 py-3 text-right text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                    {currentProducts.map((product) => (
-                      <tr 
-                        key={product.id} 
-                        className="hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer"
-                        onClick={() => handleViewProduct(product.id)}
-                      >
-                        <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {product.name}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                            {typeof product.category === 'object' && product.category !== null && 'name' in product.category 
-                              ? product.category.name 
-                              : product.category}
+              <>
+                {/* Desktop Table View (Hidden on mobile) */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full table-fixed">
+                    <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0 z-10">
+                      <tr>
+                        <th 
+                          className="w-48 px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSortChange('name')}
+                        >
+                          <span className="flex items-center">
+                            Part
+                            {sortBy === 'name' && (
+                              <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            )}
                           </span>
-                        </td>
-                        <td className={`px-3 py-3 text-sm ${
-                          product.totalStock <= (product.minStockLevel || 0) 
-                            ? 'text-red-600 dark:text-red-400 font-medium' 
-                            : 'text-gray-600 dark:text-gray-300'
-                        }`}>
-                          {product.totalStock}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {product.soldQuantity || 0}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          <button 
-                            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
-                            onClick={(e) => handleViewBatches({id: product.id, name: product.name}, e)}
-                          >
-                            <Layers size={14} className="mr-1" />
-                            {product.batchCount || 0}
-                          </button>
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD'
-                          }).format(product.avgPurchasePrice || 0)}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          <span className="inline-flex items-center">
-                            <Calendar size={14} className="mr-1" />
-                            {product.monthlyQuantity || 0}
+                </th>
+                        <th 
+                          className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSortChange('category')}
+                        >
+                          <span className="flex items-center">
+                  Category
+                            {sortBy === 'category' && (
+                              <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            )}
                           </span>
-                        </td>
-                        <td className="px-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD'
-                          }).format(product.sellingPrice)}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300 font-mono">
-                          {product.sku}
-                        </td>
-                        <td className="px-3 py-3 text-sm text-right">
-                          <div className="flex items-center justify-end space-x-2">
+                </th>
+                        <th 
+                          className="w-16 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSortChange('stock')}
+                        >
+                          <span className="flex items-center">
+                  Stock
+                            {sortBy === 'stock' && (
+                              <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </span>
+                        </th>
+                        <th 
+                          className="w-16 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSortChange('sold')}
+                        >
+                          <span className="flex items-center">
+                            Sold
+                            {sortBy === 'sold' && (
+                              <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </span>
+                        </th>
+                        <th className="w-20 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                          Batches
+                        </th>
+                        <th className="w-32 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                          Avg. Price
+                </th>
+                        <th 
+                          className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSortChange('price')}
+                        >
+                          <span className="flex items-center">
+                  Price
+                            {sortBy === 'price' && (
+                              <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </span>
+                        </th>
+                        <th className="w-28 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                          SKU
+                </th>
+                        <th className="w-24 px-3 py-3 text-right text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                      {currentProducts.map((product) => (
+                        <tr 
+                          key={product.id} 
+                          className="hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer"
+                          onClick={() => handleViewProduct(product.id)}
+                        >
+                          <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {product.name}
+                  </td>
+                          <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                              {typeof product.category === 'object' && product.category !== null && 'name' in product.category 
+                                ? product.category.name 
+                                : product.category}
+                    </span>
+                  </td>
+                          <td className={`px-3 py-3 text-sm ${
+                            product.totalStock <= (product.minStockLevel || 0) 
+                              ? 'text-red-600 dark:text-red-400 font-medium' 
+                              : 'text-gray-600 dark:text-gray-300'
+                          }`}>
+                            {product.totalStock}
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
+                            {product.soldQuantity || 0}
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
                             <button 
-                              className="p-1.5 rounded-full bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
-                              title="Add Inventory Batch"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewBatches({id: product.id, name: product.name}, e);
-                              }}
+                              className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
+                              onClick={(e) => handleViewBatches({id: product.id, name: product.name}, e)}
                             >
-                              <PlusCircle size={16} className="text-green-600 dark:text-green-400" />
+                              <Layers size={14} className="mr-1" />
+                              {product.batchCount || 0}
                             </button>
-                            <button 
-                              className="p-1.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/40 transition-colors"
-                              title="Record Sale"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setQuickSellProduct({id: product.id, name: product.name});
-                              }}
-                            >
-                              <MinusCircle size={16} className="text-amber-600 dark:text-amber-400" />
-                            </button>
-                            
-                            {/* More options dropdown */}
-                            <div className="relative" ref={e => {
-                              // Only set the ref for the active dropdown
-                              if (product.id === activeDropdown) {
-                                dropdownRef.current = e;
-                              }
-                            }}>
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD'
+                            }).format(product.avgPurchasePrice || 0)}
+                          </td>
+                          <td className="px-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD'
+                            }).format(product.sellingPrice)}
+                  </td>
+                          <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300 font-mono">
+                            {product.sku}
+                  </td>
+                          <td className="px-3 py-3 text-sm text-right">
+                            <div className="flex items-center justify-end space-x-2">
                               <button 
+                                className="p-1.5 rounded-full bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
+                                title="Add Inventory Batch"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setActiveDropdown(activeDropdown === product.id ? null : product.id);
+                                  handleViewBatches({id: product.id, name: product.name}, e);
                                 }}
-                                className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-600"
-                                title="More Options"
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600 dark:text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                                </svg>
+                                <PlusCircle size={16} className="text-green-600 dark:text-green-400" />
+                              </button>
+                              <button 
+                                className="p-1.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/40 transition-colors"
+                                title="Record Sale"
+                                onClick={(e) => {
+                                  handleQuickSell({id: product.id, name: product.name}, e);
+                                }}
+                              >
+                                <MinusCircle size={16} className="text-amber-600 dark:text-amber-400" />
                               </button>
                               
-                              {/* Dropdown menu */}
-                              {activeDropdown === product.id && (
-                                <div className="absolute right-0 mt-1 bg-white dark:bg-slate-800 rounded-md shadow-lg border border-gray-200 dark:border-slate-700 z-10 w-32">
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleViewProduct(product.id);
-                                      setActiveDropdown(null);
-                                    }}
-                                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
-                                  >
-                                    <Edit size={14} className="inline mr-2 text-blue-600 dark:text-blue-400" />
-                                    Edit
-                                  </button>
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      // Add delete functionality here
-                                      setActiveDropdown(null);
-                                    }}
-                                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
-                                  >
-                                    <Trash2 size={14} className="inline mr-2 text-red-600 dark:text-red-400" />
-                                    Delete
-                                  </button>
-                                </div>
-                              )}
-                            </div>
+                              {/* More options dropdown */}
+                              <div className="relative" ref={e => {
+                                // Only set the ref for the active dropdown
+                                if (product.id === activeDropdown) {
+                                  dropdownRef.current = e;
+                                }
+                              }}>
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveDropdown(activeDropdown === product.id ? null : product.id);
+                                  }}
+                                  className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-slate-600"
+                                  title="More Options"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600 dark:text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                  </svg>
+                                </button>
+                                
+                                {/* Dropdown menu */}
+                                {activeDropdown === product.id && (
+                                  <div className="absolute right-0 mt-1 bg-white dark:bg-slate-800 rounded-md shadow-lg border border-gray-200 dark:border-slate-700 z-10 w-32">
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleViewProduct(product.id);
+                                        setActiveDropdown(null);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
+                                    >
+                                      <Edit size={14} className="inline mr-2 text-blue-600 dark:text-blue-400" />
+                                      Edit
+                      </button>
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Add delete functionality here
+                                        setActiveDropdown(null);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
+                                    >
+                                      <Trash2 size={14} className="inline mr-2 text-red-600 dark:text-red-400" />
+                                      Delete
+                      </button>
+                                  </div>
+                                )}
+                              </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+                </div>
+                
+                {/* Mobile List View */}
+                <div className="md:hidden">
+                  {currentProducts.map((product) => (
+                    <div 
+                      key={product.id}
+                      className="p-4 border-b border-gray-100 dark:border-slate-700 last:border-0"
+                      onClick={() => handleViewProduct(product.id)}
+                    >
+            <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0 pr-2">
+                          <h3 className="text-base font-medium text-gray-900 dark:text-white truncate">
+                            {product.name}
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center">
+                          <button 
+                            className="p-2 rounded-full bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
+                            title="Add Inventory Batch"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewBatches({id: product.id, name: product.name}, e);
+                            }}
+                          >
+                            <PlusCircle size={18} className="text-green-600 dark:text-green-400" />
+                          </button>
+                          <button 
+                            className="p-2 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/40 transition-colors ml-1"
+                            title="Record Sale"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuickSell({id: product.id, name: product.name}, e);
+                            }}
+                          >
+                            <MinusCircle size={18} className="text-amber-600 dark:text-amber-400" />
+                          </button>
+                          <button 
+                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ml-1"
+                            title="Edit Product"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewProduct(product.id);
+                            }}
+                          >
+                            <Edit size={18} className="text-blue-600 dark:text-blue-400" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center">
+                          <div className="mr-4">
+                            <span className="text-xs text-gray-500 dark:text-gray-400 block">Available</span>
+                            <span className={`text-sm font-medium ${
+                              product.totalStock <= (product.minStockLevel || 0) 
+                                ? 'text-red-600 dark:text-red-400' 
+                                : 'text-gray-800 dark:text-gray-200'
+                            }`}>
+                              {product.totalStock} units
+                            </span>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <div>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 block">Sold</span>
+                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {product.soldQuantity || 0} units
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="text-right">
+                          <span className="text-xs text-gray-500 dark:text-gray-400 block">Price</span>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD'
+                            }).format(product.sellingPrice)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
                 
                 {/* Pagination Controls */}
                 {filteredProducts.length > itemsPerPage && (
@@ -660,8 +795,8 @@ export default function ProductsPage() {
                           disabled={currentPage === 1}
                           className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 disabled:opacity-50"
                         >
-                          Previous
-                        </button>
+                  Previous
+                </button>
                         <span className="text-sm text-gray-700 dark:text-gray-200">
                           Page {currentPage} of {totalPages}
                         </span>
@@ -670,8 +805,8 @@ export default function ProductsPage() {
                           disabled={currentPage === totalPages}
                           className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 disabled:opacity-50"
                         >
-                          Next
-                        </button>
+                  Next
+                </button>
                       </div>
                       <div className="hidden md:flex md:flex-1 md:items-center md:justify-between flex-wrap gap-4">
                         <div>
@@ -791,26 +926,35 @@ export default function ProductsPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             )}
-          </div>
-        </div>
+              </div>
+            </div>
       </main>
       
+      {/* Full page dialogs on mobile */}
       {selectedProduct && (
-        <BatchesModal 
-          productId={selectedProduct.id}
-          productName={selectedProduct.name}
-          onClose={closeModal}
-        />
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex p-0 md:p-4 md:items-center md:justify-center">
+          <div className="bg-white dark:bg-slate-800 md:rounded-lg shadow-xl w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl overflow-y-auto">
+            <BatchesModal 
+              productId={selectedProduct.id}
+              productName={selectedProduct.name}
+              onClose={closeModal}
+            />
+          </div>
+        </div>
       )}
       
       {quickSellProduct && (
-        <QuickSellModal
-          productId={quickSellProduct.id}
-          productName={quickSellProduct.name}
-          onClose={closeSellModal}
-        />
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex p-0 md:p-4 md:items-center md:justify-center">
+          <div className="bg-white dark:bg-slate-800 md:rounded-lg shadow-xl w-full h-full md:h-auto md:max-h-[90vh] md:max-w-4xl overflow-y-auto">
+            <QuickSellModal
+              productId={quickSellProduct.id}
+              productName={quickSellProduct.name}
+              onClose={closeSellModal}
+            />
+      </div>
+    </div>
       )}
     </>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/admin/Header';
-import { Calendar, Truck, Filter, Search, Package, Database, Download } from 'lucide-react';
+import { Calendar, Truck, Filter, Search, Package, Database, Download, X } from 'lucide-react';
 
 interface Batch {
   id: string;
@@ -170,327 +170,326 @@ export default function BatchHistoryPage() {
     <>
       <Header />
       <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="p-3 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Batch History</h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Batch History</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Viewing batches from {new Date(dateRange.start).toLocaleDateString()} to {new Date(dateRange.end).toLocaleDateString()}
               </p>
             </div>
             
             <button 
               onClick={exportCSV}
-              className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
             >
-              <Download size={18} className="mr-2" />
+              <Download size={16} className="mr-2" />
               Export CSV
             </button>
           </div>
           
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Batches</p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{totalBatches}</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Batches</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{totalBatches}</h3>
                 </div>
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-                  <Database size={24} className="text-blue-600 dark:text-blue-400" />
+                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-full">
+                  <Database size={16} className="text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Initial Units</p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {totalInitialQuantity}
-                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Initial Units</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{totalInitialQuantity}</h3>
                 </div>
-                <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
-                  <Package size={24} className="text-green-600 dark:text-green-400" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-2 sm:p-3 rounded-full">
+                  <Package size={16} className="text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Current Units</p>
-                  <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {totalCurrentQuantity}
-                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Current Stock</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{totalCurrentQuantity}</h3>
                 </div>
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-                  <Package size={24} className="text-blue-600 dark:text-blue-400" />
+                <div className="bg-amber-100 dark:bg-amber-900/30 p-2 sm:p-3 rounded-full">
+                  <Package size={16} className="text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Total Cost</p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Spent</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
                     ${totalSpent.toFixed(2)}
                   </h3>
                 </div>
-                <div className="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-full">
-                  <Truck size={24} className="text-amber-600 dark:text-amber-400" />
+                <div className="bg-red-100 dark:bg-red-900/30 p-2 sm:p-3 rounded-full">
+                  <Truck size={16} className="text-red-600 dark:text-red-400" />
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Filters Section */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden mb-6">
-            <div className="p-4 border-b border-gray-200 dark:border-slate-700">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="relative w-full md:w-64">
-                  <input
-                    type="text"
-                    placeholder="Search by product, supplier, or invoice..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-600 
-                             text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-                  />
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          {/* Filters */}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 mb-4 sm:mb-6">
+            <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-slate-700">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                {/* Date Range */}
+                <div className="grid grid-cols-2 gap-2 sm:flex-1 sm:flex sm:gap-4">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                        <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                      </div>
+                      <input
+                        type="date"
+                        value={dateRange.start}
+                        onChange={(e) => setDateRange({...dateRange, start: e.target.value})}
+                        className="block w-full pl-8 pr-2 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                        <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+                      </div>
+                      <input
+                        type="date"
+                        value={dateRange.end}
+                        onChange={(e) => setDateRange({...dateRange, end: e.target.value})}
+                        className="block w-full pl-8 pr-2 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-2 items-center">
+                {/* Status Filter */}
+                <div className="flex-1 sm:max-w-[200px]">
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Status</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'depleted')}
-                    className="border border-gray-300 dark:border-slate-600 
-                             text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                             rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full py-1.5 pr-8 pl-3 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="all">All Statuses</option>
-                    <option value="active">Active Batches</option>
-                    <option value="depleted">Depleted Batches</option>
+                    <option value="all">All Batches</option>
+                    <option value="active">Active Only</option>
+                    <option value="depleted">Depleted Only</option>
                   </select>
-                  
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-300">From:</label>
+                </div>
+                
+                {/* Search */}
+                <div className="flex-1">
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Search</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Search size={16} className="text-gray-500 dark:text-gray-400" />
+                    </div>
                     <input
-                      type="date"
-                      value={dateRange.start}
-                      onChange={(e) => setDateRange({...dateRange, start: e.target.value})}
-                      className="border border-gray-300 dark:border-slate-600 
-                               text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                               rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                      type="text"
+                      placeholder="Search product, supplier..."
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="block w-full pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-300">To:</label>
-                    <input
-                      type="date"
-                      value={dateRange.end}
-                      onChange={(e) => setDateRange({...dateRange, end: e.target.value})}
-                      className="border border-gray-300 dark:border-slate-600 
-                               text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
-                               rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                    />
+                    {searchText && (
+                      <button
+                        className="absolute inset-y-0 right-0 flex items-center pr-2"
+                        onClick={() => setSearchText('')}
+                      >
+                        <X size={16} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
+              
+              <div className="mt-3 flex justify-between items-center text-sm text-gray-600 dark:text-gray-300">
+                <span>Found {filteredBatches.length} batches</span>
+                <div className="flex items-center gap-2">
+                  <span>Sort by:</span>
+                  <button 
+                    className={`px-2 py-1 rounded-md ${sortBy === 'date' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-slate-700'}`}
+                    onClick={() => handleSort('date')}
+                  >
+                    Date
+                  </button>
+                  <button 
+                    className={`px-2 py-1 rounded-md ${sortBy === 'product' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-slate-700'}`}
+                    onClick={() => handleSort('product')}
+                  >
+                    Product
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Batches Table */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+            
+            {/* Batch Table */}
             {isLoading ? (
-              <div className="py-20 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading batch data...</p>
+              <div className="p-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">Loading batches...</p>
               </div>
             ) : error ? (
-              <div className="py-20 text-center">
-                <div className="text-red-500 text-lg">{error}</div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Please try refreshing the page</p>
+              <div className="p-8 text-center">
+                <p className="text-red-500 dark:text-red-400 mb-2">{error}</p>
               </div>
-            ) : filteredBatches.length === 0 ? (
-              <div className="py-20 text-center">
-                <div className="text-gray-500 text-lg">No batch records found</div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Try adjusting your search or filters</p>
+            ) : currentBatches.length === 0 ? (
+              <div className="p-8 text-center">
+                <Package size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
+                <p className="text-gray-600 dark:text-gray-300">No batches found</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">Try adjusting your filters or selecting a different date range</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full table-fixed">
-                  <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0 z-10">
-                    <tr>
-                      <th 
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('date')}
-                      >
-                        <span className="flex items-center">
-                          Purchase Date
-                          {sortBy === 'date' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th 
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('product')}
-                      >
-                        <span className="flex items-center">
+              <>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                    <thead className="bg-gray-50 dark:bg-slate-700">
+                      <tr>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Date
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
                           Product
-                          {sortBy === 'product' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Category
-                      </th>
-                      <th 
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('quantity')}
-                      >
-                        <span className="flex items-center">
-                          Initial Qty
-                          {sortBy === 'quantity' && (
-                            <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </span>
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Current Qty
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Purchase Price
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Total Cost
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Supplier
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                    {currentBatches.map((batch) => (
-                      <tr 
-                        key={batch.id} 
-                        className="hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer"
-                        onClick={() => router.push(`/admin/batches/${batch.id}`)}
-                      >
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {new Date(batch.purchaseDate).toLocaleDateString()}
-                        </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {batch.productName}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {batch.category || 'N/A'}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {batch.initialQuantity}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {batch.currentQuantity}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          ${batch.purchasePrice.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          ${(batch.purchasePrice * batch.initialQuantity).toFixed(2)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                          {batch.supplier}
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                            ${batch.status === 'active' 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' 
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`}
-                          >
-                            {batch.status === 'active' ? 'Active' : 'Depleted'}
-                          </span>
-                        </td>
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Supplier
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Initial
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Current
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Price
+                        </th>
+                        <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                          Status
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                      {currentBatches.map((batch) => (
+                        <tr 
+                          key={batch.id}
+                          className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                        >
+                          <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            {new Date(batch.purchaseDate).toLocaleDateString()}
+                          </td>
+                          <td className="px-3 py-2.5 max-w-[150px] truncate text-sm text-gray-900 dark:text-gray-100">
+                            {batch.productName}
+                          </td>
+                          <td className="px-3 py-2.5 max-w-[120px] truncate text-sm text-gray-900 dark:text-gray-100">
+                            {batch.supplier || 'N/A'}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            {batch.initialQuantity}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            {batch.currentQuantity}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            ${batch.purchasePrice.toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2.5 whitespace-nowrap text-sm">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              batch.status === 'active' 
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            }`}>
+                              {batch.status === 'active' ? 'Active' : 'Depleted'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                 
-                {/* Pagination Controls */}
-                {filteredBatches.length > itemsPerPage && (
-                  <div className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                    <div className="px-4 py-3 flex items-center justify-between">
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="px-3 py-3 flex items-center justify-between border-t border-gray-200 dark:border-slate-700">
+                    <div className="flex-1 flex justify-between sm:hidden">
+                      <button
+                        onClick={() => changePage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => changePage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
                         <p className="text-sm text-gray-700 dark:text-gray-300">
-                          Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
-                          <span className="font-medium">
-                            {Math.min(indexOfLastItem, filteredBatches.length)}
-                          </span>{' '}
-                          of <span className="font-medium">{filteredBatches.length}</span> batches
+                          Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredBatches.length)}</span> of <span className="font-medium">{filteredBatches.length}</span> results
                         </p>
                       </div>
-                      
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => changePage(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded-md text-sm text-gray-700 dark:text-gray-300 disabled:opacity-50"
-                        >
-                          Previous
-                        </button>
-                        
-                        <div className="flex gap-1">
-                          {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
-                            let pageNum;
-                            if (totalPages <= 5) {
-                              pageNum = idx + 1;
-                            } else if (currentPage <= 3) {
-                              pageNum = idx + 1;
-                            } else if (currentPage >= totalPages - 2) {
-                              pageNum = totalPages - 4 + idx;
-                            } else {
-                              pageNum = currentPage - 2 + idx;
-                            }
-                            
-                            if (pageNum > 0 && pageNum <= totalPages) {
-                              return (
-                                <button
-                                  key={pageNum}
-                                  onClick={() => changePage(pageNum)}
-                                  className={`px-3 py-1 border rounded-md text-sm ${
-                                    currentPage === pageNum
-                                      ? 'bg-blue-500 text-white border-blue-500'
-                                      : 'border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300'
-                                  }`}
-                                >
-                                  {pageNum}
-                                </button>
-                              );
-                            }
-                            
-                            return null;
-                          })}
-                        </div>
-                        
-                        <button
-                          onClick={() => changePage(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded-md text-sm text-gray-700 dark:text-gray-300 disabled:opacity-50"
-                        >
-                          Next
-                        </button>
+                      <div>
+                        <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                          <button
+                            onClick={() => changePage(1)}
+                            disabled={currentPage === 1}
+                            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">First</span>
+                            <span>«</span>
+                          </button>
+                          <button
+                            onClick={() => changePage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="relative inline-flex items-center px-2 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Previous</span>
+                            <span>‹</span>
+                          </button>
+                          <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Page {currentPage} of {totalPages}
+                          </span>
+                          <button
+                            onClick={() => changePage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="relative inline-flex items-center px-2 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Next</span>
+                            <span>›</span>
+                          </button>
+                          <button
+                            onClick={() => changePage(totalPages)}
+                            disabled={currentPage === totalPages}
+                            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <span className="sr-only">Last</span>
+                            <span>»</span>
+                          </button>
+                        </nav>
                       </div>
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             )}
           </div>
         </div>

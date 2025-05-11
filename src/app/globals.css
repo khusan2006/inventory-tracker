@@ -28,6 +28,7 @@ body {
   background: var(--background);
   color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 .btn-primary {
@@ -60,4 +61,79 @@ body {
 .hide-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(156, 163, 175, 0.3);
   border-radius: 10px;
+}
+
+/* Mobile-friendly card layout utilities */
+.mobile-card {
+  @apply bg-white dark:bg-slate-800 rounded-lg shadow-sm p-3 sm:p-4 mb-2 sm:mb-4 border border-gray-200 dark:border-slate-700;
+}
+
+.mobile-card-header {
+  @apply flex justify-between items-center mb-2 sm:mb-3;
+}
+
+.mobile-card-title {
+  @apply text-sm sm:text-base font-medium text-gray-900 dark:text-white;
+}
+
+.mobile-card-body {
+  @apply text-xs sm:text-sm text-gray-600 dark:text-gray-400;
+}
+
+/* Responsive form controls */
+.form-control {
+  @apply w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-slate-600 
+         text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700
+         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+/* Mobile-friendly touch targets */
+.touch-target {
+  @apply min-h-[44px] min-w-[44px]; /* Minimum size for touch targets */
+}
+
+/* Responsive typography utilities */
+.text-mobile-xs {
+  @apply text-xs sm:text-sm;
+}
+
+.text-mobile-sm {
+  @apply text-sm sm:text-base;
+}
+
+.text-mobile-base {
+  @apply text-base sm:text-lg;
+}
+
+.text-mobile-lg {
+  @apply text-lg sm:text-xl;
+}
+
+.text-mobile-xl {
+  @apply text-xl sm:text-2xl;
+}
+
+/* Responsive padding and spacing */
+.p-mobile {
+  @apply p-3 sm:p-4 md:p-6;
+}
+
+.px-mobile {
+  @apply px-3 sm:px-4 md:px-6;
+}
+
+.py-mobile {
+  @apply py-3 sm:py-4 md:py-6;
+}
+
+.m-mobile {
+  @apply m-2 sm:m-4;
+}
+
+.mb-mobile {
+  @apply mb-3 sm:mb-4 md:mb-6;
+}
+
+.mt-mobile {
+  @apply mt-3 sm:mt-4 md:mt-6;
 }

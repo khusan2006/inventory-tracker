@@ -67,9 +67,9 @@ export default function DashboardPage() {
   }, [recentSales, inventory, salesLoading, inventoryLoading]);
   
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Header />
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 overflow-y-auto pb-10">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900">
         <div className="p-6">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Dashboard</h1>
@@ -122,12 +122,12 @@ export default function DashboardPage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <InventorySummary />
             <RecentActivity />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 } 

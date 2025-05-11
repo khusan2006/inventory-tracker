@@ -17,7 +17,8 @@ import {
   Tag,
   Layers,
   RefreshCw,
-  PieChart
+  PieChart,
+  Car
 } from 'lucide-react';
 
 export default function Sidebar({ className = "", isMobile = false }: { className?: string, isMobile?: boolean }) {
@@ -80,8 +81,9 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
 
   return (
     <div className={`h-full w-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col ${className}`}>
-      <div className="p-4 border-b border-gray-200 dark:border-slate-700">
-        <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">Auto Parts Manager</h2>
+      <div className="h-16 flex items-center p-4 border-b border-gray-200 dark:border-slate-700">
+        <Car className="text-blue-600 dark:text-blue-400 mr-2" size={24} />
+        <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Auto Parts Manager</h2>
       </div>
       <nav className="flex-1 overflow-y-auto py-2 hide-scrollbar">
         <ul className="space-y-1">

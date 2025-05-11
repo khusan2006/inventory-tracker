@@ -71,12 +71,19 @@ export default function SalesChart() {
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
         gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+        // Determine if we're on a small screen
+        const isSmallScreen = window.innerWidth < 640;
         
         // Create the chart
         const chart = new ChartJS(ctx, {
           type: 'line',
           data: {
-            labels: monthlySales.map(data => data.month),
+            labels: monthlySales.map(data => {
+              // On small screens, use abbreviated month names
+              const monthName = data.month;
+              return isSmallScreen ? monthName.substring(0, 3) : monthName;
+            }),
             datasets: [
               {
                 label: 'Monthly Sales',
@@ -88,8 +95,8 @@ export default function SalesChart() {
                 pointBackgroundColor: 'rgb(59, 130, 246)',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: isSmallScreen ? 3 : 4,
+                pointHoverRadius: isSmallScreen ? 4 : 6,
               }
             ]
           },
@@ -104,7 +111,7 @@ export default function SalesChart() {
                 backgroundColor: 'rgba(17, 24, 39, 0.8)',
                 titleColor: '#fff',
                 bodyColor: '#fff',
-                padding: 12,
+                padding: isSmallScreen ? 8 : 12,
                 displayColors: false,
                 callbacks: {
                   label: function(context: any) {
@@ -121,8 +128,10 @@ export default function SalesChart() {
                 ticks: {
                   color: '#9ca3af',
                   font: {
-                    size: 11,
+                    size: isSmallScreen ? 9 : 11,
                   },
+                  maxRotation: isSmallScreen ? 45 : 0,
+                  minRotation: isSmallScreen ? 45 : 0,
                 },
               },
               y: {
@@ -135,9 +144,18 @@ export default function SalesChart() {
                 ticks: {
                   color: '#9ca3af',
                   font: {
-                    size: 11,
+                    size: isSmallScreen ? 9 : 11,
                   },
                   callback: function(value: any) {
+                    // Format y-axis values differently on mobile
+                    if (isSmallScreen) {
+                      // For mobile: abbreviate numbers (e.g., 1K, 2.5K)
+                      if (value >= 1000) {
+                        return '$' + (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'K';
+                      }
+                      return '$' + value;
+                    }
+                    // For desktop: full format with commas
                     return '$' + value.toLocaleString();
                   }
                 },
@@ -149,8 +167,17 @@ export default function SalesChart() {
         
         setChartRendered(true);
         
+        // Update chart on window resize
+        const handleResize = () => {
+          chart.destroy();
+          loadChart();
+        };
+        
+        window.addEventListener('resize', handleResize);
+        
         return () => {
           chart.destroy();
+          window.removeEventListener('resize', handleResize);
         };
       } catch (err) {
         console.error('Failed to load Chart.js', err);
@@ -163,11 +190,11 @@ export default function SalesChart() {
   
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-6">
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
         </div>
-        <div className="h-64 flex items-center justify-center">
+        <div className="h-48 sm:h-64 flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
         </div>
       </div>
@@ -176,35 +203,35 @@ export default function SalesChart() {
   
   if (error) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-6">
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
         </div>
-        <div className="h-64 flex items-center justify-center">
-          <p className="text-red-500">Failed to load sales data.</p>
+        <div className="h-48 sm:h-64 flex items-center justify-center">
+          <p className="text-red-500 text-mobile-xs">Failed to load sales data.</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
-        <div className="flex flex-col items-end">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Total Sales (YTD)</p>
+    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-6">
+        <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white mb-2 sm:mb-0">Sales Overview</h3>
+        <div className="flex flex-col items-start sm:items-end">
+          <p className="text-mobile-xs text-gray-600 dark:text-gray-400">Total Sales (YTD)</p>
           <div className="flex items-center">
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalSales)}</span>
+            <span className="text-mobile-lg font-bold text-gray-900 dark:text-white">{formatCurrency(totalSales)}</span>
             {growthPercentage > 0 && (
               <div className={`flex items-center ml-2 ${isGrowthPositive ? 'text-green-500' : 'text-red-500'}`}>
                 <ArrowUpRight className={`h-4 w-4 ${!isGrowthPositive && 'rotate-180'}`} />
-                <span className="text-sm font-medium">{growthPercentage.toFixed(1)}%</span>
+                <span className="text-mobile-xs font-medium">{growthPercentage.toFixed(1)}%</span>
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className="h-64 relative">
+      <div className="h-48 sm:h-64 relative">
         {!chartRendered && !isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-slate-700 bg-opacity-50 rounded-lg">
             <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />

@@ -13,7 +13,11 @@ import {
   ChevronRight,
   Download,
   RefreshCw,
-  AlertTriangle
+  AlertTriangle,
+  Loader2,
+  CalendarPlus,
+  XCircle,
+  Check
 } from 'lucide-react';
 import { MonthlyReport as MonthlyReportType, MonthlyProductReport } from '@/types/inventory';
 
@@ -198,168 +202,149 @@ export default function MonthlyRolloverPage() {
   return (
     <>
       <Header />
-      <div className="h-screen overflow-auto bg-gray-50 dark:bg-slate-900 p-6 pb-32">
+      <div className="h-screen overflow-auto bg-gray-50 dark:bg-slate-900 p-4 sm:p-6 pb-32">
         {/* Back button */}
         <button 
           onClick={() => router.push('/admin/rollover')} 
-          className="mb-6 flex items-center gap-2 text-blue-600 hover:text-blue-800"
+          className="mb-4 sm:mb-6 flex items-center gap-2 text-blue-600 hover:text-blue-800"
         >
           <ArrowLeft size={16} />
           <span>Back to Rollover</span>
         </button>
         
         {/* Report header */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+          {/* Report header content */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Monthly Inventory Report</h1>
-              <div className="flex items-center mt-1">
-                <Calendar size={18} className="text-gray-500 dark:text-gray-400 mr-1" />
-                <span className="text-gray-600 dark:text-gray-300">
-                  {monthNames[selectedMonth-1]} {selectedYear}
-                </span>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Monthly Rollover</h1>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <span>{monthNames[selectedMonth-1]} {selectedYear}</span>
+                </div>
+                
+                <div className="flex items-center text-sm space-x-2">
+                  <button
+                    onClick={() => handlePreviousMonth()}
+                    disabled={(selectedMonth === currentDate.getMonth() + 1 && selectedYear === currentDate.getFullYear()) && !report?.isFinalized}
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="flex items-center">
+                      <ChevronLeft size={16} />
+                      <span className="hidden sm:inline">Previous</span>
+                    </span>
+                  </button>
+                  <span className="text-gray-600 dark:text-gray-400">|</span>
+                  <button
+                    onClick={() => handleNextMonth()}
+                    disabled={!report?.isFinalized}
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="flex items-center">
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight size={16} />
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
             
-            <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-              <div className="flex items-center space-x-2">
-                <button 
-                  onClick={handlePreviousMonth}
-                  className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                
-                <select
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200"
-                >
-                  {monthNames.map((month, index) => (
-                    <option key={index} value={index + 1}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-                
-                <select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200"
-                >
-                  {Array.from({ length: 5 }, (_, i) => currentDate.getFullYear() - 2 + i).map(year => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-                
-                <button 
-                  onClick={handleNextMonth}
-                  className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-              
-              <button 
-                onClick={handleExportReport}
-                disabled={!report || isLoading}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Download size={18} className="mr-2" />
-                Export
-              </button>
-              
-              <button 
+            <div className="mt-4 sm:mt-0">
+              <button
                 onClick={handleMonthRollover}
-                disabled={
-                  isRollingOver || 
-                  isLoading || 
-                  !report || 
-                  (selectedYear === currentDate.getFullYear() && 
-                   selectedMonth === currentDate.getMonth() + 1) ||
-                  report?.isFinalized
-                }
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={(selectedMonth === currentDate.getMonth() + 1 && selectedYear === currentDate.getFullYear()) || report?.isFinalized || isLoading || isRollingOver}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 
+                         text-white rounded-lg transition-colors text-sm font-medium disabled:cursor-not-allowed"
               >
-                <RefreshCw size={18} className={`mr-2 ${isRollingOver ? 'animate-spin' : ''}`} />
-                Rollover to Next Month
+                {isRollingOver ? (
+                  <Loader2 className="animate-spin w-4 h-4 mr-2" />
+                ) : (
+                  <CalendarPlus className="w-4 h-4 mr-2" />
+                )}
+                {isRollingOver ? 'Processing...' : 'Rollover to Next Month'}
               </button>
             </div>
           </div>
           
+          {/* Content based on report status */}
           {isLoading ? (
-            <div className="py-20 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading report data...</p>
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+              <p className="text-gray-600 dark:text-gray-400">Loading report data...</p>
             </div>
           ) : error ? (
-            <div className="py-12 text-center">
-              <AlertTriangle size={48} className="mx-auto text-amber-500 mb-4" />
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Error Loading Report</h2>
-              <p className="text-gray-600 dark:text-gray-400">{error}</p>
+            <div className="flex flex-col items-center justify-center py-12">
+              <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+              <p className="text-red-600 dark:text-red-400 font-medium mb-2">Error loading report</p>
+              <p className="text-gray-600 dark:text-gray-400 text-center max-w-md">
+                {typeof error === 'string' ? error : 'An unexpected error occurred.'}
+              </p>
+              <button
+                onClick={() => setSelectedMonth(selectedMonth)}
+                className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm"
+              >
+                Try Again
+              </button>
             </div>
           ) : report?.reportData ? (
-            <div className="space-y-8" style={{ paddingBottom: "100px" }}>
+            <div className="space-y-6 sm:space-y-8" style={{ paddingBottom: "100px" }}>
               {/* Finalized Status */}
               {report.isFinalized && (
-                <div className="mb-6 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                  <p className="text-blue-700 dark:text-blue-300 flex items-center">
-                    <Calendar className="mr-2 h-5 w-5" />
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <p className="text-blue-700 dark:text-blue-300 flex items-center text-sm">
+                    <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
                     <span>This report has been finalized and cannot be modified. Any new transactions will be recorded in the next month.</span>
                   </p>
                 </div>
               )}
               
               {/* Summary Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Revenue</h3>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                <div className="bg-white dark:bg-slate-700 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Total Revenue</h3>
+                  <p className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(report.reportData.totalRevenue)}
                   </p>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="mt-1 sm:mt-2 text-xs text-gray-500 dark:text-gray-400">
                     From {report.reportData.totalSold} items sold
                   </div>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Profit</h3>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <div className="bg-white dark:bg-slate-700 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Total Profit</h3>
+                  <p className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {formatCurrency(report.reportData.totalProfit)}
                   </p>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="mt-1 sm:mt-2 text-xs text-gray-500 dark:text-gray-400">
                     {report.reportData.avgProfitMargin.toFixed(2)}% margin
                   </div>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-1">Inventory Added</h3>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                <div className="bg-white dark:bg-slate-700 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Inventory Added</h3>
+                  <p className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                     {report.reportData.totalPurchased} items
                   </p>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="mt-1 sm:mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Cost: {formatCurrency(report.reportData.totalCost)}
                   </div>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-700 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-1">Inventory Change</h3>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                    {report.reportData.totalEndingInventory - report.reportData.totalStartingInventory >= 0 ? '+' : ''}
-                    {report.reportData.totalEndingInventory - report.reportData.totalStartingInventory} items
+                <div className="bg-white dark:bg-slate-700 p-3 sm:p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">Inventory Value</h3>
+                  <p className="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
+                    {formatCurrency(report.reportData.totalEndingInventory * (report.reportData.totalCost / Math.max(report.reportData.totalSold, 1)))}
                   </p>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    From {report.reportData.totalStartingInventory} to {report.reportData.totalEndingInventory}
+                  <div className="mt-1 sm:mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Across {report.reportData.totalEndingInventory} items
                   </div>
                 </div>
               </div>
               
               {/* Product List - Fixed scrolling */}
-              <div className="mb-12">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Unsold Inventory for Rollover</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <div className="mb-8 sm:mb-12">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 sm:mb-4">Unsold Inventory for Rollover</h2>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-3 sm:mb-4">
                   These items will be transferred to the next month when you perform the rollover.
                 </p>
                 
@@ -368,22 +353,22 @@ export default function MonthlyRolloverPage() {
                     <table className="w-full table-fixed">
                       <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0 z-10">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '30%' }}>
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '35%' }}>
                             Product
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '14%' }}>
-                            Remaining Quantity
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '15%' }}>
+                            <span className="hidden sm:inline">Remaining</span> Qty
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '14%' }}>
-                            Current Value
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '15%' }}>
+                            Value
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '14%' }}>
-                            Sold This Month
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell" style={{ width: '15%' }}>
+                            Sold
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '14%' }}>
-                            Purchased This Month
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell" style={{ width: '15%' }}>
+                            Purchased
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '14%' }}>
+                          <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
                             Status
                           </th>
                         </tr>
@@ -391,68 +376,63 @@ export default function MonthlyRolloverPage() {
                       <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {report.reportData.products
                           .filter(product => product.endingQuantity > 0)
-                          .map((product) => {
-                            // Calculate the current value (based on average cost from batches)
-                            const avgCost = product.cost / (product.soldQuantity || 1);
-                            const currentValue = product.endingQuantity * avgCost;
+                          .map(product => {
+                            const currentValue = product.endingQuantity * (product.cost / (product.soldQuantity || 1));
+                            let stockStatus;
                             
-                            // Determine inventory status
-                            const getStockStatus = () => {
-                              if (product.endingQuantity <= 0) return 'Out of Stock';
-                              if (product.endingQuantity < 5) return 'Low Stock';
-                              return 'In Stock';
-                            };
-                            
-                            // Get status color
-                            const getStatusColor = () => {
-                              if (product.endingQuantity <= 0) return 'text-red-600 dark:text-red-400';
-                              if (product.endingQuantity < 5) return 'text-amber-600 dark:text-amber-400';
-                              return 'text-green-600 dark:text-green-400';
-                            };
-                            
+                            if (product.endingQuantity <= 0) {
+                              stockStatus = {
+                                label: "Out of Stock",
+                                color: "text-red-600 dark:text-red-400",
+                                icon: <XCircle size={14} className="mr-1" />
+                              };
+                            } else if (product.endingQuantity <= 5) {
+                              stockStatus = {
+                                label: "Low Stock",
+                                color: "text-amber-600 dark:text-amber-400",
+                                icon: <AlertTriangle size={14} className="mr-1" />
+                              };
+                            } else {
+                              stockStatus = {
+                                label: "In Stock",
+                                color: "text-green-600 dark:text-green-400",
+                                icon: <Check size={14} className="mr-1" />
+                              };
+                            }
+                          
                             return (
-                              <tr key={product.productId} className="hover:bg-gray-50 dark:hover:bg-slate-700">
-                                <td className="px-4 py-4 whitespace-nowrap">
+                              <tr key={product.productId} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-2 sm:px-4 py-3">
                                   <div className="flex items-center">
-                                    <div className="flex-shrink-0 h-10 w-10 bg-gray-100 dark:bg-slate-600 rounded-lg flex items-center justify-center">
-                                      <Package size={20} className="text-gray-500 dark:text-gray-400" />
-                                    </div>
-                                    <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900 dark:text-white">{product.productName}</div>
-                                      <div className="text-xs text-gray-500 dark:text-gray-400">{product.sku}</div>
+                                    <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">
+                                      {product.productName}
                                     </div>
                                   </div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                                    {product.category}
+                                  </div>
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-white">
                                   {product.endingQuantity}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-white">
                                   {formatCurrency(currentValue)}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                  <span className={product.soldQuantity > 0 ? 'text-amber-600 dark:text-amber-400' : ''}>
-                                    {product.soldQuantity || 0}
-                                  </span>
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                                  {product.soldQuantity || 0}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                  <span className={product.purchasedQuantity > 0 ? 'text-green-600 dark:text-green-400' : ''}>
-                                    {product.purchasedQuantity || 0}
-                                  </span>
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                                  {product.purchasedQuantity || 0}
                                 </td>
-                                <td className={`px-4 py-4 whitespace-nowrap text-sm font-medium ${getStatusColor()}`}>
-                                  {getStockStatus()}
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
+                                  <span className={`inline-flex items-center text-xs sm:text-sm ${stockStatus.color}`}>
+                                    {stockStatus.icon}
+                                    {stockStatus.label}
+                                  </span>
                                 </td>
                               </tr>
                             );
                           })}
-                        
-                        {report.reportData.products.filter(p => p.endingQuantity > 0).length === 0 && (
-                          <tr>
-                            <td colSpan={6} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                              No unsold inventory available for this month.
-                            </td>
-                          </tr>
-                        )}
                       </tbody>
                     </table>
                   </div>
@@ -460,9 +440,9 @@ export default function MonthlyRolloverPage() {
               </div>
 
               {/* Out of Stock Products - Fixed scrolling */}
-              <div className="mb-16">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Out of Stock Products</h2>
+              <div className="mb-8 sm:mb-16">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Out of Stock Products</h2>
                   <button 
                     onClick={() => {
                       const element = document.getElementById("out-of-stock");
@@ -470,7 +450,7 @@ export default function MonthlyRolloverPage() {
                         element.style.display = element.style.display === "none" ? "block" : "none";
                       }
                     }}
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center"
+                    className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center"
                   >
                     <span>Toggle View</span>
                   </button>
@@ -482,55 +462,45 @@ export default function MonthlyRolloverPage() {
                       <table className="w-full table-fixed">
                         <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0 z-10">
                           <tr>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '40%' }}>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '40%' }}>
                               Product
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
-                              Last Sale Date
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
+                              Last Sale
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
                               Total Sold
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
-                              Total Revenue
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{ width: '20%' }}>
+                              Revenue
                             </th>
                           </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
                           {report.reportData.products
-                            .filter(product => product.endingQuantity === 0)
-                            .map((product) => (
-                              <tr key={product.productId} className="hover:bg-gray-50 dark:hover:bg-slate-700">
-                                <td className="px-4 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    <div className="flex-shrink-0 h-10 w-10 bg-gray-100 dark:bg-slate-600 rounded-lg flex items-center justify-center">
-                                      <Package size={20} className="text-gray-500 dark:text-gray-400" />
-                                    </div>
-                                    <div className="ml-4">
-                                      <div className="text-sm font-medium text-gray-900 dark:text-white">{product.productName}</div>
-                                      <div className="text-xs text-gray-500 dark:text-gray-400">{product.sku}</div>
-                                    </div>
+                            .filter(product => product.endingQuantity <= 0)
+                            .map(product => (
+                              <tr key={product.productId} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                                <td className="px-2 sm:px-4 py-3">
+                                  <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
+                                    {product.productName}
+                                  </div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                                    {product.category}
                                   </div>
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                  -
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                  {/* Use a dash as fallback for last sale date */}
+                                  {'-'}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                                   {product.soldQuantity || 0}
                                 </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                  {formatCurrency(product.revenue)}
+                                <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                  {formatCurrency(product.revenue || 0)}
                                 </td>
                               </tr>
                             ))}
-                          
-                          {report.reportData.products.filter(p => p.endingQuantity === 0).length === 0 && (
-                            <tr>
-                              <td colSpan={4} className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                                No out of stock products for this month.
-                              </td>
-                            </tr>
-                          )}
                         </tbody>
                       </table>
                     </div>
@@ -540,34 +510,40 @@ export default function MonthlyRolloverPage() {
             </div>
           ) : (
             <div className="py-12 text-center">
-              <p className="text-gray-600 dark:text-gray-400">No report data available. Select a different month or try again later.</p>
+              <div className="flex flex-col items-center justify-center">
+                <Calendar className="h-16 w-16 text-gray-400 mb-4" />
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No Report Available</h3>
+                <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                  There is no report data available for this month yet. Reports are generated when sales or inventory changes occur.
+                </p>
+              </div>
             </div>
           )}
         </div>
         
         {/* Instructions section with margin bottom */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-16">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-            <InfoIcon size={20} className="mr-2 text-blue-500" />
-            Month-End Procedure
-          </h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4 sm:p-6 mb-8 sm:mb-16">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">Month-End Rollover Procedure</h2>
           
-          <div className="text-gray-700 dark:text-gray-300 space-y-3">
-            <p>At the end of each month, use the "Rollover to Next Month" button to:</p>
+          <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400 space-y-2 sm:space-y-4">
+            <p>
+              The month-end rollover process finalizes your inventory and sales data for the month, creating a permanent record 
+              for accounting purposes. After rollover, any new transactions will be applied to the next month.
+            </p>
             
-            <ol className="list-decimal ml-5 space-y-2">
-              <li>Finalize the current month's inventory report</li>
-              <li>Transfer your current inventory quantities to the next month</li>
-              <li>Archive completed transactions for the month</li>
-              <li>Start tracking new inventory and sales for the next month</li>
-            </ol>
-            
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mt-4">
-              <p className="text-blue-800 dark:text-blue-300 text-sm">
-                <strong>Note:</strong> The rollover button is enabled only for past months. You cannot rollover the current month until it ends.
-                Additionally, you cannot rollover a month that has already been finalized.
+            <div className="pl-4 border-l-2 border-blue-500 dark:border-blue-400">
+              <p className="text-sm">
+                <strong className="text-gray-800 dark:text-gray-200">Important:</strong> Before performing the rollover, ensure that all sales and inventory
+                transactions for the month are correctly entered. You cannot edit a month's data after it has been rolled over.
               </p>
             </div>
+            
+            <ol className="list-decimal pl-5 space-y-2">
+              <li>Verify all inventory counts and sales are accurate</li>
+              <li>Check that all shipments have been properly recorded</li>
+              <li>Click the "Rollover to Next Month" button when ready</li>
+              <li>Wait for confirmation that the process has completed</li>
+            </ol>
           </div>
         </div>
       </div>
