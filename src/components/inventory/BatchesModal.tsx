@@ -7,6 +7,7 @@ import { useProductBatches } from '@/hooks/useProductBatches';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
+import { useTranslation } from '@/i18n/client';
 
 interface BatchesModalProps {
   productId: string;
@@ -24,6 +25,7 @@ interface BatchFormData {
 }
 
 export default function BatchesModal({ productId, productName, onClose }: BatchesModalProps) {
+  const { t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState<BatchFormData>({
@@ -227,11 +229,12 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Batches for {productName}
+            {t('batches.batchesFor', { product: productName })}
           </h2>
           <button 
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            aria-label={t('common.close')}
           >
             <X size={20} />
           </button>
@@ -241,14 +244,14 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
           {!showAddForm && (
             <div className="mb-4 flex justify-between items-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage inventory batches for this product
+                {t('batches.manageInventoryBatches')}
               </p>
               <button
                 onClick={() => setShowAddForm(true)}
                 className="flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-md transition-colors text-sm"
               >
                 <Plus size={16} className="mr-1" />
-                Add New Batch
+                {t('batches.addNewBatch')}
               </button>
             </div>
           )}
@@ -258,11 +261,12 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-md font-medium text-blue-900 dark:text-blue-300 flex items-center">
                   <FilePlus size={18} className="mr-2" />
-                  Add New Inventory Batch
+                  {t('batches.addNewBatch')}
                 </h3>
                 <button
                   onClick={() => setShowAddForm(false)}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  aria-label={t('common.close')}
                 >
                   <X size={18} />
                 </button>
@@ -278,7 +282,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Quantity *
+                      {t('batches.quantity')} *
                     </label>
                     <input
                       type="number"
@@ -293,7 +297,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Purchase Price *
+                      {t('batches.purchasePrice')} *
                     </label>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
@@ -314,7 +318,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Purchase Date *
+                      {t('batches.purchaseDate')} *
                     </label>
                     <input
                       type="date"
@@ -328,7 +332,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Supplier
+                      {t('batches.supplier')}
                     </label>
                     <input
                       type="text"
@@ -341,7 +345,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Invoice Number
+                      {t('batches.invoiceNumber')}
                     </label>
                     <input
                       type="text"
@@ -354,7 +358,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                   
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Notes
+                      {t('batches.notes')}
                     </label>
                     <textarea
                       name="notes"
@@ -372,7 +376,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                     onClick={() => setShowAddForm(false)}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 rounded-md"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -382,12 +386,12 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                     {addBatchMutation.isPending ? (
                       <>
                         <RefreshCw size={16} className="mr-2 animate-spin" />
-                        Saving...
+                        {t('common.loading')}
                       </>
                     ) : (
                       <>
                         <Plus size={16} className="mr-2" />
-                        Add Batch
+                        {t('batches.addBatch')}
                       </>
                     )}
                   </button>
@@ -399,23 +403,23 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
           {isLoading ? (
             <div className="py-20 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading batches...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">{t('batches.loading')}</p>
             </div>
           ) : error ? (
             <div className="py-20 text-center">
-              <p className="text-red-600 dark:text-red-400">{error.message || 'Failed to load batch data'}</p>
+              <p className="text-red-600 dark:text-red-400">{error.message || t('common.failedToLoadData')}</p>
             </div>
           ) : batches.length === 0 ? (
             <div className="py-16 text-center">
               <Package size={40} className="mx-auto text-gray-400 dark:text-gray-600 mb-4" />
-              <p className="text-gray-600 dark:text-gray-400 mb-4">No batches found for this product.</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('batches.noResults')}</p>
               {!showAddForm && (
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
                 >
                   <Plus size={16} className="mr-2" />
-                  Add First Batch
+                  {t('batches.addBatch')}
                 </button>
               )}
             </div>
@@ -425,28 +429,28 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                 <thead className="bg-gray-50 dark:bg-slate-700">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Batch ID
+                      {t('batches.batchId')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Purchase Date
+                      {t('batches.purchaseDate')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Purchase Price
+                      {t('batches.purchaseAmount')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Initial
+                      {t('batches.initial')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Current
+                      {t('batches.current')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Sold
+                      {t('batches.sold')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Status
+                      {t('common.status')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Supplier
+                      {t('batches.supplier')}
                     </th>
                   </tr>
                 </thead>
@@ -496,7 +500,9 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                                 ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                                 : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
                             }`}>
-                              {batch.status.charAt(0).toUpperCase() + batch.status.slice(1)}
+                              {batch.status === 'active' ? t('common.active') : 
+                               batch.status === 'depleted' ? t('common.depleted') : 
+                               batch.status.charAt(0).toUpperCase() + batch.status.slice(1)}
                             </span>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
@@ -516,7 +522,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 rounded-md"
           >
-            Close
+            {t('common.close')}
           </button>
         </div>
       </div>

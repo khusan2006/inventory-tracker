@@ -35,6 +35,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Category {
   id: string;
@@ -45,6 +46,7 @@ interface Category {
 }
 
 export default function CategoriesPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
@@ -99,7 +101,7 @@ export default function CategoriesPage() {
       setFilteredCategories(data);
     } catch (err) {
       console.error('Error fetching categories:', err);
-      setError('Could not load categories. Please try again later.');
+      setError(t('categories.errorLoading'));
     } finally {
       setIsLoading(false);
     }
@@ -127,7 +129,7 @@ export default function CategoriesPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to add category');
+        throw new Error(data.error || t('categories.errorAdding'));
       }
       
       // Add the new category to the list
@@ -142,7 +144,7 @@ export default function CategoriesPage() {
       setIsAddDialogOpen(false);
     } catch (err: any) {
       console.error('Error adding category:', err);
-      setError(err.message || 'Failed to add category');
+      setError(err.message || t('categories.errorAdding'));
     }
   };
 
@@ -165,7 +167,7 @@ export default function CategoriesPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update category');
+        throw new Error(data.error || t('categories.errorUpdating'));
       }
       
       // Update the category in the list
@@ -183,7 +185,7 @@ export default function CategoriesPage() {
       setIsEditDialogOpen(false);
     } catch (err: any) {
       console.error('Error updating category:', err);
-      setError(err.message || 'Failed to update category');
+      setError(err.message || t('categories.errorUpdating'));
     }
   };
 
@@ -199,7 +201,7 @@ export default function CategoriesPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to delete category');
+        throw new Error(data.error || t('categories.errorDeleting'));
       }
       
       // Remove the category from the list
@@ -210,7 +212,7 @@ export default function CategoriesPage() {
       setIsDeleteDialogOpen(false);
     } catch (err: any) {
       console.error('Error deleting category:', err);
-      setError(err.message || 'Failed to delete category');
+      setError(err.message || t('categories.errorDeleting'));
     }
   };
 
@@ -238,9 +240,9 @@ export default function CategoriesPage() {
             <div className="flex items-center">
               <Tag className="mr-3 text-blue-600 dark:text-blue-400 p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg h-9 w-9" />
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Product Categories</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('categories.title')}</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Manage your product categories
+                  {t('categories.subtitle')}
                 </p>
               </div>
             </div>
@@ -248,40 +250,40 @@ export default function CategoriesPage() {
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="default" className="w-full sm:w-auto">
-                  <Plus className="mr-2 h-4 w-4" /> Add Category
+                  <Plus className="mr-2 h-4 w-4" /> {t('categories.addButton')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Add New Category</DialogTitle>
+                  <DialogTitle>{t('categories.addNewTitle')}</DialogTitle>
                   <DialogDescription>
-                    Create a new product category to organize your inventory.
+                    {t('categories.addNewDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name">{t('common.name')}</Label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="Category name"
+                      placeholder={t('categories.nameInputPlaceholder')}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{t('common.description')}</Label>
                     <Textarea
                       id="description"
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      placeholder="Brief description of this category"
+                      placeholder={t('categories.descriptionInputPlaceholder')}
                       rows={3}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="color">Color</Label>
+                    <Label htmlFor="color">{t('common.color')}</Label>
                     <div className="flex space-x-2">
                       <Input
                         id="color"
@@ -308,10 +310,10 @@ export default function CategoriesPage() {
                 )}
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button onClick={handleAddCategory}>
-                    Add Category
+                    {t('categories.addButton')}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -324,7 +326,7 @@ export default function CategoriesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400" size={18} />
               <input
                 type="text"
-                placeholder="Search categories..."
+                placeholder={t('categories.searchPlaceholder')}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 dark:border-slate-600 
@@ -345,7 +347,7 @@ export default function CategoriesPage() {
           {isLoading ? (
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-              <p className="ml-3 text-gray-600 dark:text-gray-400">Loading categories...</p>
+              <p className="ml-3 text-gray-600 dark:text-gray-400">{t('categories.loading')}</p>
             </div>
           ) : error && categories.length === 0 ? (
             <div className="bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 p-4 rounded-md flex items-center">
@@ -359,9 +361,9 @@ export default function CategoriesPage() {
                 {filteredCategories.length === 0 ? (
                   <div className="p-8 text-center">
                     <Tag size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">No categories found</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">{t('categories.noResultsTitle')}</p>
                     <p className="text-gray-500 dark:text-gray-400 mt-1">
-                      {searchText ? "Try a different search term" : "Create your first category to get started"}
+                      {searchText ? t('categories.tryDifferentSearch') : t('categories.createFirstCategory')}
                     </p>
                   </div>
                 ) : (
@@ -369,19 +371,19 @@ export default function CategoriesPage() {
                     <thead className="bg-gray-50 dark:bg-slate-700">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Color
+                          {t('common.color')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Name
+                          {t('common.name')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Description
+                          {t('common.description')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Created
+                          {t('common.created')}
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Actions
+                          {t('common.actions')}
                         </th>
                       </tr>
                     </thead>
@@ -398,7 +400,7 @@ export default function CategoriesPage() {
                             {category.name}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-md truncate">
-                            {category.description || 'No description'}
+                            {category.description || t('categories.noDescription')}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                             {new Date(category.createdAt).toLocaleDateString()}
@@ -433,9 +435,9 @@ export default function CategoriesPage() {
                 {filteredCategories.length === 0 ? (
                   <div className="bg-white dark:bg-slate-800 rounded-lg p-8 text-center shadow-sm border border-gray-200 dark:border-gray-700">
                     <Tag size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
-                    <p className="text-gray-600 dark:text-gray-300 text-lg">No categories found</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">{t('categories.noResultsTitle')}</p>
                     <p className="text-gray-500 dark:text-gray-400 mt-1">
-                      {searchText ? "Try a different search term" : "Create your first category to get started"}
+                      {searchText ? t('categories.tryDifferentSearch') : t('categories.createFirstCategory')}
                     </p>
                   </div>
                 ) : (
@@ -457,7 +459,7 @@ export default function CategoriesPage() {
                           />
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
-                          {category.description || 'No description'}
+                          {category.description || t('categories.noDescription')}
                         </p>
                         <div className="flex justify-between items-center">
                           <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -470,7 +472,7 @@ export default function CategoriesPage() {
                               onClick={() => openEditDialog(category)}
                               className="px-2 h-8"
                             >
-                              <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
+                              <Pencil className="h-3.5 w-3.5 mr-1" /> {t('common.edit')}
                             </Button>
                             <Button 
                               variant="outline" 
@@ -478,7 +480,7 @@ export default function CategoriesPage() {
                               onClick={() => openDeleteDialog(category)}
                               className="px-2 h-8 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border-red-200 hover:border-red-300 dark:border-red-900 dark:hover:border-red-800"
                             >
-                              <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                              <Trash2 className="h-3.5 w-3.5 mr-1" /> {t('common.delete')}
                             </Button>
                           </div>
                         </div>
@@ -494,35 +496,35 @@ export default function CategoriesPage() {
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Edit Category</DialogTitle>
+                <DialogTitle>{t('categories.editTitle')}</DialogTitle>
                 <DialogDescription>
-                  Update the details for this category.
+                  {t('categories.editDescription')}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-name">Name</Label>
+                  <Label htmlFor="edit-name">{t('common.name')}</Label>
                   <Input
                     id="edit-name"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Category name"
+                    placeholder={t('categories.nameInputPlaceholder')}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-description">Description</Label>
+                  <Label htmlFor="edit-description">{t('common.description')}</Label>
                   <Textarea
                     id="edit-description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder="Brief description of this category"
+                    placeholder={t('categories.descriptionInputPlaceholder')}
                     rows={3}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-color">Color</Label>
+                  <Label htmlFor="edit-color">{t('common.color')}</Label>
                   <div className="flex space-x-2">
                     <Input
                       id="edit-color"
@@ -549,10 +551,10 @@ export default function CategoriesPage() {
               )}
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button onClick={handleEditCategory}>
-                  Save Changes
+                  {t('common.saveChanges')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -562,19 +564,18 @@ export default function CategoriesPage() {
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogTitle>{t('common.confirmDelete')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action will permanently delete the category &quot;{selectedCategory?.name}&quot;. 
-                  This action cannot be undone.
+                  {t('categories.deleteConfirmation', { name: selectedCategory?.name })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={handleDeleteCategory}
                   className="bg-red-500 hover:bg-red-600"
                 >
-                  Delete
+                  {t('common.delete')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

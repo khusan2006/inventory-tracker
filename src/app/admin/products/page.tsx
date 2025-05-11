@@ -9,6 +9,7 @@ import BatchesModal from '@/components/inventory/BatchesModal';
 import QuickSellModal from '@/components/inventory/QuickSellModal';
 import { useInventory } from '@/hooks/useInventory';
 import { useProductBatches } from '@/hooks/useProductBatches';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Updated Product interface to handle category as either string or object
 interface Product {
@@ -32,6 +33,7 @@ interface Product {
 
 export default function ProductsPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<{id: string, name: string} | null>(null);
   const [quickSellProduct, setQuickSellProduct] = useState<{id: string, name: string} | null>(null);
   
@@ -368,15 +370,15 @@ export default function ProductsPage() {
         <div className="p-3 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
             <div className="md:block hidden">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Auto Parts Inventory</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('inventory.autoParts')}</h1>
               <p className="text-gray-600 dark:text-gray-300">
-                {filteredProducts.length} {filteredProducts.length === 1 ? 'part' : 'parts'} found
+                {filteredProducts.length} {t('inventory.partsFound')}
               </p>
             </div>
             
             <Link href="/admin/products/new" className="hidden sm:flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors">
               <Plus size={18} className="mr-2" />
-              Add Auto Part
+              {t('inventory.addAutoPart')}
             </Link>
           </div>
           
@@ -389,10 +391,10 @@ export default function ProductsPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-        </div>
-                <input
-                  type="text"
-                    placeholder="Search parts..."
+                  </div>
+                  <input
+                    type="text"
+                    placeholder={t('common.search')}
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-slate-600 
@@ -408,7 +410,7 @@ export default function ProductsPage() {
                       <X size={16} />
                     </button>
                   )}
-              </div>
+                </div>
               
                 {/* Filter controls - scrollable horizontal row on mobile */}
                 <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -420,7 +422,7 @@ export default function ProductsPage() {
                                text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
                                rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
                     >
-                  <option value="">All Categories</option>
+                      <option value="">{t('inventory.allCategories')}</option>
                       {categories.map(category => (
                         <option key={category} value={category}>{category}</option>
                       ))}
@@ -435,11 +437,11 @@ export default function ProductsPage() {
                                text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
                                rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
                     >
-                      <option value="all">All Stock</option>
-                      <option value="inStock">In Stock</option>
-                      <option value="lowStock">Low Stock</option>
-                      <option value="outOfStock">Out of Stock</option>
-                </select>
+                      <option value="all">{t('inventory.allStock')}</option>
+                      <option value="inStock">{t('inventory.inStock')}</option>
+                      <option value="lowStock">{t('inventory.lowStock')}</option>
+                      <option value="outOfStock">{t('inventory.outOfStock')}</option>
+                    </select>
                   </div>
                   
                   <div className="flex-shrink-0">
@@ -450,12 +452,12 @@ export default function ProductsPage() {
                                text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
                                rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
                     >
-                      <option value="name">Sort: Name</option>
-                      <option value="stock">Sort: Stock</option>
-                      <option value="price">Sort: Price</option>
-                      <option value="category">Sort: Category</option>
-                      <option value="sold">Sort: Sales</option>
-                </select>
+                      <option value="name">{t('inventory.sortName')}</option>
+                      <option value="stock">{t('inventory.sortStock')}</option>
+                      <option value="price">{t('inventory.sortPrice')}</option>
+                      <option value="category">{t('inventory.sortCategory')}</option>
+                      <option value="sold">{t('inventory.sortSales')}</option>
+                    </select>
                   </div>
                   
                   <button
@@ -464,7 +466,7 @@ export default function ProductsPage() {
                              text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700 
                              rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-sm"
                   >
-                    {sortDirection === 'asc' ? '↑ Asc' : '↓ Desc'}
+                    {sortDirection === 'asc' ? `↑ ${t('inventory.asc')}` : `↓ ${t('inventory.desc')}`}
                   </button>
                 </div>
               </div>
@@ -473,17 +475,17 @@ export default function ProductsPage() {
             {isLoading ? (
               <div className="py-20 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading inventory...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
               </div>
             ) : error ? (
               <div className="py-20 text-center">
-                <div className="text-red-500 text-lg">Error loading inventory data</div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Please try refreshing the page</p>
+                <div className="text-red-500 text-lg">{t('common.failedToLoadData')}</div>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{t('common.tryAdjusting')}</p>
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="py-20 text-center">
-                <div className="text-gray-500 text-lg">No products found</div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Try adjusting your search or filters</p>
+                <div className="text-gray-500 text-lg">{t('common.noResults')}</div>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{t('common.tryAdjusting')}</p>
                 {searchText || categoryFilter || stockFilter !== 'all' ? (
                   <button
                     onClick={() => {
@@ -493,10 +495,10 @@ export default function ProductsPage() {
                     }}
                     className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                   >
-                    Clear Filters
+                    {t('common.clearFilters')}
                   </button>
                 ) : null}
-          </div>
+              </div>
             ) : (
               <>
                 {/* Desktop Table View (Hidden on mobile) */}
@@ -509,29 +511,29 @@ export default function ProductsPage() {
                           onClick={() => handleSortChange('name')}
                         >
                           <span className="flex items-center">
-                            Part
+                            {t('inventory.part')}
                             {sortBy === 'name' && (
                               <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             )}
                           </span>
-                </th>
+                        </th>
                         <th 
                           className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSortChange('category')}
                         >
                           <span className="flex items-center">
-                  Category
+                            {t('inventory.category')}
                             {sortBy === 'category' && (
                               <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             )}
                           </span>
-                </th>
+                        </th>
                         <th 
                           className="w-16 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSortChange('stock')}
                         >
                           <span className="flex items-center">
-                  Stock
+                            {t('inventory.stock')}
                             {sortBy === 'stock' && (
                               <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             )}
@@ -542,37 +544,37 @@ export default function ProductsPage() {
                           onClick={() => handleSortChange('sold')}
                         >
                           <span className="flex items-center">
-                            Sold
+                            {t('inventory.sold')}
                             {sortBy === 'sold' && (
                               <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             )}
                           </span>
                         </th>
                         <th className="w-20 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                          Batches
+                          {t('inventory.batches')}
                         </th>
                         <th className="w-32 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                          Avg. Price
-                </th>
+                          {t('inventory.avgPrice')}
+                        </th>
                         <th 
                           className="w-24 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSortChange('price')}
                         >
                           <span className="flex items-center">
-                  Price
+                            {t('inventory.priceHeader')}
                             {sortBy === 'price' && (
                               <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                             )}
                           </span>
                         </th>
                         <th className="w-28 px-3 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                          SKU
-                </th>
+                          {t('inventory.sku')}
+                        </th>
                         <th className="w-24 px-3 py-3 text-right text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+                          {t('inventory.actions')}
+                        </th>
+                      </tr>
+                    </thead>
                     <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                       {currentProducts.map((product) => (
                         <tr 
@@ -582,14 +584,14 @@ export default function ProductsPage() {
                         >
                           <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
                             {product.name}
-                  </td>
+                          </td>
                           <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                               {typeof product.category === 'object' && product.category !== null && 'name' in product.category 
                                 ? product.category.name 
                                 : product.category}
-                    </span>
-                  </td>
+                            </span>
+                          </td>
                           <td className={`px-3 py-3 text-sm ${
                             product.totalStock <= (product.minStockLevel || 0) 
                               ? 'text-red-600 dark:text-red-400 font-medium' 
@@ -620,10 +622,10 @@ export default function ProductsPage() {
                               style: 'currency',
                               currency: 'USD'
                             }).format(product.sellingPrice)}
-                  </td>
+                          </td>
                           <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300 font-mono">
                             {product.sku}
-                  </td>
+                          </td>
                           <td className="px-3 py-3 text-sm text-right">
                             <div className="flex items-center justify-end space-x-2">
                               <button 
@@ -678,8 +680,8 @@ export default function ProductsPage() {
                                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
                                     >
                                       <Edit size={14} className="inline mr-2 text-blue-600 dark:text-blue-400" />
-                                      Edit
-                      </button>
+                                      {t('common.edit')}
+                                    </button>
                                     <button 
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -689,17 +691,17 @@ export default function ProductsPage() {
                                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 w-full text-left"
                                     >
                                       <Trash2 size={14} className="inline mr-2 text-red-600 dark:text-red-400" />
-                                      Delete
-                      </button>
+                                      {t('common.delete')}
+                                    </button>
                                   </div>
                                 )}
                               </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
                 
                 {/* Mobile List View */}
@@ -710,7 +712,7 @@ export default function ProductsPage() {
                       className="p-4 border-b border-gray-100 dark:border-slate-700 last:border-0"
                       onClick={() => handleViewProduct(product.id)}
                     >
-            <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0 pr-2">
                           <h3 className="text-base font-medium text-gray-900 dark:text-white truncate">
                             {product.name}
@@ -754,25 +756,25 @@ export default function ProductsPage() {
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center">
                           <div className="mr-4">
-                            <span className="text-xs text-gray-500 dark:text-gray-400 block">Available</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 block">{t('inventory.available')}</span>
                             <span className={`text-sm font-medium ${
                               product.totalStock <= (product.minStockLevel || 0) 
                                 ? 'text-red-600 dark:text-red-400' 
                                 : 'text-gray-800 dark:text-gray-200'
                             }`}>
-                              {product.totalStock} units
+                              {product.totalStock} {t('inventory.units')}
                             </span>
                           </div>
                           <div>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 block">Sold</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 block">{t('inventory.sold')}</span>
                             <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                              {product.soldQuantity || 0} units
+                              {product.soldQuantity || 0} {t('inventory.units')}
                             </span>
                           </div>
                         </div>
                         
                         <div className="text-right">
-                          <span className="text-xs text-gray-500 dark:text-gray-400 block">Price</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 block">{t('inventory.price')}</span>
                           <span className="text-sm font-medium text-gray-900 dark:text-white">
                             {new Intl.NumberFormat('en-US', {
                               style: 'currency',
@@ -783,7 +785,7 @@ export default function ProductsPage() {
                       </div>
                     </div>
                   ))}
-              </div>
+                </div>
                 
                 {/* Pagination Controls */}
                 {filteredProducts.length > itemsPerPage && (
@@ -795,27 +797,27 @@ export default function ProductsPage() {
                           disabled={currentPage === 1}
                           className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 disabled:opacity-50"
                         >
-                  Previous
-                </button>
+                          {t('inventory.previous')}
+                        </button>
                         <span className="text-sm text-gray-700 dark:text-gray-200">
-                          Page {currentPage} of {totalPages}
+                          {t('inventory.page')} {currentPage} {t('inventory.of')} {totalPages}
                         </span>
                         <button
                           onClick={goToNextPage}
                           disabled={currentPage === totalPages}
                           className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 disabled:opacity-50"
                         >
-                  Next
-                </button>
+                          {t('inventory.next')}
+                        </button>
                       </div>
                       <div className="hidden md:flex md:flex-1 md:items-center md:justify-between flex-wrap gap-4">
                         <div>
                           <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
+                            {t('inventory.showing')} <span className="font-medium">{indexOfFirstItem + 1}</span> {t('inventory.to')}{' '}
                             <span className="font-medium">
                               {Math.min(indexOfLastItem, filteredProducts.length)}
                             </span>{' '}
-                            of <span className="font-medium">{filteredProducts.length}</span> products
+                            {t('inventory.of')} <span className="font-medium">{filteredProducts.length}</span> {t('inventory.products')}
                           </p>
                         </div>
                         <div>
@@ -879,7 +881,7 @@ export default function ProductsPage() {
                         
                         <div className="flex items-center ml-4 border-l pl-4 border-gray-200 dark:border-slate-700">
                           <label htmlFor="itemsPerPage" className="text-sm text-gray-700 dark:text-gray-300 mr-2 font-medium">
-                            Items per page:
+                            {t('inventory.itemsPerPage')}:
                           </label>
                           <select
                             id="itemsPerPage"
@@ -928,8 +930,8 @@ export default function ProductsPage() {
                 )}
               </>
             )}
-              </div>
-            </div>
+          </div>
+        </div>
       </main>
       
       {/* Full page dialogs on mobile */}
@@ -953,8 +955,8 @@ export default function ProductsPage() {
               productName={quickSellProduct.name}
               onClose={closeSellModal}
             />
-      </div>
-    </div>
+          </div>
+        </div>
       )}
     </>
   );

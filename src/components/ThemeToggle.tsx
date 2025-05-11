@@ -3,10 +3,12 @@
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+  const { t } = useTranslation();
   
   // Safety mechanism to prevent error
   let theme: 'light' | 'dark' = 'light';
@@ -66,8 +68,8 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-      aria-label={displayTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={displayTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={displayTheme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
+      title={displayTheme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
     >
       {displayTheme === 'dark' ? (
         <Sun size={20} className="text-amber-300" />

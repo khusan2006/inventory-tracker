@@ -18,8 +18,10 @@ import {
 } from 'lucide-react';
 import { useRecentSalesData, formatCurrency } from '@/hooks/useSalesData';
 import { useInventory } from '@/hooks/useInventory';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { data: inventory = [], isLoading: inventoryLoading } = useInventory();
   const { data: recentSales = [], isLoading: salesLoading } = useRecentSalesData();
   
@@ -72,44 +74,44 @@ export default function DashboardPage() {
       <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900">
         <div className="p-6">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{t('admin.dashboard')}</h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Overview of your auto parts inventory and sales
+              {t('dashboard.summary')}
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <StatCard 
-              title="Total Revenue" 
+              title={t('dashboard.totalSales')} 
               value={formatCurrency(metrics.totalRevenue)} 
               icon={<DollarSign size={22} />} 
               trend={{ value: "12%", positive: true }}
               color="blue"
-              subtitle="Last 30 days"
+              subtitle={t('dashboard.last30Days')}
             />
             <StatCard 
-              title="Orders" 
+              title={t('orders.orders')} 
               value={metrics.monthlyOrders.toString()} 
               icon={<ShoppingBag size={22} />} 
               trend={{ value: "8%", positive: true }}
               color="green"
-              subtitle="Last 30 days"
+              subtitle={t('dashboard.last30Days')}
             />
             <StatCard 
-              title="Products In Stock" 
+              title={t('dashboard.totalProducts')} 
               value={metrics.totalStock.toString()} 
               icon={<Package size={22} />} 
               trend={{ value: "4%", positive: true }}
               color="purple"
-              subtitle={`Across ${metrics.totalProducts} products`}
+              subtitle={`${t('common.across')} ${metrics.totalProducts} ${t('inventory.products')}`}
             />
             <StatCard 
-              title="Profit Margin" 
+              title={t('dashboard.profitMargin')} 
               value={`${metrics.avgProfitMargin.toFixed(1)}%`} 
               icon={<Percent size={22} />} 
               trend={{ value: "2.5%", positive: true }}
               color="amber"
-              subtitle="Average on all sales"
+              subtitle={t('dashboard.averageOnSales')}
             />
           </div>
           

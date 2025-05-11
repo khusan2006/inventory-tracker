@@ -154,10 +154,14 @@ export default function SalesHistoryPage() {
     setSortConfig({ key, direction });
     
     const sortedData = [...filteredSales].sort((a, b) => {
-      if (a[key] < b[key]) {
+      // Check for null or undefined values
+      const valueA = a[key] ?? '';
+      const valueB = b[key] ?? '';
+      
+      if (valueA < valueB) {
         return direction === 'ascending' ? -1 : 1;
       }
-      if (a[key] > b[key]) {
+      if (valueA > valueB) {
         return direction === 'ascending' ? 1 : -1;
       }
       return 0;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
+import LanguageSelector from './LanguageSelector';
 
 export default function ThemeWrapper() {
   const [mounted, setMounted] = useState(false);
@@ -25,5 +26,10 @@ export default function ThemeWrapper() {
     return <div className="p-2"></div>;
   }
 
-  return <ThemeToggle />;
+  return (
+    <div className="flex items-center space-x-2">
+      <LanguageSelector />
+      <ThemeToggle />
+    </div>
+  );
 } 

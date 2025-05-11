@@ -4,8 +4,10 @@ import React, { useMemo } from 'react';
 import { useInventory } from '@/hooks/useInventory';
 import { Loader2, Package, AlertTriangle } from 'lucide-react';
 import { formatCurrency } from '@/hooks/useSalesData';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function InventorySummary() {
+  const { t } = useTranslation();
   const { data: inventory, isLoading, error } = useInventory();
   
   // Calculate inventory metrics
@@ -84,7 +86,7 @@ export default function InventorySummary() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inventory Summary</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('dashboard.inventorySummary')}</h3>
         </div>
         <div className="h-[350px] flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
@@ -97,10 +99,10 @@ export default function InventorySummary() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inventory Summary</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('dashboard.inventorySummary')}</h3>
         </div>
         <div className="h-[350px] flex items-center justify-center">
-          <p className="text-red-500">Failed to load inventory data.</p>
+          <p className="text-red-500">{t('common.failedToLoadData')}</p>
         </div>
       </div>
     );
@@ -118,30 +120,30 @@ export default function InventorySummary() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inventory Summary</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('dashboard.inventorySummary')}</h3>
         <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {metrics.totalProducts} products
+          {metrics.totalProducts} {t('inventory.products')}
         </span>
       </div>
       
       {inventory.length === 0 ? (
         <div className="h-[350px] flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
           <Package className="w-12 h-12 mb-2 opacity-50" />
-          <p>No inventory data available.</p>
+          <p>{t('inventory.noInventoryData')}</p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <div className="text-blue-600 dark:text-blue-400 text-sm font-medium">Total Stock</div>
+              <div className="text-blue-600 dark:text-blue-400 text-sm font-medium">{t('inventory.totalStock')}</div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{metrics.totalStock}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">units across all products</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('inventory.unitsAcrossAllProducts')}</div>
             </div>
             
             <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4">
-              <div className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">Inventory Value</div>
+              <div className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">{t('inventory.inventoryValue')}</div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{formatCurrency(metrics.totalValue)}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">based on purchase prices</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('inventory.basedOnPurchasePrices')}</div>
             </div>
           </div>
           
@@ -151,14 +153,18 @@ export default function InventorySummary() {
               {metrics.outOfStockCount > 0 && (
                 <div className="flex items-center mb-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded-lg">
                   <AlertTriangle size={16} className="mr-2" />
-                  <span className="text-sm font-medium">{metrics.outOfStockCount} products out of stock</span>
+                  <span className="text-sm font-medium">
+                    {metrics.outOfStockCount} {t('inventory.productsOutOfStock')}
+                  </span>
                 </div>
               )}
               
               {metrics.lowStockCount > 0 && (
                 <div className="flex items-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-2 rounded-lg">
                   <AlertTriangle size={16} className="mr-2" />
-                  <span className="text-sm font-medium">{metrics.lowStockCount} products low on stock</span>
+                  <span className="text-sm font-medium">
+                    {metrics.lowStockCount} {t('inventory.productsLowStock')}
+                  </span>
                 </div>
               )}
             </div>
@@ -166,7 +172,7 @@ export default function InventorySummary() {
           
           {/* Category breakdown */}
           <div>
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Stock by Category</h4>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('inventory.stockByCategory')}</h4>
             <div className="space-y-3">
               {metrics.categories.map((category, index) => {
                 // Calculate percentage for the bar width
@@ -179,7 +185,7 @@ export default function InventorySummary() {
                         {category.name}
                       </span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {category.stock} units ({category.count} products)
+                        {category.stock} {t('inventory.units')} ({category.count} {t('inventory.products')})
                       </span>
                     </div>
                     

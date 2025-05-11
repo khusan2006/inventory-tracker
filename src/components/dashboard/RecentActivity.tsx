@@ -5,15 +5,17 @@ import { Clock, ShoppingBag, Package, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRecentActivity } from "@/hooks/useSalesData";
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function RecentActivity() {
+  const { t } = useTranslation();
   const { data: activities, isLoading, error } = useRecentActivity();
   
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-36">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -26,11 +28,11 @@ export default function RecentActivity() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground p-4 text-center">
-            Unable to load recent activity.
+            {t('common.unableToLoadData')}
           </p>
         </CardContent>
       </Card>
@@ -40,7 +42,7 @@ export default function RecentActivity() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
+        <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -49,7 +51,7 @@ export default function RecentActivity() {
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium leading-none">{activity.productName}</p>
                 <p className="text-xs text-muted-foreground">
-                  Qty: {activity.quantity} · ${activity.salePrice.toFixed(2)} each
+                  {t('common.qty')}: {activity.quantity} · ${activity.salePrice.toFixed(2)} {t('common.each')}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {activity.timeAgo}

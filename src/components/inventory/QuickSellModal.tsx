@@ -9,6 +9,7 @@ import { useProduct } from '@/hooks/useProducts';
 import { useProductBatches } from '@/hooks/useProductBatches';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
+import { useTranslation } from '@/i18n/client';
 
 // Updated Product interface to handle category as either string or object
 interface Product {
@@ -82,6 +83,7 @@ function calculateBatchProfitMargin(batches: BatchWithSale[], sellingPrice: numb
 }
 
 export default function QuickSellModal({ productId, productName, onClose }: QuickSellModalProps) {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -301,18 +303,18 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
     
     // Validate inputs
     if (quantity <= 0) {
-      setError('Please enter a valid quantity');
+      setError(t('sales.enterValidQuantity'));
       return;
     }
     
     if (sellingPrice <= 0) {
-      setError('Please enter a valid selling price');
+      setError(t('sales.enterValidPrice'));
       return;
     }
     
     // Check if we have enough stock
     if (quantity > totalAvailableStock) {
-      setError(`Not enough stock. Only ${totalAvailableStock} units available.`);
+      setError(t('sales.notEnoughStock', { available: totalAvailableStock }));
       return;
     }
     
@@ -346,17 +348,17 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md p-6">
           <div className="text-center py-8">
             <AlertTriangle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Error Loading Data</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('common.error')}</h3>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               {productError instanceof Error ? productError.message : 
                batchesError instanceof Error ? batchesError.message : 
-               'Failed to load required data'}
+               t('common.failedToLoadData')}
             </p>
             <button
               onClick={onClose}
               className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Close
+              {t('common.close')}
             </button>
           </div>
         </div>
@@ -370,12 +372,12 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md p-6">
           <div className="text-center py-8">
             <AlertTriangle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Product Not Found</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('inventory.productNotFound')}</h3>
             <button
               onClick={onClose}
               className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Close
+              {t('common.close')}
             </button>
           </div>
         </div>
@@ -388,11 +390,12 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Quick Sell - {product.name}
+            {t('sales.quickSell', { product: product.name })}
           </h2>
           <button 
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            aria-label={t('common.close')}
           >
             <X size={20} />
           </button>
@@ -408,21 +411,21 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Available Stock
+                {t('sales.availableStock')}
               </label>
               <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                {totalAvailableStock} units
+                {totalAvailableStock} {t('inventory.units')}
               </div>
               {totalAvailableStock === 0 && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                  This product is out of stock
+                  {t('inventory.outOfStock')}
                 </p>
               )}
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Quantity to Sell
+                {t('sales.quantityToSell')}
               </label>
               <input
                 type="number"
@@ -437,7 +440,7 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
             
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Selling Price (per unit)
+                {t('sales.sellingPrice')}
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
@@ -455,7 +458,7 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
               </div>
               {product.sellingPrice > 0 && (
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Suggested price: ${product.sellingPrice.toFixed(2)}
+                  {t('sales.suggestedPrice', { price: product.sellingPrice.toFixed(2) })}
                 </p>
               )}
             </div>
@@ -464,16 +467,16 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
             {selectedBatchesForSale.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Batches to be used (FIFO order):
+                  {t('sales.batchesToBeUsed')}
                 </h3>
                 <div className="bg-gray-50 dark:bg-slate-700 rounded-md border border-gray-200 dark:border-slate-600 overflow-hidden">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-600">
                     <thead className="bg-gray-100 dark:bg-slate-600">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Qty</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cost</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Profit</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t('common.date')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t('common.qty')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t('common.cost')}</th>
+                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{t('common.profit')}</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-slate-700 divide-y divide-gray-200 dark:divide-slate-600">
@@ -509,21 +512,21 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center">
                 <Calculator size={16} className="mr-2" />
-                Sale Summary
+                {t('sales.saleSummary')}
               </h3>
               
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="text-gray-600 dark:text-gray-400">Total Revenue:</div>
+                <div className="text-gray-600 dark:text-gray-400">{t('sales.totalRevenue')}</div>
                 <div className="font-medium text-gray-900 dark:text-white">
                   ${(quantity * sellingPrice).toFixed(2)}
                 </div>
                 
-                <div className="text-gray-600 dark:text-gray-400">Estimated Profit:</div>
+                <div className="text-gray-600 dark:text-gray-400">{t('sales.estimatedProfit')}</div>
                 <div className={`font-medium ${profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                   ${profit.toFixed(2)}
                 </div>
                 
-                <div className="text-gray-600 dark:text-gray-400">Profit Margin:</div>
+                <div className="text-gray-600 dark:text-gray-400">{t('sales.profitMargin')}</div>
                 <div className={`font-medium ${margin >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                   {margin.toFixed(2)}%
                 </div>
@@ -540,12 +543,12 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
               {saleMutation.isPending ? (
                 <>
                   <RefreshCw size={16} className="mr-2 animate-spin" />
-                  Processing...
+                  {t('common.loading')}
                 </>
               ) : (
                 <>
                   <CreditCard size={16} className="mr-2" />
-                  Record Sale
+                  {t('sales.recordSale')}
                 </>
               )}
             </button>

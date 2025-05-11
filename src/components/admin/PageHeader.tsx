@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ReactNode } from 'react';
 
 interface PageHeaderProps {
@@ -5,9 +7,18 @@ interface PageHeaderProps {
   description?: string;
   icon?: ReactNode;
   actions?: ReactNode;
+  translationKey?: string;
+  descriptionTranslationKey?: string;
 }
 
-export default function PageHeader({ title, description, icon, actions }: PageHeaderProps) {
+export default function PageHeader({ 
+  title, 
+  description, 
+  icon, 
+  actions,
+  translationKey,
+  descriptionTranslationKey
+}: PageHeaderProps) {
   return (
     <div className="flex justify-between items-start mb-6">
       <div className="flex items-center">

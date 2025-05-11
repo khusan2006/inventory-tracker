@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMonthlySalesData, formatCurrency } from '@/hooks/useSalesData';
 import { ArrowUpRight, Loader2 } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Use a different approach for Chart.js import
 import dynamic from 'next/dynamic';
@@ -28,6 +29,7 @@ const ChartComponent = dynamic(() => import('chart.js/auto').then((mod) => {
 }), { ssr: false });
 
 export default function SalesChart() {
+  const { t } = useTranslation();
   const chartRef = useRef<HTMLCanvasElement>(null);
   const { data: monthlySales, isLoading, error } = useMonthlySalesData();
   const [chartRendered, setChartRendered] = useState(false);
@@ -86,7 +88,7 @@ export default function SalesChart() {
             }),
             datasets: [
               {
-                label: 'Monthly Sales',
+                label: t('dashboard.monthlySales'),
                 data: monthlySales.map(data => data.total),
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: gradient,
@@ -186,13 +188,13 @@ export default function SalesChart() {
     
     loadChart();
     
-  }, [monthlySales, isLoading]);
+  }, [monthlySales, isLoading, t]);
   
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
         <div className="flex items-center justify-between mb-3 sm:mb-6">
-          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">{t('dashboard.salesOverview')}</h3>
         </div>
         <div className="h-48 sm:h-64 flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
@@ -205,10 +207,10 @@ export default function SalesChart() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
         <div className="flex items-center justify-between mb-3 sm:mb-6">
-          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Sales Overview</h3>
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">{t('dashboard.salesOverview')}</h3>
         </div>
         <div className="h-48 sm:h-64 flex items-center justify-center">
-          <p className="text-red-500 text-mobile-xs">Failed to load sales data.</p>
+          <p className="text-red-500 text-mobile-xs">{t('common.failedToLoadData')}</p>
         </div>
       </div>
     );
@@ -217,9 +219,9 @@ export default function SalesChart() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-6">
-        <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white mb-2 sm:mb-0">Sales Overview</h3>
+        <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white mb-2 sm:mb-0">{t('dashboard.salesOverview')}</h3>
         <div className="flex flex-col items-start sm:items-end">
-          <p className="text-mobile-xs text-gray-600 dark:text-gray-400">Total Sales (YTD)</p>
+          <p className="text-mobile-xs text-gray-600 dark:text-gray-400">{t('dashboard.totalSalesYTD')}</p>
           <div className="flex items-center">
             <span className="text-mobile-lg font-bold text-gray-900 dark:text-white">{formatCurrency(totalSales)}</span>
             {growthPercentage > 0 && (

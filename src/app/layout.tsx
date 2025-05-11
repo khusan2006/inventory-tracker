@@ -3,6 +3,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import QueryClientProvider from "@/providers/QueryClientProvider";
+import LanguageProvider from "@/i18n/LanguageProvider";
 
 export const metadata: Metadata = {
   title: "Auto Parts Inventory System",
@@ -18,10 +19,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <QueryClientProvider>
-            {children}
-            <Toaster position="bottom-right" />
-          </QueryClientProvider>
+          <LanguageProvider>
+            <QueryClientProvider>
+              {children}
+              <Toaster position="bottom-right" />
+            </QueryClientProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

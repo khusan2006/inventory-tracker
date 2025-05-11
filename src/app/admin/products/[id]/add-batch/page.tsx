@@ -9,6 +9,7 @@ import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useProduct } from '@/hooks/useProducts';
 import Header from '@/components/admin/Header';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface BatchFormData {
   quantity: number;
@@ -20,6 +21,7 @@ interface BatchFormData {
 }
 
 export default function AddBatchPage() {
+  const { t } = useTranslation();
   // Use the useParams hook to get the id parameter from the URL
   const params = useParams();
   const productId = params.id as string;
@@ -138,11 +140,11 @@ export default function AddBatchPage() {
       const purchasePrice = parseFloat(formData.purchasePrice.toString());
       
       if (isNaN(initialQuantity) || initialQuantity <= 0) {
-        throw new Error('Quantity must be a positive number');
+        throw new Error(t('batches.enterValidQuantity'));
       }
       
       if (isNaN(purchasePrice) || purchasePrice <= 0) {
-        throw new Error('Purchase price must be a positive number');
+        throw new Error(t('batches.enterValidPrice'));
       }
       
       const newBatch: Partial<Batch> = {
@@ -162,7 +164,7 @@ export default function AddBatchPage() {
       
     } catch (err) {
       console.error('Error adding batch:', err);
-      setFormError(err instanceof Error ? err.message : 'Failed to add batch');
+      setFormError(err instanceof Error ? err.message : t('batches.failedToAddBatch'));
     }
   };
   
@@ -177,17 +179,17 @@ export default function AddBatchPage() {
               className="flex items-center text-blue-600 dark:text-blue-400 hover:underline"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Back to Product
+              {t('common.back')}
             </button>
           </div>
           
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-slate-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Add Inventory Batch {product ? `for ${product.name}` : ''}
+                {t('batches.addBatch')} {product ? `${t('common.for')} ${product.name}` : ''}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Enter details for the new inventory batch
+                {t('batches.addNewBatchDescription')}
               </p>
             </div>
             
@@ -205,7 +207,7 @@ export default function AddBatchPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Quantity <span className="text-red-600">*</span>
+                      {t('batches.quantity')} <span className="text-red-600">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -225,7 +227,7 @@ export default function AddBatchPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Purchase Price <span className="text-red-600">*</span>
+                      {t('batches.purchasePrice')} <span className="text-red-600">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -247,7 +249,7 @@ export default function AddBatchPage() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Purchase Date <span className="text-red-600">*</span>
+                    {t('batches.purchaseDate')} <span className="text-red-600">*</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -266,7 +268,7 @@ export default function AddBatchPage() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Supplier
+                    {t('batches.supplier')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -284,7 +286,7 @@ export default function AddBatchPage() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Invoice Number
+                    {t('batches.invoiceNumber')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -302,7 +304,7 @@ export default function AddBatchPage() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Notes
+                    {t('batches.notes')}
                   </label>
                   <textarea
                     name="notes"
@@ -320,7 +322,7 @@ export default function AddBatchPage() {
                   onClick={() => router.back()}
                   className="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-md mr-3 hover:bg-gray-50 dark:hover:bg-slate-700"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -330,12 +332,12 @@ export default function AddBatchPage() {
                   {addBatchMutation.isPending ? (
                     <>
                       <RefreshCw size={16} className="mr-2 animate-spin" />
-                      Adding...
+                      {t('common.loading')}
                     </>
                   ) : (
                     <>
                       <Plus size={16} className="mr-2" />
-                      Add Batch
+                      {t('batches.addBatch')}
                     </>
                   )}
                 </button>

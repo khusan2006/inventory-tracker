@@ -10,6 +10,7 @@ import { useProductBatches } from '@/hooks/useProductBatches';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import Header from '@/components/admin/Header';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Helper type for batches with sale quantities
 interface BatchWithSale extends Batch {
@@ -61,6 +62,7 @@ function calculateBatchProfitMargin(batches: BatchWithSale[], sellingPrice: numb
 }
 
 export default function RecordSalePage() {
+  const { t } = useTranslation();
   // Use the useParams hook to get the id parameter from the URL
   const params = useParams();
   const productId = params.id as string;
@@ -297,17 +299,18 @@ export default function RecordSalePage() {
     
     // Validation
     if (quantity <= 0) {
-      setError('Quantity must be greater than zero');
+      setError(t('sales.enterValidQuantity'));
       return;
     }
     
     if (sellingPrice <= 0) {
-      setError('Selling price must be greater than zero');
+      setError(t('sales.enterValidPrice'));
       return;
     }
     
+    // Check if we have enough stock
     if (quantity > totalAvailableStock) {
-      setError(`Not enough stock. Only ${totalAvailableStock} units available.`);
+      setError(t('sales.notEnoughStock', { available: totalAvailableStock }));
       return;
     }
     
@@ -332,7 +335,7 @@ export default function RecordSalePage() {
               className="flex items-center text-blue-600 dark:text-blue-400 hover:underline"
             >
               <ArrowLeft size={18} className="mr-1" />
-              Back to Product
+              {t('common.back')}
             </button>
           </div>
           
@@ -340,28 +343,28 @@ export default function RecordSalePage() {
             {/* Header */}
             <div className="p-4 border-b border-gray-200 dark:border-slate-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Record Sale {product ? `for ${product.name}` : ''}
+                {t('sales.recordSale')} {product ? `${t('common.for')} ${product.name}` : ''}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Enter details to record a product sale
+                {t('sales.recordNewSaleDescription')}
               </p>
             </div>
             
             {isLoading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading product data...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
               </div>
             ) : loadingError ? (
               <div className="p-8 text-center">
                 <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
-                <p className="text-red-500 text-lg font-medium">Failed to load product data</p>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Please try again later</p>
+                <p className="text-red-500 text-lg font-medium">{t('common.failedToLoadData')}</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{t('common.tryAdjusting')}</p>
                 <button 
                   onClick={() => router.back()} 
                   className="mt-4 px-4 py-2 bg-gray-200 dark:bg-slate-700 rounded-md hover:bg-gray-300 dark:hover:bg-slate-600"
                 >
-                  Go Back
+                  {t('common.back')}
                 </button>
               </div>
             ) : saleComplete ? (
@@ -369,9 +372,9 @@ export default function RecordSalePage() {
                 <div className="bg-green-100 dark:bg-green-900/20 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Check size={48} className="text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sale Recorded Successfully!</h3>
-                <p className="text-gray-600 dark:text-gray-400">The inventory has been updated.</p>
-                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Redirecting to product page...</p>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('sales.saleRecordedSuccess')}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{t('sales.inventoryUpdated')}</p>
+                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{t('sales.redirecting')}</p>
               </div>
             ) : (
               <div className="p-4">
@@ -389,7 +392,7 @@ export default function RecordSalePage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Quantity to Sell <span className="text-red-600">*</span>
+                      {t('sales.quantityToSell')} <span className="text-red-600">*</span>
                     </label>
                     <div className="relative mt-1">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -404,14 +407,14 @@ export default function RecordSalePage() {
                         className="w-full pl-9 pr-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {totalAvailableStock} units available
+                        {totalAvailableStock} {t('inventory.units')} {t('inventory.available')}
                       </div>
                     </div>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Selling Price <span className="text-red-600">*</span>
+                      {t('sales.sellingPrice')} <span className="text-red-600">*</span>
                     </label>
                     <div className="relative mt-1">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -431,30 +434,30 @@ export default function RecordSalePage() {
                 
                 {/* Sale Summary */}
                 <div className="mt-6 p-5 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600">
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Sale Summary</h3>
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">{t('sales.saleSummary')}</h3>
                   
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Total Quantity:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{quantity} units</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('sales.totalQuantity')}:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{quantity} {t('inventory.units')}</span>
                     </div>
                     
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Unit Price:</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('sales.unitPrice')}:</span>
                       <span className="font-medium text-gray-900 dark:text-white">
                         ${sellingPrice.toFixed(2)}
                       </span>
                     </div>
                     
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Total Revenue:</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('sales.totalRevenue')}:</span>
                       <span className="font-medium text-gray-900 dark:text-white">
                         ${(quantity * sellingPrice).toFixed(2)}
                       </span>
                     </div>
                     
                     <div className="pt-3 mt-3 border-t border-gray-200 dark:border-slate-600 flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Estimated Profit:</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('sales.estimatedProfit')}:</span>
                       <span className="font-medium text-green-600 dark:text-green-400">
                         ${profit.toFixed(2)} ({margin.toFixed(1)}%)
                       </span>
@@ -465,7 +468,7 @@ export default function RecordSalePage() {
                 {/* Batch Details */}
                 {selectedBatchesForSale.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Batch Details (FIFO Method)</h3>
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t('sales.batchesToBeUsed')}</h3>
                     
                     <div className="border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
                       <div className="overflow-x-auto">
@@ -473,16 +476,16 @@ export default function RecordSalePage() {
                           <thead className="bg-gray-50 dark:bg-slate-700">
                             <tr>
                               <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Date
+                                {t('common.date')}
                               </th>
                               <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Cost
+                                {t('common.cost')}
                               </th>
                               <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Qty
+                                {t('common.qty')}
                               </th>
                               <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Profit
+                                {t('common.profit')}
                               </th>
                             </tr>
                           </thead>
@@ -517,7 +520,7 @@ export default function RecordSalePage() {
                     onClick={() => router.back()}
                     className="w-full sm:w-auto px-4 py-2.5 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-md sm:mr-3 hover:bg-gray-50 dark:hover:bg-slate-700 text-center"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="button"
@@ -528,12 +531,12 @@ export default function RecordSalePage() {
                     {saleMutation.isPending ? (
                       <>
                         <RefreshCw size={16} className="mr-2 animate-spin" />
-                        Processing...
+                        {t('common.loading')}
                       </>
                     ) : (
                       <>
                         <ShoppingCart size={16} className="mr-2" />
-                        Record Sale
+                        {t('sales.recordSale')}
                       </>
                     )}
                   </button>

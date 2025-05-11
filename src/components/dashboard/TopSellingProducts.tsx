@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTopSellingProducts, formatCurrency } from '@/hooks/useSalesData';
 import { Package, BarChart2, ExternalLink, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Product {
   id: string;
@@ -16,6 +17,7 @@ interface Product {
 }
 
 export default function TopSellingProducts() {
+  const { t } = useTranslation();
   const { data: products, isLoading, error } = useTopSellingProducts();
   const [timeFrame, setTimeFrame] = useState<'week' | 'month'>('month');
   
@@ -29,7 +31,7 @@ export default function TopSellingProducts() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
         <div className="flex justify-between items-center mb-3 sm:mb-6">
-          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Top Selling Products</h3>
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">{t('dashboard.topSellingProducts')}</h3>
         </div>
         <div className="flex items-center justify-center min-h-[250px]">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
@@ -42,10 +44,10 @@ export default function TopSellingProducts() {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-6">
         <div className="flex justify-between items-center mb-3 sm:mb-6">
-          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Top Selling Products</h3>
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">{t('dashboard.topSellingProducts')}</h3>
         </div>
         <div className="flex items-center justify-center min-h-[250px]">
-          <p className="text-red-500 text-mobile-xs">Failed to load product data.</p>
+          <p className="text-red-500 text-mobile-xs">{t('common.failedToLoadData')}</p>
         </div>
       </div>
     );
@@ -56,7 +58,7 @@ export default function TopSellingProducts() {
       <div className="flex justify-between items-center mb-3 sm:mb-6">
         <div className="flex items-center">
           <BarChart2 className="text-blue-500 mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">Top Selling Products</h3>
+          <h3 className="text-mobile-sm font-semibold text-gray-900 dark:text-white">{t('dashboard.topSellingProducts')}</h3>
         </div>
         
         <div className="flex rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 text-xs sm:text-sm">
@@ -66,7 +68,7 @@ export default function TopSellingProducts() {
               : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300'}`}
             onClick={() => setTimeFrame('week')}
           >
-            Week
+            {t('common.week')}
           </button>
           <button 
             className={`px-2 sm:px-3 py-1 ${timeFrame === 'month' 
@@ -74,7 +76,7 @@ export default function TopSellingProducts() {
               : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300'}`}
             onClick={() => setTimeFrame('month')}
           >
-            Month
+            {t('common.month')}
           </button>
         </div>
       </div>
@@ -82,7 +84,7 @@ export default function TopSellingProducts() {
       {displayProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-4 min-h-[200px]">
           <Package className="h-10 w-10 text-gray-400 mb-2" />
-          <p className="text-mobile-xs text-gray-500 dark:text-gray-400">No products sold in this period.</p>
+          <p className="text-mobile-xs text-gray-500 dark:text-gray-400">{t('dashboard.noProductsSoldPeriod')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -99,7 +101,7 @@ export default function TopSellingProducts() {
                   </h4>
                   <div className="flex items-center mt-1 sm:mt-0">
                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300 mr-2">
-                      {product.totalQuantity} sold
+                      {product.totalQuantity} {t('dashboard.sold')}
                     </span>
                     <span className="text-xs font-medium text-green-600 dark:text-green-400">
                       {formatCurrency(product.totalRevenue)}
@@ -118,7 +120,7 @@ export default function TopSellingProducts() {
                   <span className="mr-2">{product.category}</span>
                   <span className="hidden sm:inline mx-1">•</span>
                   <span className="text-blue-600 dark:text-blue-400">
-                    {((product.totalRevenue * 0.3) / product.totalRevenue * 100).toFixed(1)}% profit margin
+                    {((product.totalRevenue * 0.3) / product.totalRevenue * 100).toFixed(1)}% {t('dashboard.profitMargin')}
                   </span>
                 </div>
               </div>
@@ -129,7 +131,7 @@ export default function TopSellingProducts() {
             href="/admin/sales" 
             className="flex items-center justify-center mt-4 text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline py-2"
           >
-            View All Sales
+            {t('dashboard.viewAllSales')}
             <ExternalLink className="ml-1 h-3 w-3" />
           </Link>
         </div>

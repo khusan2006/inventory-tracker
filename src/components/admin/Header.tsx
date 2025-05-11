@@ -2,11 +2,14 @@
 
 import { Bell, Search, Car, Menu, X } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle';
+import LanguageSelector from '../LanguageSelector';
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { t } = useTranslation();
   
   // Close sidebar when escape key is pressed
   useEffect(() => {
@@ -38,20 +41,20 @@ export default function Header() {
           <button 
             className="mr-2 md:mr-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle sidebar"
+            aria-label={t('common.toggleSidebar')}
           >
             <Menu size={20} className="text-gray-700 dark:text-gray-300" />
           </button>
           {/* Hide car icon and title on mobile */}
           <Car className="hidden md:block text-blue-600 dark:text-blue-400 mr-2" size={24} />
-          <h1 className="hidden md:block text-xl font-semibold text-gray-900 dark:text-gray-100">Auto Parts Manager</h1>
+          <h1 className="hidden md:block text-xl font-semibold text-gray-900 dark:text-gray-100">{t('home.title')}</h1>
         </div>
         
         <div className="flex items-center space-x-3">
           <div className="relative hidden sm:block">
             <input
               type="text"
-              placeholder="Search parts..."
+              placeholder={t('common.search')}
               className="w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 
                        text-gray-800 dark:text-gray-200 bg-white dark:bg-slate-700
                        focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
@@ -59,9 +62,14 @@ export default function Header() {
             <Search className="absolute left-3 top-2.5 text-gray-500 dark:text-gray-400" size={18} />
           </div>
           
+          <LanguageSelector />
           <ThemeToggle />
           
-          <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+          <button 
+            className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700"
+            aria-label={t('common.notifications')}
+            title={t('common.notifications')}
+          >
             <Bell size={20} className="text-gray-700 dark:text-gray-300" />
             <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
@@ -70,7 +78,7 @@ export default function Header() {
             <div className="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white">
               A
             </div>
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-200 hidden sm:inline">Admin</span>
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200 hidden sm:inline">{t('common.admin')}</span>
           </div>
         </div>
       </header>
@@ -81,13 +89,12 @@ export default function Header() {
           <div className="h-full w-64 bg-white dark:bg-slate-800 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-slate-700">
               <div className="flex items-center">
-                <Car className="text-blue-600 dark:text-blue-400 mr-2" size={24} />
-                <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">Auto Parts Manager</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t('common.menu')}</h2>
               </div>
               <button 
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none"
                 onClick={() => setSidebarOpen(false)}
-                aria-label="Close sidebar"
+                aria-label={t('common.closeSidebar')}
               >
                 <X size={20} className="text-gray-500 dark:text-gray-400" />
               </button>

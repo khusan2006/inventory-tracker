@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface StatCardProps {
   title: string;
@@ -57,6 +58,8 @@ const colorVariants = {
 };
 
 export function StatCard({ title, value, icon, trend, color, subtitle }: StatCardProps) {
+  const { t } = useTranslation();
+  
   return (
     <div className={`relative overflow-hidden bg-white dark:bg-slate-800 rounded-xl shadow-sm border ${colorVariants[color].border} p-6`}>
       {/* Decorative ring background */}
@@ -85,7 +88,7 @@ export function StatCard({ title, value, icon, trend, color, subtitle }: StatCar
             {trend.positive ? <ArrowUp size={14} className="mr-1" /> : <ArrowDown size={14} className="mr-1" />}
             {trend.value}
           </div>
-          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">vs last period</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{t('dashboard.vsLastPeriod')}</span>
         </div>
       )}
     </div>
