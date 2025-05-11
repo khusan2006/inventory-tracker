@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Category model for product categorization
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  color       String    @default("#CBD5E1") // Tailwind slate-300 color
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@map("categories")
+}
+
+// Product model for inventory items
+model Product {
+  id            String   @id @default(uuid())
+  sku           String   @unique
+  name          String
+  description   String?
+  sellingPrice  Float
+  totalStock    Int      @default(0)
+  minStockLevel Int      @default(0)
+  location      String?
+  imageUrl      String?
+  fitment       String?
+  supplier      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+  batches       Batch[]
+  sales         Sale[]
+
+  @@map("products")
+}
+
+// Batch model for FIFO tracking
+model Batch {
+  id              String   @id @default(uuid())
+  purchaseDate    DateTime
+  purchasePrice   Float
+  initialQuantity Int
+  currentQuantity Int
+  status          String   @default("active") // active, depleted
+  supplier        String?
+  invoiceNumber   String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  sales           Sale[]
+
+  @@map("batches")
+}
+
+// Sale model for tracking sales
+model Sale {
+  id            String   @id @default(uuid())
+  quantity      Int
+  salePrice     Float
+  purchasePrice Float
+  profit        Float
+  profitMargin  Float
+  saleDate      DateTime
+  customerId    String?
+  invoiceNumber String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  batchId       String
+  batch         Batch    @relation(fields: [batchId], references: [id])
+
+  @@map("sales")
+}
+
+// Monthly Report model for storing monthly reports
+model MonthlyReport {
+  id                  String   @id @default(uuid())
+  year                Int
+  month               Int // 0-11, where 0 = January
+  totalSales          Float
+  totalProfit         Float
+  averageProfitMargin Float
+  isFinalized         Boolean  @default(false)
+  reportData          Json
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([year, month])
+  @@map("monthly_reports")
+}
