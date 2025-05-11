@@ -93,7 +93,7 @@ function generateYearRange() {
 }
 
 // Generate a realistic SKU
-function generateSKU(categoryName, index) {
+function generateSKU(categoryName: string, index: number): string {
   const prefix = categoryName.substring(0, 2).toUpperCase();
   const randomNum = String(index).padStart(4, '0');
   return `${prefix}-${randomNum}`;
@@ -102,7 +102,7 @@ function generateSKU(categoryName, index) {
 // Generate fitment information
 function generateFitment() {
   const brand = faker.helpers.arrayElement(carBrands);
-  const model = faker.helpers.arrayElement(carModels[brand]);
+  const model = faker.helpers.arrayElement(carModels[brand as keyof typeof carModels]);
   const yearRange = generateYearRange();
   return `${brand} ${model} ${yearRange}`;
 }
@@ -138,7 +138,7 @@ async function seedProducts(count = 50) {
       
       // Generate part name based on category
       const prefix = faker.helpers.arrayElement(partPrefixes);
-      const partType = faker.helpers.arrayElement(partTypes[categoryName]);
+      const partType = faker.helpers.arrayElement(partTypes[categoryName as keyof typeof partTypes]);
       const name = `${prefix} ${partType}`;
       
       // Create product
@@ -209,7 +209,7 @@ async function seedProducts(count = 50) {
     });
     
     for (const product of productsWithBatches) {
-      const totalStock = product.batches.reduce((sum, batch) => sum + batch.currentQuantity, 0);
+      const totalStock = product.batches.reduce((sum: number, batch: any) => sum + batch.currentQuantity, 0);
       
       await prisma.product.update({
         where: { id: product.id },

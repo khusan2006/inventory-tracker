@@ -1,5 +1,5 @@
-const { PrismaClient } = require('../src/generated/prisma');
-const { v4: uuidv4 } = require('uuid');
+import { PrismaClient } from '../src/generated/prisma';
+import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
@@ -284,10 +284,11 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error('Error seeding database:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   }); 

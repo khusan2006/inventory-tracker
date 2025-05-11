@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const id = params.id;
+    // Extract the id from the URL path using regex
+    const pathParts = request.nextUrl.pathname.split('/');
+    const batchId = pathParts[pathParts.length - 1];
     
-    if (!id) {
+    if (!batchId) {
       return NextResponse.json(
         { error: 'Batch ID is required' },
         { status: 400 }
@@ -17,7 +16,7 @@ export async function GET(
     
     // Fetch the batch with product details
     const batch = await prisma.batch.findUnique({
-      where: { id },
+      where: { id: batchId },
       include: {
         product: {
           include: {

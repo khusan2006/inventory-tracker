@@ -5,6 +5,7 @@ import {
   generateMonthlyReport, 
   getMonthDateRange 
 } from '@/types/inventory';
+import { Product, Batch } from '@/types/inventory';
 
 // GET a monthly report
 export async function GET(request: NextRequest) {
@@ -49,11 +50,40 @@ export async function GET(request: NextRequest) {
     // Get date range for the month
     const { startDate, endDate } = getMonthDateRange(year, month);
     
-    // Get products
-    const products = await prisma.product.findMany();
+    // Get products with categories
+    const dbProducts = await prisma.product.findMany({
+      include: { category: true }
+    });
     
-    // Get batches
-    const batches = await prisma.batch.findMany();
+    // Map products to the expected format
+    const products: Product[] = dbProducts.map(product => ({
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      category: product.category?.name || 'Uncategorized',
+      description: product.description || undefined,
+      sellingPrice: product.sellingPrice,
+      totalStock: product.totalStock,
+      minStockLevel: product.minStockLevel,
+      location: product.location || undefined,
+      imageUrl: product.imageUrl || undefined,
+      fitment: product.fitment || undefined
+    }));
+    
+    // Get batches and convert date to string
+    const dbBatches = await prisma.batch.findMany();
+    const batches: Batch[] = dbBatches.map(batch => ({
+      id: batch.id,
+      productId: batch.productId,
+      purchaseDate: batch.purchaseDate.toISOString(),
+      purchasePrice: batch.purchasePrice,
+      initialQuantity: batch.initialQuantity,
+      currentQuantity: batch.currentQuantity,
+      status: batch.status as 'active' | 'depleted' | 'archived',
+      supplier: batch.supplier || undefined,
+      invoiceNumber: batch.invoiceNumber || undefined,
+      notes: batch.notes || undefined
+    }));
     
     // Get sales for this month
     const sales = await prisma.sale.findMany({
@@ -68,8 +98,23 @@ export async function GET(request: NextRequest) {
       }
     });
     
+    // Transform sales to the expected format
+    const transformedSales = sales.map(sale => ({
+      id: sale.id,
+      productId: sale.productId,
+      batchId: sale.batchId,
+      quantity: sale.quantity,
+      salePrice: sale.salePrice,
+      purchasePrice: sale.purchasePrice,
+      profit: sale.profit,
+      profitMargin: sale.profitMargin,
+      saleDate: sale.saleDate.toISOString(),
+      customerId: sale.customerId || undefined,
+      invoiceNumber: sale.invoiceNumber || undefined
+    }));
+    
     // Generate the report using our helper function
-    const reportData = generateMonthlyReport(products, batches, sales, year, month);
+    const reportData = generateMonthlyReport(products, batches, transformedSales, year, month);
     
     // If no existing report, create a new one (not finalized)
     if (!existingReport) {
@@ -129,11 +174,40 @@ export async function POST(request: NextRequest) {
     // Get date range for the month
     const { startDate, endDate } = getMonthDateRange(year, month);
     
-    // Get products
-    const products = await prisma.product.findMany();
+    // Get products with categories
+    const dbProducts = await prisma.product.findMany({
+      include: { category: true }
+    });
     
-    // Get batches
-    const batches = await prisma.batch.findMany();
+    // Map products to the expected format
+    const products: Product[] = dbProducts.map(product => ({
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      category: product.category?.name || 'Uncategorized',
+      description: product.description || undefined,
+      sellingPrice: product.sellingPrice,
+      totalStock: product.totalStock,
+      minStockLevel: product.minStockLevel,
+      location: product.location || undefined,
+      imageUrl: product.imageUrl || undefined,
+      fitment: product.fitment || undefined
+    }));
+    
+    // Get batches and convert date to string
+    const dbBatches = await prisma.batch.findMany();
+    const batches: Batch[] = dbBatches.map(batch => ({
+      id: batch.id,
+      productId: batch.productId,
+      purchaseDate: batch.purchaseDate.toISOString(),
+      purchasePrice: batch.purchasePrice,
+      initialQuantity: batch.initialQuantity,
+      currentQuantity: batch.currentQuantity,
+      status: batch.status as 'active' | 'depleted' | 'archived',
+      supplier: batch.supplier || undefined,
+      invoiceNumber: batch.invoiceNumber || undefined,
+      notes: batch.notes || undefined
+    }));
     
     // Get sales for this month
     const sales = await prisma.sale.findMany({
@@ -148,8 +222,23 @@ export async function POST(request: NextRequest) {
       }
     });
     
+    // Transform sales to the expected format
+    const transformedSales = sales.map(sale => ({
+      id: sale.id,
+      productId: sale.productId,
+      batchId: sale.batchId,
+      quantity: sale.quantity,
+      salePrice: sale.salePrice,
+      purchasePrice: sale.purchasePrice,
+      profit: sale.profit,
+      profitMargin: sale.profitMargin,
+      saleDate: sale.saleDate.toISOString(),
+      customerId: sale.customerId || undefined,
+      invoiceNumber: sale.invoiceNumber || undefined
+    }));
+    
     // Generate the final report for the month
-    const finalReportData = generateMonthlyReport(products, batches, sales, year, month);
+    const finalReportData = generateMonthlyReport(products, batches, transformedSales, year, month);
     
     // Check if report already exists
     const existingReport = await prisma.monthlyReport.findUnique({
