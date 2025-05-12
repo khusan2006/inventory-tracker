@@ -22,6 +22,7 @@ import {
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { getTimeAgo, formatCurrency } from '@/hooks/useSalesData';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -56,6 +57,7 @@ interface SortConfig {
 
 export default function SalesHistoryPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [sales, setSales] = useState<Sale[]>([]);
   const [filteredSales, setFilteredSales] = useState<Sale[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -229,9 +231,9 @@ export default function SalesHistoryPage() {
         <div className="p-3 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Sales History</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('sales.salesHistory')}</h1>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Viewing sales from {new Date(dateRange.start).toLocaleDateString()} to {new Date(dateRange.end).toLocaleDateString()}
+                {t('sales.viewing')} {new Date(dateRange.start).toLocaleDateString()} {t('common.to')} {new Date(dateRange.end).toLocaleDateString()}
               </p>
             </div>
             
@@ -240,7 +242,7 @@ export default function SalesHistoryPage() {
               onClick={() => {/* Export CSV function here */}}
             >
               <FileText className="mr-2 h-4 w-4" />
-              Export CSV
+              {t('sales.exportCSV')}
             </Button>
           </div>
           
@@ -252,7 +254,7 @@ export default function SalesHistoryPage() {
                   <ShoppingCart size={18} />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Sales</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{t('sales.totalSales')}</p>
                   <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{totalSales}</p>
                 </div>
               </div>
@@ -264,7 +266,7 @@ export default function SalesHistoryPage() {
                   <DollarSign size={18} />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{t('sales.totalRevenue')}</p>
                   <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalRevenue)}</p>
                 </div>
               </div>
@@ -276,7 +278,7 @@ export default function SalesHistoryPage() {
                   <DollarSign size={18} />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Profit</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{t('sales.totalProfit')}</p>
                   <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(totalProfit)}</p>
                 </div>
               </div>
@@ -288,7 +290,7 @@ export default function SalesHistoryPage() {
                   <Tag size={18} />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Avg. Profit Margin</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{t('sales.avgProfitMargin')}</p>
                   <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{averageProfitMargin.toFixed(1)}%</p>
                 </div>
               </div>
@@ -302,7 +304,7 @@ export default function SalesHistoryPage() {
                 {/* Date Range Filter */}
                 <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-4">
                   <div className="flex flex-col">
-                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">{t('sales.startDate')}</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                         <CalendarIcon size={16} className="text-gray-500 dark:text-gray-400" />
@@ -317,7 +319,7 @@ export default function SalesHistoryPage() {
                   </div>
                   
                   <div className="flex flex-col">
-                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                    <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">{t('sales.endDate')}</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                         <CalendarIcon size={16} className="text-gray-500 dark:text-gray-400" />
@@ -334,14 +336,14 @@ export default function SalesHistoryPage() {
 
                 {/* Search Input */}
                 <div className="w-full sm:max-w-[230px]">
-                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Search</label>
+                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">{t('common.search')}</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <Search size={16} className="text-gray-500 dark:text-gray-400" />
                     </div>
                     <input
                       type="text"
-                      placeholder="Search product name..."
+                      placeholder={t('sales.searchProductName')}
                       value={searchText}
                       onChange={(e) => setSearchText(e.target.value)}
                       className="block w-full pl-9 pr-8 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -363,11 +365,11 @@ export default function SalesHistoryPage() {
                   onClick={clearFilters}
                   className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  Reset Filters
+                  {t('common.clearFilters')}
                 </button>
                 
                 <div className="text-sm text-gray-600 dark:text-gray-300">
-                  Found {filteredSales.length} sales
+                  {t('sales.foundCount', { count: filteredSales.length })}
                 </div>
               </div>
             </div>
@@ -375,7 +377,7 @@ export default function SalesHistoryPage() {
             {isLoading ? (
               <div className="p-8 text-center">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Loading sales data...</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{t('sales.loading')}</p>
               </div>
             ) : error ? (
               <div className="p-8 text-center">
@@ -384,8 +386,8 @@ export default function SalesHistoryPage() {
             ) : filteredSales.length === 0 ? (
               <div className="p-8 text-center">
                 <ShoppingCart size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
-                <p className="text-gray-600 dark:text-gray-300">No sales found</p>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">Try adjusting your filters or selecting a different date range</p>
+                <p className="text-gray-600 dark:text-gray-300">{t('sales.noResults')}</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">{t('common.tryAdjusting')}</p>
               </div>
             ) : (
               <>
@@ -398,7 +400,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('saleDate')}
                         >
                           <div className="flex items-center">
-                            Date
+                            {t('common.date')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -407,7 +409,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('productName')}
                         >
                           <div className="flex items-center">
-                            Product
+                            {t('sales.product')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -416,7 +418,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('category')}
                         >
                           <div className="flex items-center">
-                            Category
+                            {t('inventory.category')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -425,7 +427,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('quantity')}
                         >
                           <div className="flex items-center justify-end">
-                            Qty
+                            {t('sales.qty')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -434,7 +436,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('salePrice')}
                         >
                           <div className="flex items-center justify-end">
-                            Price
+                            {t('common.price')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -443,7 +445,7 @@ export default function SalesHistoryPage() {
                           onClick={() => handleSort('profit')}
                         >
                           <div className="flex items-center justify-end">
-                            Profit
+                            {t('common.profit')}
                             <ArrowUpDown size={14} className="ml-1" />
                           </div>
                         </th>
@@ -463,7 +465,7 @@ export default function SalesHistoryPage() {
                             {sale.productName}
                           </td>
                           <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-                            {sale.category || 'Uncategorized'}
+                            {sale.category || t('sales.uncategorized')}
                           </td>
                           <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
                             {sale.quantity}
@@ -489,20 +491,20 @@ export default function SalesHistoryPage() {
                         disabled={currentPage === 1}
                         className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Previous
+                        {t('common.previous')}
                       </button>
                       <button
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages}
                         className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Next
+                        {t('common.next')}
                       </button>
                     </div>
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
                         <p className="text-sm text-gray-700 dark:text-gray-300">
-                          Showing <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span> to <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredSales.length)}</span> of <span className="font-medium">{filteredSales.length}</span> results
+                          {t('common.showing')} <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span> {t('common.to')} <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredSales.length)}</span> {t('common.of')} <span className="font-medium">{filteredSales.length}</span> {t('common.results')}
                         </p>
                       </div>
                       <div>
@@ -512,7 +514,7 @@ export default function SalesHistoryPage() {
                             disabled={currentPage === 1}
                             className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <span className="sr-only">Previous</span>
+                            <span className="sr-only">{t('common.previous')}</span>
                             <ChevronLeft className="h-5 w-5" />
                           </button>
                           <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 bg-blue-50 dark:bg-blue-900/20 text-sm font-medium text-blue-600 dark:text-blue-400">
@@ -523,7 +525,7 @@ export default function SalesHistoryPage() {
                             disabled={currentPage === totalPages}
                             className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <span className="sr-only">Next</span>
+                            <span className="sr-only">{t('common.next')}</span>
                             <ChevronRight className="h-5 w-5" />
                           </button>
                         </nav>

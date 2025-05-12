@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="h-16 flex justify-between items-center px-4 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
+      <header className="h-16 flex justify-between items-center px-4 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 w-full">
         <div className="flex items-center">
           <button 
             className="mr-2 md:mr-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
@@ -45,9 +45,6 @@ export default function Header() {
           >
             <Menu size={20} className="text-gray-700 dark:text-gray-300" />
           </button>
-          {/* Hide car icon and title on mobile */}
-          <Car className="hidden md:block text-blue-600 dark:text-blue-400 mr-2" size={24} />
-          <h1 className="hidden md:block text-xl font-semibold text-gray-900 dark:text-gray-100">{t('home.title')}</h1>
         </div>
         
         <div className="flex items-center space-x-3">
