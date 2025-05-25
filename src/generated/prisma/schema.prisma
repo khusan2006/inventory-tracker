@@ -14,23 +14,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Company model
+model Company {
+  id             String          @id @default(uuid())
+  name           String          @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  users          User[]
+  categories     Category[]
+  products       Product[]
+  batches        Batch[]
+  sales          Sale[]
+  monthlyReports MonthlyReport[]
+
+  @@map("companies")
+}
+
+// User model
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String?
+  password  String // Remember to hash passwords
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  accounts  Account[] // Added for next-auth
+  sessions  Session[] // Added for next-auth
+
+  @@map("users")
+}
+
 // Category model for product categorization
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  name        String
   description String?
   color       String    @default("#CBD5E1") // Tailwind slate-300 color
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
 
+  @@unique([name, companyId])
   @@map("categories")
 }
 
 // Product model for inventory items
 model Product {
   id            String   @id @default(uuid())
-  sku           String   @unique
+  sku           String
   name          String
   description   String?
   sellingPrice  Float
@@ -46,7 +81,10 @@ model Product {
   category      Category @relation(fields: [categoryId], references: [id])
   batches       Batch[]
   sales         Sale[]
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id])
 
+  @@unique([sku, companyId])
   @@map("products")
 }
 
@@ -66,6 +104,8 @@ model Batch {
   productId       String
   product         Product  @relation(fields: [productId], references: [id])
   sales           Sale[]
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
 
   @@map("batches")
 }
@@ -87,6 +127,8 @@ model Sale {
   product       Product  @relation(fields: [productId], references: [id])
   batchId       String
   batch         Batch    @relation(fields: [batchId], references: [id])
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id])
 
   @@map("sales")
 }
@@ -103,7 +145,44 @@ model MonthlyReport {
   reportData          Json
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  companyId           String
+  company             Company  @relation(fields: [companyId], references: [id])
 
-  @@unique([year, month])
+  @@unique([year, month, companyId])
   @@map("monthly_reports")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

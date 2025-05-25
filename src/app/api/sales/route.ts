@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
 
 interface SaleWithProduct {
   id: string;
@@ -15,45 +17,43 @@ interface SaleWithProduct {
   category: string | null;
 }
 
-// GET all sales or filter by productId or batchId
+// GET all sales
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const batchId = searchParams.get('batchId');
-    
-    // Build filters
-    let whereClause: any = {};
-    
+    const batchId = searchParams.get('batchId'); // Keep if direct batch filtering is needed
+
+    let whereClause: any = { companyId: userCompanyId }; // Base filter by companyId
+
     if (startDate && endDate) {
-      whereClause.saleDate = {
-        gte: new Date(startDate),
-        lte: new Date(endDate)
-      };
+      whereClause.saleDate = { gte: new Date(startDate), lte: new Date(endDate) };
     }
-    
     if (batchId) {
+      // Ensure the batch itself belongs to the company if filtering by batchId directly
+      const batch = await prisma.batch.findFirst({
+        where: { id: batchId, companyId: userCompanyId }
+      });
+      if (!batch) return NextResponse.json({ error: "Batch not found for your company or invalid batch ID"}, {status: 404});
       whereClause.batchId = batchId;
     }
-    
-    // Fetch sales with product details
+
     const sales = await prisma.sale.findMany({
       where: whereClause,
       include: {
-        product: {
-          include: {
-            category: true
-          }
-        },
+        product: { include: { category: true } },
         batch: true
       },
-      orderBy: {
-        saleDate: 'desc'
-      }
+      orderBy: { saleDate: 'desc' }
     });
-    
-    // Transform the data for the frontend
+
     const transformedSales = sales.map((sale: any) => ({
       id: sale.id,
       productId: sale.productId,
@@ -65,192 +65,172 @@ export async function GET(request: NextRequest) {
       profit: sale.profit,
       profitMargin: sale.profitMargin,
       saleDate: sale.saleDate.toISOString(),
-      category: sale.product.category?.name
+      category: sale.product.category?.name,
+      companyId: sale.companyId // Include companyId
     }));
-    
+
     return NextResponse.json(transformedSales);
   } catch (error) {
     console.error('Error fetching sales:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch sales data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch sales data' }, { status: 500 });
   }
 }
 
 // POST a new sale
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
-    
-    // Check if we're receiving batchData array (multiple batches for one sale)
-    if (data.batchData && Array.isArray(data.batchData)) {
-      if (!data.productId || !data.quantity || !data.salePrice || !data.saleDate) {
-        return NextResponse.json(
-          { error: 'Missing required fields', data },
-          { status: 400 }
-        );
-      }
-      
-      // Check if product exists
-      const product = await prisma.product.findUnique({
-        where: { id: data.productId }
+
+    // Common validations for all sale types
+    if (!data.productId || !data.quantity || !data.salePrice || !data.saleDate) {
+      return NextResponse.json({ error: 'Missing required fields for sale' }, { status: 400 });
+    }
+    const quantitySold = parseInt(data.quantity);
+    if (isNaN(quantitySold) || quantitySold <= 0) {
+        return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
+    }
+
+    // Use a transaction for all sale operations
+    const newSale = await prisma.$transaction(async (tx) => {
+      const product = await tx.product.findUnique({
+        where: { id: data.productId, companyId: userCompanyId }
       });
-      
       if (!product) {
-        return NextResponse.json(
-          { error: 'Product not found' },
-          { status: 404 }
-        );
+        throw new Error('Product not found for your company');
       }
-      
-      // Process first batch as primary batch for the sale
-      const primaryBatchData = data.batchData[0];
-      if (!primaryBatchData || !primaryBatchData.batchId) {
-        return NextResponse.json(
-          { error: 'No valid batch data provided' },
-          { status: 400 }
-        );
-      }
-      
-      // Check if primary batch exists
-      const primaryBatch = await prisma.batch.findUnique({
-        where: { id: primaryBatchData.batchId }
-      });
-      
-      if (!primaryBatch) {
-        return NextResponse.json(
-          { error: 'Primary batch not found' },
-          { status: 404 }
-        );
-      }
-      
-      // Create new sale with primary batch
-      const profit = parseFloat(data.profit || '0');
-      const profitMargin = parseFloat(data.profitMargin || '0');
-      
-      const newSale = await prisma.sale.create({
-        data: {
-          productId: data.productId,
-          batchId: primaryBatchData.batchId,
-          quantity: parseInt(data.quantity),
-          salePrice: parseFloat(data.salePrice),
-          purchasePrice: data.purchasePrice || primaryBatch.purchasePrice,
-          profit,
-          profitMargin,
-          saleDate: new Date(data.saleDate),
-          customerId: data.customerId || null,
-          invoiceNumber: data.invoiceNumber || null
-        },
-        include: {
-          product: true,
-          batch: true
+
+      let saleDataCommon = {
+        productId: data.productId,
+        quantity: quantitySold,
+        salePrice: parseFloat(data.salePrice),
+        saleDate: new Date(data.saleDate),
+        customerId: data.customerId || null,
+        invoiceNumber: data.invoiceNumber || null,
+        companyId: userCompanyId,
+        purchasePrice: 0, // Will be set based on batch(es)
+        profit: 0,        // Will be calculated
+        profitMargin: 0   // Will be calculated
+      };
+
+      let primaryBatchForSaleRecordId: string;
+      let totalPurchasePriceForSale = 0;
+
+      if (data.batchData && Array.isArray(data.batchData) && data.batchData.length > 0) {
+        // Multi-batch sale scenario
+        if (!data.batchData.every((bi: any) => bi.batchId && typeof bi.quantity === 'number' && bi.quantity > 0)) {
+            throw new Error('Invalid batchData format or quantity');
         }
-      });
-      
-      // Update the quantity of all batches involved in this sale
-      for (const batchItem of data.batchData) {
-        const batch = await prisma.batch.findUnique({
-          where: { id: batchItem.batchId }
-        });
+
+        let totalQuantityFromBatches = 0;
+        for (const batchItem of data.batchData) {
+            totalQuantityFromBatches += batchItem.quantity;
+        }
+        if (totalQuantityFromBatches !== quantitySold) {
+            throw new Error('Total quantity from batches does not match sale quantity');
+        }
         
-        if (batch) {
-          const newQuantity = Math.max(0, batch.currentQuantity - batchItem.quantity);
-          const newStatus = newQuantity === 0 ? 'depleted' : batch.status;
-          
-          await prisma.batch.update({
-            where: { id: batchItem.batchId },
+        primaryBatchForSaleRecordId = data.batchData[0].batchId; // Use first batch for the main sale record
+
+        for (const batchItem of data.batchData) {
+          const batch = await tx.batch.findUnique({
+            where: { id: batchItem.batchId, companyId: userCompanyId }
+          });
+          if (!batch) {
+            throw new Error(`Batch ID ${batchItem.batchId} not found for your company`);
+          }
+          if (batch.currentQuantity < batchItem.quantity) {
+            throw new Error(`Not enough stock in batch ${batch.id}. Available: ${batch.currentQuantity}, Requested: ${batchItem.quantity}`);
+          }
+
+          await tx.batch.update({
+            where: { id: batch.id, companyId: userCompanyId },
             data: {
-              currentQuantity: newQuantity,
-              status: newStatus
+              currentQuantity: { decrement: batchItem.quantity },
+              status: (batch.currentQuantity - batchItem.quantity === 0) ? 'depleted' : batch.status
             }
           });
+          totalPurchasePriceForSale += batch.purchasePrice * batchItem.quantity;
         }
-      }
-      
-      // Update product total stock
-      const newTotalStock = Math.max(0, product.totalStock - parseInt(data.quantity));
-      await prisma.product.update({
-        where: { id: data.productId },
-        data: {
-          totalStock: newTotalStock
+      } else if (data.batchId) {
+        // Single batch sale scenario
+        primaryBatchForSaleRecordId = data.batchId;
+        const batch = await tx.batch.findUnique({
+          where: { id: data.batchId, companyId: userCompanyId }
+        });
+        if (!batch) {
+          throw new Error('Batch not found for your company');
         }
-      });
-      
-      console.log('Sale recorded with multiple batches:', newSale);
-      
-      return NextResponse.json(newSale, { status: 201 });
-    } 
-    // Original logic for single batch sales
-    else {
-      // Validate required fields
-      if (!data.productId || !data.batchId || !data.quantity || !data.salePrice || 
-          !data.purchasePrice || !data.saleDate) {
-        return NextResponse.json(
-          { error: 'Missing required fields', data },
-          { status: 400 }
-        );
+        if (batch.currentQuantity < quantitySold) {
+          throw new Error(`Not enough stock in batch ${batch.id}. Available: ${batch.currentQuantity}, Requested: ${quantitySold}`);
+        }
+        await tx.batch.update({
+          where: { id: batch.id, companyId: userCompanyId },
+          data: {
+            currentQuantity: { decrement: quantitySold },
+            status: (batch.currentQuantity - quantitySold === 0) ? 'depleted' : batch.status
+          }
+        });
+        totalPurchasePriceForSale = batch.purchasePrice * quantitySold;
+         // Use explicitly provided purchase price for the sale record if available, else batch's purchase price
+        saleDataCommon.purchasePrice = parseFloat(data.purchasePrice || batch.purchasePrice);
+      } else {
+        throw new Error('Either batchId or batchData (for multiple batches) must be provided.');
       }
       
-      // Check if product exists
-      const product = await prisma.product.findUnique({
-        where: { id: data.productId }
-      });
-      
-      if (!product) {
-        return NextResponse.json(
-          { error: 'Product not found' },
-          { status: 404 }
-        );
+      // If not provided from client, calculate purchase price based on consumed batches
+      if(data.purchasePrice === undefined && (data.batchData && data.batchData.length > 0)){
+          saleDataCommon.purchasePrice = totalPurchasePriceForSale / quantitySold; // Average purchase price if multi-batch
+      } else if (data.purchasePrice !== undefined) {
+          saleDataCommon.purchasePrice = parseFloat(data.purchasePrice);
+      } // else, for single batch, it was set using batch.purchasePrice if data.purchasePrice was missing
+
+      // Calculate profit and profit margin
+      const totalSalePrice = saleDataCommon.salePrice * quantitySold;
+      saleDataCommon.profit = parseFloat((totalSalePrice - (saleDataCommon.purchasePrice * quantitySold)).toFixed(2));
+      if (saleDataCommon.purchasePrice > 0) {
+        saleDataCommon.profitMargin = parseFloat(((saleDataCommon.profit / (saleDataCommon.purchasePrice * quantitySold)) * 100).toFixed(2));
+      } else if (saleDataCommon.profit > 0) {
+        saleDataCommon.profitMargin = 100; // Infinite profit margin if purchase price is 0 but sale price is > 0
+      } else {
+        saleDataCommon.profitMargin = 0;
       }
-      
-      // Check if batch exists
-      const batch = await prisma.batch.findUnique({
-        where: { id: data.batchId }
-      });
-      
-      if (!batch) {
-        return NextResponse.json(
-          { error: 'Batch not found' },
-          { status: 404 }
-        );
-      }
-      
-      // Create new sale
-      const quantity = parseInt(data.quantity);
-      const salePrice = parseFloat(data.salePrice);
-      const purchasePrice = parseFloat(data.purchasePrice);
-      const profit = parseFloat(data.profit || (salePrice * quantity - purchasePrice * quantity).toFixed(2));
-      const profitMargin = parseFloat(data.profitMargin || ((profit / (purchasePrice * quantity)) * 100).toFixed(2));
-      
-      const newSale = await prisma.sale.create({
+
+      const createdSale = await tx.sale.create({
         data: {
-          productId: data.productId,
-          batchId: data.batchId,
-          quantity,
-          salePrice,
-          purchasePrice,
-          profit,
-          profitMargin,
-          saleDate: new Date(data.saleDate),
-          customerId: data.customerId || null,
-          invoiceNumber: data.invoiceNumber || null
+          ...saleDataCommon,
+          batchId: primaryBatchForSaleRecordId, // Link to the primary batch for the sale record
         },
-        include: {
-          product: true,
-          batch: true
-        }
+        include: { product: true, batch: true }
       });
-      
-      console.log('Sale recorded:', newSale);
-      
-      return NextResponse.json(newSale, { status: 201 });
-    }
-  } catch (error) {
+
+      // Update product total stock
+      await tx.product.update({
+        where: { id: data.productId, companyId: userCompanyId },
+        data: { totalStock: { decrement: quantitySold } }
+      });
+
+      return createdSale;
+    });
+
+    console.log(`Sale recorded: ${newSale.id} for company ${userCompanyId}`);
+    return NextResponse.json(newSale, { status: 201 });
+
+  } catch (error: any) {
     console.error('Error creating sale:', error);
-    return NextResponse.json(
-      { error: 'Failed to create sale' },
-      { status: 500 }
-    );
+    // Specific error messages from transaction can be passed to client
+    if (error.message.includes('not found for your company') || 
+        error.message.includes('Not enough stock') || 
+        error.message.includes('must be provided') || 
+        error.message.includes('Invalid batchData') ||
+        error.message.includes('does not match sale quantity')) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Failed to create sale' }, { status: 500 });
   }
 } 

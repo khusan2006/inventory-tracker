@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
 
 interface BatchWithProduct {
   id: string;
@@ -17,6 +19,12 @@ interface BatchWithProduct {
 
 // GET all batches or filter by productId
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const startDate = searchParams.get('startDate');
@@ -42,6 +50,7 @@ export async function GET(request: NextRequest) {
     // Fetch batches with product details
     const batches = await prisma.batch.findMany({
       where: {
+        companyId: userCompanyId,
         ...dateFilter,
         ...statusFilter
       },
@@ -69,7 +78,8 @@ export async function GET(request: NextRequest) {
       status: batch.status,
       supplier: batch.supplier,
       invoiceNumber: batch.invoiceNumber,
-      category: batch.product.category?.name
+      category: batch.product.category?.name,
+      companyId: batch.companyId
     }));
     
     return NextResponse.json(transformedBatches);
@@ -84,6 +94,12 @@ export async function GET(request: NextRequest) {
 
 // POST a new batch
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
     
@@ -95,14 +111,14 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Check if product exists
+    // Check if product exists AND belongs to the user's company
     const product = await prisma.product.findUnique({
-      where: { id: data.productId }
+      where: { id: data.productId, companyId: userCompanyId }
     });
     
     if (!product) {
       return NextResponse.json(
-        { error: 'Product not found' },
+        { error: 'Product not found for your company' },
         { status: 404 }
       );
     }
@@ -111,30 +127,32 @@ export async function POST(request: NextRequest) {
     const purchasePrice = parseFloat(data.purchasePrice);
     const initialQuantity = parseInt(data.initialQuantity);
     
-    const newBatch = await prisma.batch.create({
-      data: {
-        productId: data.productId,
-        purchaseDate: new Date(data.purchaseDate),
-        purchasePrice,
-        initialQuantity,
-        currentQuantity: initialQuantity,
-        status: 'active',
-        supplier: data.supplier || null,
-        invoiceNumber: data.invoiceNumber || null,
-        notes: data.notes || null
-      },
-      include: { product: true }
+    // Use a transaction to create batch and update product stock
+    const newBatch = await prisma.$transaction(async (tx) => {
+      const createdBatch = await tx.batch.create({
+        data: {
+          productId: data.productId,
+          purchaseDate: new Date(data.purchaseDate),
+          purchasePrice,
+          initialQuantity,
+          currentQuantity: initialQuantity,
+          status: 'active',
+          supplier: data.supplier || null,
+          invoiceNumber: data.invoiceNumber || null,
+          notes: data.notes || null,
+          companyId: userCompanyId
+        },
+        include: { product: true }
+      });
+
+      await tx.product.update({
+        where: { id: data.productId, companyId: userCompanyId },
+        data: { totalStock: { increment: initialQuantity } }
+      });
+      return createdBatch;
     });
     
-    // Update product total stock
-    await prisma.product.update({
-      where: { id: data.productId },
-      data: {
-        totalStock: { increment: initialQuantity }
-      }
-    });
-    
-    console.log(`New batch created with ID: ${newBatch.id} for product ${newBatch.productId}`);
+    console.log(`New batch created with ID: ${newBatch.id} for product ${newBatch.productId} in company ${userCompanyId}`);
     
     return NextResponse.json(newBatch, { status: 201 });
   } catch (error) {
@@ -148,6 +166,12 @@ export async function POST(request: NextRequest) {
 
 // DELETE a batch
 export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -159,15 +183,15 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    // Check if batch exists and get its current quantity
+    // Check if batch exists for this company
     const batch = await prisma.batch.findUnique({
-      where: { id },
+      where: { id, companyId: userCompanyId },
       include: { sales: true }
     });
     
     if (!batch) {
       return NextResponse.json(
-        { error: 'Batch not found' },
+        { error: 'Batch not found for your company' },
         { status: 404 }
       );
     }
@@ -183,22 +207,22 @@ export async function DELETE(request: NextRequest) {
     // Start a transaction to delete batch and update product stock
     const deletedBatch = await prisma.$transaction(async (tx) => {
       // Delete the batch
-      const deletedBatch = await tx.batch.delete({
-        where: { id }
+      const batchToDelete = await tx.batch.delete({
+        where: { id, companyId: userCompanyId }
       });
       
       // Update the product's total stock
       await tx.product.update({
-        where: { id: deletedBatch.productId },
+        where: { id: batchToDelete.productId, companyId: userCompanyId },
         data: {
-          totalStock: { decrement: deletedBatch.currentQuantity }
+          totalStock: { decrement: batchToDelete.currentQuantity }
         }
       });
       
-      return deletedBatch;
+      return batchToDelete;
     });
     
-    console.log(`Deleted batch with ID: ${id}`);
+    console.log(`Deleted batch with ID: ${id} from company ${userCompanyId}`);
     
     return NextResponse.json({ success: true, deletedBatch });
   } catch (error) {
@@ -212,6 +236,12 @@ export async function DELETE(request: NextRequest) {
 
 // PATCH to update a batch
 export async function PATCH(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
     
@@ -225,22 +255,22 @@ export async function PATCH(request: NextRequest) {
     
     // Find the batch
     const existingBatch = await prisma.batch.findUnique({
-      where: { id: data.id }
+      where: { id: data.id, companyId: userCompanyId }
     });
     
     if (!existingBatch) {
       return NextResponse.json(
-        { error: `Batch not found with ID: ${data.id}` },
+        { error: 'Batch not found for your company' },
         { status: 404 }
       );
     }
     
     // Prepare update data
-    const updateData: any = {};
     const stockChange = data.currentQuantity !== undefined 
       ? parseInt(data.currentQuantity) - existingBatch.currentQuantity
       : 0;
     
+    const updateData: any = {};
     if (data.purchaseDate !== undefined) updateData.purchaseDate = new Date(data.purchaseDate);
     if (data.purchasePrice !== undefined) updateData.purchasePrice = parseFloat(data.purchasePrice);
     if (data.initialQuantity !== undefined) updateData.initialQuantity = parseInt(data.initialQuantity);
@@ -256,7 +286,7 @@ export async function PATCH(request: NextRequest) {
     const updatedBatch = await prisma.$transaction(async (tx) => {
       // Update the batch
       const batch = await tx.batch.update({
-        where: { id: data.id },
+        where: { id: data.id, companyId: userCompanyId },
         data: updateData,
         include: { product: true }
       });
@@ -264,7 +294,7 @@ export async function PATCH(request: NextRequest) {
       // If current quantity changed, update product stock
       if (stockChange !== 0) {
         await tx.product.update({
-          where: { id: existingBatch.productId },
+          where: { id: existingBatch.productId, companyId: userCompanyId },
           data: {
             totalStock: { increment: stockChange }
           }
@@ -274,7 +304,7 @@ export async function PATCH(request: NextRequest) {
       return batch;
     });
     
-    console.log(`Updated batch ${data.id}, current quantity: ${updatedBatch.currentQuantity}`);
+    console.log(`Updated batch with ID: ${data.id} for company ${userCompanyId}`);
     
     return NextResponse.json(updatedBatch);
   } catch (error) {

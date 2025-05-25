@@ -6,39 +6,39 @@ import {
   getMonthDateRange 
 } from '@/types/inventory';
 import { Product, Batch } from '@/types/inventory';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // GET a monthly report
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const yearParam = searchParams.get('year');
     const monthParam = searchParams.get('month');
     
-    // Check if year and month parameters exist
     if (!yearParam || !monthParam) {
-      return NextResponse.json(
-        { error: 'Year and month parameters are required (e.g., ?year=2023&month=3 for March 2023)' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Year and month parameters are required' }, { status: 400 });
     }
     
-    // Parse parameters
     const year = parseInt(yearParam);
-    const month = parseInt(monthParam) - 1; // Adjust for 0-indexed months (0 = January)
+    const month = parseInt(monthParam) - 1;
     
     if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
-      return NextResponse.json(
-        { error: 'Invalid year or month. Month should be 1-12.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid year or month' }, { status: 400 });
     }
     
-    // Check if we already have a finalized report stored
     const existingReport = await prisma.monthlyReport.findUnique({
       where: {
-        year_month: {
+        year_month_companyId: {
           year,
-          month
+          month,
+          companyId: userCompanyId
         }
       }
     });
@@ -47,81 +47,32 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(existingReport);
     }
     
-    // Get date range for the month
     const { startDate, endDate } = getMonthDateRange(year, month);
     
-    // Get products with categories
     const dbProducts = await prisma.product.findMany({
+      where: { companyId: userCompanyId },
       include: { category: true }
     });
-    
-    // Map products to the expected format
-    const products: Product[] = dbProducts.map(product => ({
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-      category: product.category?.name || 'Uncategorized',
-      description: product.description || undefined,
-      sellingPrice: product.sellingPrice,
-      totalStock: product.totalStock,
-      minStockLevel: product.minStockLevel,
-      location: product.location || undefined,
-      imageUrl: product.imageUrl || undefined,
-      fitment: product.fitment || undefined
-    }));
-    
-    // Get batches and convert date to string
-    const dbBatches = await prisma.batch.findMany();
-    const batches: Batch[] = dbBatches.map(batch => ({
-      id: batch.id,
-      productId: batch.productId,
-      purchaseDate: batch.purchaseDate.toISOString(),
-      purchasePrice: batch.purchasePrice,
-      initialQuantity: batch.initialQuantity,
-      currentQuantity: batch.currentQuantity,
-      status: batch.status as 'active' | 'depleted' | 'archived',
-      supplier: batch.supplier || undefined,
-      invoiceNumber: batch.invoiceNumber || undefined,
-      notes: batch.notes || undefined
-    }));
-    
-    // Get sales for this month
-    const sales = await prisma.sale.findMany({
+    const products: Product[] = dbProducts.map(p => ({ ...p, category: p.category?.name || 'Uncategorized', description: p.description || undefined, location: p.location || undefined, imageUrl: p.imageUrl || undefined, fitment: p.fitment || undefined }));
+
+    const dbBatches = await prisma.batch.findMany({ where: { companyId: userCompanyId } });
+    const batches: Batch[] = dbBatches.map(b => ({ ...b, purchaseDate: b.purchaseDate.toISOString(), status: b.status as any, supplier: b.supplier || undefined, invoiceNumber: b.invoiceNumber || undefined, notes: b.notes || undefined }));
+
+    const salesData = await prisma.sale.findMany({
       where: {
-        saleDate: {
-          gte: new Date(startDate),
-          lte: new Date(endDate)
-        }
+        companyId: userCompanyId,
+        saleDate: { gte: new Date(startDate), lte: new Date(endDate) }
       },
-      include: {
-        product: true
-      }
+      include: { product: true }
     });
+    const transformedSales = salesData.map(s => ({ ...s, saleDate: s.saleDate.toISOString(), customerId: s.customerId || undefined, invoiceNumber: s.invoiceNumber || undefined }));
     
-    // Transform sales to the expected format
-    const transformedSales = sales.map(sale => ({
-      id: sale.id,
-      productId: sale.productId,
-      batchId: sale.batchId,
-      quantity: sale.quantity,
-      salePrice: sale.salePrice,
-      purchasePrice: sale.purchasePrice,
-      profit: sale.profit,
-      profitMargin: sale.profitMargin,
-      saleDate: sale.saleDate.toISOString(),
-      customerId: sale.customerId || undefined,
-      invoiceNumber: sale.invoiceNumber || undefined
-    }));
-    
-    // Generate the report using our helper function
     const reportData = generateMonthlyReport(products, batches, transformedSales, year, month);
     
-    // If no existing report, create a new one (not finalized)
     if (!existingReport) {
       const newReport = await prisma.monthlyReport.create({
         data: {
-          year,
-          month,
+          year, month, companyId: userCompanyId,
           totalSales: reportData.totalRevenue,
           totalProfit: reportData.totalProfit,
           averageProfitMargin: reportData.avgProfitMargin,
@@ -129,14 +80,12 @@ export async function GET(request: NextRequest) {
           reportData: reportData as any
         }
       });
-      
       return NextResponse.json(newReport);
     }
     
-    // Update existing report with latest data (but keep finalized status)
     const updatedReport = await prisma.monthlyReport.update({
       where: {
-        id: existingReport.id
+        id: existingReport.id,
       },
       data: {
         totalSales: reportData.totalRevenue,
@@ -145,167 +94,74 @@ export async function GET(request: NextRequest) {
         reportData: reportData as any
       }
     });
-    
     return NextResponse.json(updatedReport);
   } catch (error) {
-    console.error('Error generating monthly report:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate monthly report' },
-      { status: 500 }
-    );
+    console.error('Error generating/fetching monthly report:', error);
+    return NextResponse.json({ error: 'Failed to generate/fetch monthly report' }, { status: 500 });
   }
 }
 
 // POST a new month rollover (finalize the report)
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
-    
     if (!data.year || data.month === undefined) {
-      return NextResponse.json(
-        { error: 'Year and month are required for rollover' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Year and month are required' }, { status: 400 });
     }
-    
     const year = parseInt(data.year);
-    const month = parseInt(data.month) - 1; // Adjust for 0-indexed months
-    
-    // Get date range for the month
+    const month = parseInt(data.month) - 1;
+
+    if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
+        return NextResponse.json({ error: 'Invalid year or month' }, { status: 400 });
+    }
+
     const { startDate, endDate } = getMonthDateRange(year, month);
-    
-    // Get products with categories
-    const dbProducts = await prisma.product.findMany({
-      include: { category: true }
+
+    const dbProducts = await prisma.product.findMany({ where: { companyId: userCompanyId }, include: { category: true } });
+    const products: Product[] = dbProducts.map(p => ({ ...p, category: p.category?.name || 'Uncategorized', description: p.description || undefined, location: p.location || undefined, imageUrl: p.imageUrl || undefined, fitment: p.fitment || undefined }));
+
+    const dbBatches = await prisma.batch.findMany({ where: { companyId: userCompanyId } });
+    const batches: Batch[] = dbBatches.map(b => ({ ...b, purchaseDate: b.purchaseDate.toISOString(), status: b.status as any, supplier: b.supplier || undefined, invoiceNumber: b.invoiceNumber || undefined, notes: b.notes || undefined }));
+
+    const salesData = await prisma.sale.findMany({
+      where: { companyId: userCompanyId, saleDate: { gte: new Date(startDate), lte: new Date(endDate) } },
+      include: { product: true }
     });
-    
-    // Map products to the expected format
-    const products: Product[] = dbProducts.map(product => ({
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-      category: product.category?.name || 'Uncategorized',
-      description: product.description || undefined,
-      sellingPrice: product.sellingPrice,
-      totalStock: product.totalStock,
-      minStockLevel: product.minStockLevel,
-      location: product.location || undefined,
-      imageUrl: product.imageUrl || undefined,
-      fitment: product.fitment || undefined
-    }));
-    
-    // Get batches and convert date to string
-    const dbBatches = await prisma.batch.findMany();
-    const batches: Batch[] = dbBatches.map(batch => ({
-      id: batch.id,
-      productId: batch.productId,
-      purchaseDate: batch.purchaseDate.toISOString(),
-      purchasePrice: batch.purchasePrice,
-      initialQuantity: batch.initialQuantity,
-      currentQuantity: batch.currentQuantity,
-      status: batch.status as 'active' | 'depleted' | 'archived',
-      supplier: batch.supplier || undefined,
-      invoiceNumber: batch.invoiceNumber || undefined,
-      notes: batch.notes || undefined
-    }));
-    
-    // Get sales for this month
-    const sales = await prisma.sale.findMany({
-      where: {
-        saleDate: {
-          gte: new Date(startDate),
-          lte: new Date(endDate)
-        }
-      },
-      include: {
-        product: true
-      }
-    });
-    
-    // Transform sales to the expected format
-    const transformedSales = sales.map(sale => ({
-      id: sale.id,
-      productId: sale.productId,
-      batchId: sale.batchId,
-      quantity: sale.quantity,
-      salePrice: sale.salePrice,
-      purchasePrice: sale.purchasePrice,
-      profit: sale.profit,
-      profitMargin: sale.profitMargin,
-      saleDate: sale.saleDate.toISOString(),
-      customerId: sale.customerId || undefined,
-      invoiceNumber: sale.invoiceNumber || undefined
-    }));
-    
-    // Generate the final report for the month
+    const transformedSales = salesData.map(s => ({ ...s, saleDate: s.saleDate.toISOString(), customerId: s.customerId || undefined, invoiceNumber: s.invoiceNumber || undefined }));
+
     const finalReportData = generateMonthlyReport(products, batches, transformedSales, year, month);
-    
-    // Check if report already exists
-    const existingReport = await prisma.monthlyReport.findUnique({
+
+    // Upsert the report: create if not exists, update if exists and mark as finalized
+    const report = await prisma.monthlyReport.upsert({
       where: {
-        year_month: {
-          year,
-          month
-        }
+        year_month_companyId: { year, month, companyId: userCompanyId }
+      },
+      update: {
+        totalSales: finalReportData.totalRevenue,
+        totalProfit: finalReportData.totalProfit,
+        averageProfitMargin: finalReportData.avgProfitMargin,
+        isFinalized: true,
+        reportData: finalReportData as any
+      },
+      create: {
+        year, month, companyId: userCompanyId,
+        totalSales: finalReportData.totalRevenue,
+        totalProfit: finalReportData.totalProfit,
+        averageProfitMargin: finalReportData.avgProfitMargin,
+        isFinalized: true,
+        reportData: finalReportData as any
       }
     });
-    
-    let finalReport;
-    
-    if (existingReport) {
-      // Update the existing report and mark as finalized
-      finalReport = await prisma.monthlyReport.update({
-        where: {
-          id: existingReport.id
-        },
-        data: {
-          totalSales: finalReportData.totalRevenue,
-          totalProfit: finalReportData.totalProfit,
-          averageProfitMargin: finalReportData.avgProfitMargin,
-          isFinalized: true,
-          reportData: finalReportData as any
-        }
-      });
-    } else {
-      // Create a new finalized report
-      finalReport = await prisma.monthlyReport.create({
-        data: {
-          year,
-          month,
-          totalSales: finalReportData.totalRevenue,
-          totalProfit: finalReportData.totalProfit,
-          averageProfitMargin: finalReportData.avgProfitMargin,
-          isFinalized: true,
-          reportData: finalReportData as any
-        }
-      });
-    }
-    
-    // Calculate the next month and year
-    let nextMonth = month + 1;
-    let nextYear = year;
-    
-    if (nextMonth > 11) {
-      nextMonth = 0;
-      nextYear = year + 1;
-    }
-    
-    console.log(`Month rollover completed from ${month + 1}/${year} to ${nextMonth + 1}/${nextYear}`);
-    
-    // Return both the final report and info for the next month
-    return NextResponse.json({
-      status: 'success',
-      message: `Month successfully rolled over from ${month + 1}/${year} to ${nextMonth + 1}/${nextYear}`,
-      finalReport,
-      nextMonth: nextMonth + 1, // Adjust back to 1-indexed for the response
-      nextYear
-    });
-    
+
+    return NextResponse.json(report, { status: 200 });
   } catch (error) {
-    console.error('Error during month rollover:', error);
-    return NextResponse.json(
-      { error: 'Failed to process month rollover' },
-      { status: 500 }
-    );
+    console.error('Error finalizing monthly report:', error);
+    return NextResponse.json({ error: 'Failed to finalize monthly report' }, { status: 500 });
   }
 } 

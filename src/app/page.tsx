@@ -70,7 +70,7 @@ export default function Home() {
             {t('home.welcomeMessage')}
           </p>
           <Link 
-            href="/admin/dashboard" 
+            href="/dashboard"
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
           >
             {t('admin.dashboard')}

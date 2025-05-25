@@ -2,6 +2,7 @@
   "name": "inventory-tracker",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -13,15 +14,19 @@
     "db:seed": "npx ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.9.1",
     "@prisma/client": "^6.7.0",
     "@tanstack/react-query": "^5.75.7",
+    "@types/bcrypt": "^5.0.2",
     "@types/uuid": "^10.0.0",
+    "bcrypt": "^6.0.0",
     "chart.js": "^4.4.9",
     "date-fns": "^4.1.0",
     "i18next": "^25.1.2",
     "i18next-browser-languagedetector": "^8.1.0",
     "lucide-react": "^0.509.0",
     "next": "15.3.2",
+    "next-auth": "^4.24.11",
     "pg": "^8.15.6",
     "prisma": "^6.7.0",
     "react": "^19.0.0",

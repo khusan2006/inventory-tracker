@@ -1,21 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust if your authOptions are elsewhere
 
 // GET all products or filter by ID
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
     if (id) {
       const product = await prisma.product.findUnique({
-        where: { id },
+        where: { id, companyId: userCompanyId }, // Scoped by companyId
         include: { category: true }
       });
       
       if (!product) {
         return NextResponse.json(
-          { error: 'Product not found' },
+          { error: 'Product not found for your company' },
           { status: 404 }
         );
       }
@@ -23,8 +31,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(product);
     }
     
-    // Get all products with their categories
+    // Get all products for the company
     const products = await prisma.product.findMany({
+      where: { companyId: userCompanyId }, // Scoped by companyId
       include: { category: true },
       orderBy: { name: 'asc' }
     });
@@ -41,10 +50,15 @@ export async function GET(request: NextRequest) {
 
 // POST a new product
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
     
-    // Validate required fields
     if (!data.sku || !data.name || !data.categoryId || !data.sellingPrice) {
       return NextResponse.json(
         { error: 'Missing required fields (sku, name, categoryId, sellingPrice)' },
@@ -52,45 +66,45 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Check if the category exists
+    // Check if the category exists AND belongs to the user's company
     const categoryExists = await prisma.category.findUnique({
-      where: { id: data.categoryId }
+      where: { id: data.categoryId, companyId: userCompanyId } 
     });
     
     if (!categoryExists) {
       return NextResponse.json(
-        { error: 'Category not found' },
+        { error: 'Category not found or does not belong to your company' },
         { status: 404 }
       );
     }
     
-    // Check if SKU already exists
+    // Check if SKU already exists for this company
     const existingProduct = await prisma.product.findFirst({
       where: {
         sku: {
           equals: data.sku,
-          mode: 'insensitive' // Case-insensitive match
-        }
+          mode: 'insensitive'
+        },
+        companyId: userCompanyId // Scoped by companyId
       }
     });
     
     if (existingProduct) {
       return NextResponse.json(
-        { error: 'A product with this SKU already exists' },
+        { error: 'A product with this SKU already exists in your company' },
         { status: 409 }
       );
     }
     
-    // Create new product
     const newProduct = await prisma.product.create({
       data: {
-        sku: data.sku,
-        name: data.name,
-        description: data.description || '',
-        categoryId: data.categoryId,
+        ...data, // Spread existing data
         sellingPrice: parseFloat(data.sellingPrice),
         totalStock: parseInt(data.totalStock || '0'),
         minStockLevel: parseInt(data.minStockLevel || '0'),
+        companyId: userCompanyId, // Assign companyId
+        // Ensure all fields from schema are covered or have defaults
+        description: data.description || '',
         location: data.location || '',
         imageUrl: data.imageUrl || '',
         fitment: data.fitment || '',
@@ -99,8 +113,7 @@ export async function POST(request: NextRequest) {
       include: { category: true }
     });
     
-    console.log(`New product created: ${newProduct.name} (${newProduct.id}), SKU: ${newProduct.sku}`);
-    
+    console.log(`New product created: ${newProduct.name} (${newProduct.id}), SKU: ${newProduct.sku} for company ${userCompanyId}`);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     console.error('Error creating product:', error);
@@ -113,66 +126,52 @@ export async function POST(request: NextRequest) {
 
 // PATCH to update a product
 export async function PATCH(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
-    
-    // Validate required fields
     if (!data.id) {
-      return NextResponse.json(
-        { error: 'Product ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
     
-    // Find the product
+    // Find the product within the user's company
     const existingProduct = await prisma.product.findUnique({
-      where: { id: data.id }
+      where: { id: data.id, companyId: userCompanyId } // Scoped by companyId
     });
     
     if (!existingProduct) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found for your company' }, { status: 404 });
     }
     
-    // If SKU is being updated, check for duplicates
     if (data.sku && data.sku !== existingProduct.sku) {
       const productWithSameSku = await prisma.product.findFirst({
         where: {
           id: { not: data.id },
-          sku: {
-            equals: data.sku,
-            mode: 'insensitive' // Case-insensitive match
-          }
+          sku: { equals: data.sku, mode: 'insensitive' },
+          companyId: userCompanyId // Scoped by companyId
         }
       });
       
       if (productWithSameSku) {
-        return NextResponse.json(
-          { error: 'A product with this SKU already exists' },
-          { status: 409 }
-        );
+        return NextResponse.json({ error: 'A product with this SKU already exists in your company' }, { status: 409 });
       }
     }
     
-    // If changing category, verify the category exists
     if (data.categoryId && data.categoryId !== existingProduct.categoryId) {
       const categoryExists = await prisma.category.findUnique({
-        where: { id: data.categoryId }
+        where: { id: data.categoryId, companyId: userCompanyId } // Scoped by companyId
       });
       
       if (!categoryExists) {
-        return NextResponse.json(
-          { error: 'Category not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: 'Category not found or does not belong to your company' }, { status: 404 });
       }
     }
     
-    // Prepare update data (only defined fields will be updated)
     const updateData: any = {};
-    
     if (data.sku !== undefined) updateData.sku = data.sku;
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
@@ -185,72 +184,58 @@ export async function PATCH(request: NextRequest) {
     if (data.fitment !== undefined) updateData.fitment = data.fitment;
     if (data.supplier !== undefined) updateData.supplier = data.supplier;
     
-    // Update product
+    // companyId should not be changed via this PATCH
+
     const updatedProduct = await prisma.product.update({
-      where: { id: data.id },
+      where: { id: data.id, companyId: userCompanyId }, // Ensure update is scoped
       data: updateData,
       include: { category: true }
     });
     
-    console.log(`Updated product: ${updatedProduct.name} (${updatedProduct.id})`);
-    
+    console.log(`Updated product: ${updatedProduct.name} (${updatedProduct.id}) for company ${userCompanyId}`);
     return NextResponse.json(updatedProduct);
   } catch (error) {
     console.error('Error updating product:', error);
-    return NextResponse.json(
-      { error: 'Failed to update product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
 
 // DELETE a product
 export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    
     if (!id) {
-      return NextResponse.json(
-        { error: 'Product ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
     
-    // Check if product exists and if it has any batches
     const product = await prisma.product.findUnique({
-      where: { id },
+      where: { id, companyId: userCompanyId }, // Scoped by companyId
       include: { batches: true, sales: true }
     });
     
     if (!product) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found for your company' }, { status: 404 });
     }
     
-    // Check if there are any batches or sales associated with this product
     if (product.batches.length > 0 || product.sales.length > 0) {
-      return NextResponse.json(
-        { error: 'Cannot delete product with associated batches or sales' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Cannot delete product with associated batches or sales' }, { status: 400 });
     }
     
-    // Delete the product
     const deletedProduct = await prisma.product.delete({
-      where: { id }
+      where: { id, companyId: userCompanyId } // Ensure delete is scoped
     });
     
-    console.log(`Deleted product: ${deletedProduct.name} (${deletedProduct.id})`);
-    
+    console.log(`Deleted product: ${deletedProduct.name} (${deletedProduct.id}) for company ${userCompanyId}`);
     return NextResponse.json({ success: true, deletedProduct });
   } catch (error) {
     console.error('Error deleting product:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 } 

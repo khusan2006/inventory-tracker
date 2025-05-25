@@ -1,20 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust if your authOptions are elsewhere
 
 // GET all categories or a specific category by ID
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
     if (id) {
       const category = await prisma.category.findUnique({
-        where: { id }
+        where: { id, companyId: userCompanyId } // Scoped by companyId
       });
       
       if (!category) {
         return NextResponse.json(
-          { error: 'Category not found' },
+          { error: 'Category not found for your company' },
           { status: 404 }
         );
       }
@@ -22,7 +30,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(category);
     }
     
+    // Get all categories for the company
     const categories = await prisma.category.findMany({
+      where: { companyId: userCompanyId }, // Scoped by companyId
       orderBy: { name: 'asc' }
     });
     
@@ -38,10 +48,15 @@ export async function GET(request: NextRequest) {
 
 // POST a new category
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
     
-    // Validate required fields
     if (!data.name) {
       return NextResponse.json(
         { error: 'Category name is required' },
@@ -49,34 +64,34 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Check if category with same name already exists
+    // Check if category with same name already exists for this company
     const existingCategory = await prisma.category.findFirst({
       where: {
         name: {
           equals: data.name,
-          mode: 'insensitive' // Case-insensitive search
-        }
+          mode: 'insensitive'
+        },
+        companyId: userCompanyId // Scoped by companyId
       }
     });
     
     if (existingCategory) {
       return NextResponse.json(
-        { error: 'A category with this name already exists' },
+        { error: 'A category with this name already exists in your company' },
         { status: 409 }
       );
     }
     
-    // Create new category
     const newCategory = await prisma.category.create({
       data: {
         name: data.name,
         description: data.description || '',
-        color: data.color || '#CBD5E1' // Default color (Tailwind slate-300)
+        color: data.color || '#CBD5E1',
+        companyId: userCompanyId // Assign companyId
       }
     });
     
-    console.log(`New category created: ${newCategory.name} (${newCategory.id})`);
-    
+    console.log(`New category created: ${newCategory.name} (${newCategory.id}) for company ${userCompanyId}`);
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {
     console.error('Error creating category:', error);
@@ -89,6 +104,12 @@ export async function POST(request: NextRequest) {
 
 // PATCH (update) a category
 export async function PATCH(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const data = await request.json();
     
@@ -99,49 +120,49 @@ export async function PATCH(request: NextRequest) {
       );
     }
     
-    // Check if category exists
+    // Check if category exists for this company
     const existingCategory = await prisma.category.findUnique({
-      where: { id: data.id }
+      where: { id: data.id, companyId: userCompanyId } // Scoped by companyId
     });
     
     if (!existingCategory) {
       return NextResponse.json(
-        { error: 'Category not found' },
+        { error: 'Category not found for your company' },
         { status: 404 }
       );
     }
     
-    // If name is being updated, check for duplicates
     if (data.name && data.name !== existingCategory.name) {
       const categoryWithSameName = await prisma.category.findFirst({
         where: {
           id: { not: data.id },
           name: {
             equals: data.name,
-            mode: 'insensitive' // Case-insensitive search
-          }
+            mode: 'insensitive'
+          },
+          companyId: userCompanyId // Scoped by companyId
         }
       });
       
       if (categoryWithSameName) {
         return NextResponse.json(
-          { error: 'A category with this name already exists' },
+          { error: 'A category with this name already exists in your company' },
           { status: 409 }
         );
       }
     }
     
-    // Update the category
     const updatedCategory = await prisma.category.update({
-      where: { id: data.id },
+      where: { id: data.id, companyId: userCompanyId }, // Ensure update is scoped
       data: {
         name: data.name !== undefined ? data.name : undefined,
         description: data.description !== undefined ? data.description : undefined,
         color: data.color !== undefined ? data.color : undefined
+        // companyId should not be changed here
       }
     });
     
-    console.log(`Category updated: ${updatedCategory.name} (${updatedCategory.id})`);
+    console.log(`Category updated: ${updatedCategory.name} (${updatedCategory.id}) for company ${userCompanyId}`);
     return NextResponse.json(updatedCategory);
   } catch (error) {
     console.error('Error updating category:', error);
@@ -154,6 +175,12 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE a category
 export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.companyId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const userCompanyId = session.user.companyId;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -165,20 +192,22 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    // Check if category exists
+    // Check if category exists for this company and if it has products
     const category = await prisma.category.findUnique({
-      where: { id },
-      include: { products: true }
+      where: { id, companyId: userCompanyId }, // Scoped by companyId
+      include: { products: true } // We need to check products from THIS company
     });
     
     if (!category) {
       return NextResponse.json(
-        { error: 'Category not found' },
+        { error: 'Category not found for your company' },
         { status: 404 }
       );
     }
     
-    // Check if there are products using this category
+    // The products included will already be filtered by categoryId, 
+    // but for strictness, ensure these products also belong to the same companyId if needed.
+    // However, since a category belongs to a company, its products should too.
     if (category.products.length > 0) {
       return NextResponse.json(
         { error: 'Cannot delete category with associated products' },
@@ -186,12 +215,11 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    // Delete the category
     const deletedCategory = await prisma.category.delete({
-      where: { id }
+      where: { id, companyId: userCompanyId } // Ensure delete is scoped
     });
     
-    console.log(`Category deleted: ${deletedCategory.name} (${deletedCategory.id})`);
+    console.log(`Category deleted: ${deletedCategory.name} (${deletedCategory.id}) for company ${userCompanyId}`);
     return NextResponse.json({ success: true, deletedCategory });
   } catch (error) {
     console.error('Error deleting category:', error);

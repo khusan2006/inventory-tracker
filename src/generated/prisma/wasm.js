@@ -120,13 +120,31 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  companyId: 'companyId'
+};
+
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
   color: 'color',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  companyId: 'companyId'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -143,7 +161,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   supplier: 'supplier',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  categoryId: 'categoryId'
+  categoryId: 'categoryId',
+  companyId: 'companyId'
 };
 
 exports.Prisma.BatchScalarFieldEnum = {
@@ -158,7 +177,8 @@ exports.Prisma.BatchScalarFieldEnum = {
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  productId: 'productId'
+  productId: 'productId',
+  companyId: 'companyId'
 };
 
 exports.Prisma.SaleScalarFieldEnum = {
@@ -174,7 +194,8 @@ exports.Prisma.SaleScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   productId: 'productId',
-  batchId: 'batchId'
+  batchId: 'batchId',
+  companyId: 'companyId'
 };
 
 exports.Prisma.MonthlyReportScalarFieldEnum = {
@@ -187,7 +208,36 @@ exports.Prisma.MonthlyReportScalarFieldEnum = {
   isFinalized: 'isFinalized',
   reportData: 'reportData',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  companyId: 'companyId'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  sessionToken: 'sessionToken',
+  userId: 'userId',
+  expires: 'expires'
+};
+
+exports.Prisma.VerificationTokenScalarFieldEnum = {
+  identifier: 'identifier',
+  token: 'token',
+  expires: 'expires'
 };
 
 exports.Prisma.SortOrder = {
@@ -217,11 +267,16 @@ exports.Prisma.JsonNullValueFilter = {
 
 
 exports.Prisma.ModelName = {
+  Company: 'Company',
+  User: 'User',
   Category: 'Category',
   Product: 'Product',
   Batch: 'Batch',
   Sale: 'Sale',
-  MonthlyReport: 'MonthlyReport'
+  MonthlyReport: 'MonthlyReport',
+  Account: 'Account',
+  Session: 'Session',
+  VerificationToken: 'VerificationToken'
 };
 
 /**
