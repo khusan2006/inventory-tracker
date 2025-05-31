@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { ShoppingCart, X, AlertTriangle, Calculator, CreditCard, DollarSign, RefreshCw } from 'lucide-react';
-import { Batch, calculateBatchProfit, getBatchesForSale } from '@/types/inventory';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, AlertTriangle, Calculator, CreditCard, RefreshCw } from 'lucide-react';
+import { Batch } from '@/types/inventory';
 import { toast } from 'react-hot-toast';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useProduct } from '@/hooks/useProducts';
@@ -11,26 +11,10 @@ import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useTranslation } from '@/i18n/client';
 
-// Updated Product interface to handle category as either string or object
-interface Product {
-  id: string;
-  sku: string;
-  name: string;
-  category: string | { id: string; name: string; color?: string; };
-  description?: string;
-  sellingPrice: number;
-  totalStock: number;
-  fitment?: string;
-  minStockLevel?: number;
-  location?: string;
-  imageUrl?: string;
-  supplier?: string;
-}
-
 interface QuickSellModalProps {
   productId: string;
-  productName: string;
   onClose: () => void;
+  onSaleComplete?: (saleData: any) => void;
 }
 
 // Helper type for batches with sale quantities
@@ -82,7 +66,7 @@ function calculateBatchProfitMargin(batches: BatchWithSale[], sellingPrice: numb
   return { totalProfit, profitMargin };
 }
 
-export default function QuickSellModal({ productId, productName, onClose }: QuickSellModalProps) {
+export default function QuickSellModal({ productId, onClose, onSaleComplete }: QuickSellModalProps) {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [sellingPrice, setSellingPrice] = useState<number | null>(null);
@@ -172,11 +156,21 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
   // Mutation for processing sales with optimistic updates
   const saleMutation = useMutation({
     mutationFn: async () => {
-      if (!product || !sortedBatches.length) {
-        throw new Error('Product or batch data is missing');
+      if (sellingPrice === null) {
+        // This should ideally not be hit if handleSale has proper checks,
+        // but it's a good safeguard.
+        toast.error(t('sales.enterValidPrice'));
+        throw new Error('Selling price cannot be null at the point of mutation.');
+      }
+      // At this point, sellingPrice is guaranteed to be a number.
+      const currentSellingPrice = sellingPrice; // Assign to a new const for TS to infer non-null
+
+      if (!product || !batches) {
+        throw new Error('Product or batch data is not available.');
       }
       
       const availableBatches = sortedBatches.filter(b => b.status === 'active' && b.currentQuantity > 0);
+      
       if (!availableBatches.length) {
         throw new Error('No available batches for this product');
       }
@@ -187,7 +181,7 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
         throw new Error(`Not enough stock. Only ${quantity - result.remainingQuantity} units available.`);
       }
       
-      const profitResult = calculateBatchProfitMargin(result.selectedBatches, sellingPrice);
+      const profitResult = calculateBatchProfitMargin(result.selectedBatches, currentSellingPrice); // Use the non-null const
       
       // Create the sale record
       const response = await fetch('/api/sales', {
@@ -198,7 +192,7 @@ export default function QuickSellModal({ productId, productName, onClose }: Quic
         body: JSON.stringify({
           productId,
           quantity,
-          salePrice: sellingPrice,
+          salePrice: currentSellingPrice,
           profit: profitResult.totalProfit,
           profitMargin: profitResult.profitMargin,
           saleDate: new Date().toISOString(),

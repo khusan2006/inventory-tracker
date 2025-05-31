@@ -7,10 +7,8 @@ import {
   Moon, 
   Sun, 
   Save, 
-  ChevronDown, 
-  Shield, 
-  Globe,
-  Briefcase
+  Shield,
+  ChevronDown,
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 

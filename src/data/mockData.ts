@@ -216,7 +216,7 @@ export const getProductsWithBatches = (): ProductWithBatches[] => {
 export const createMockSale = (
   productId: string, 
   quantity: number
-): { success: boolean; message?: string; saleData?: any } => {
+): { success: boolean; message?: string; saleData?: unknown } => {
   // Find the product
   const product = mockProducts.find(p => p.id === productId);
   if (!product) {

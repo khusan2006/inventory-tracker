@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, ShoppingCart, X, AlertTriangle, Calculator, CreditCard, DollarSign, RefreshCw, Check } from 'lucide-react';
-import { Batch, calculateBatchProfit } from '@/types/inventory';
+import { ArrowLeft, ShoppingCart, Package, Loader2, AlertTriangle, DollarSign, RefreshCw, Check } from 'lucide-react';
+import { Batch } from '@/types/inventory';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useProduct } from '@/hooks/useProducts';
 import { useProductBatches } from '@/hooks/useProductBatches';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Button } from "@/components/ui/button";
 
 // Helper type for batches with sale quantities
 interface BatchWithSale extends Batch {

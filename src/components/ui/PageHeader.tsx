@@ -7,36 +7,25 @@ interface PageHeaderProps {
   description?: string;
   icon?: ReactNode;
   actions?: ReactNode;
-  translationKey?: string;
-  descriptionTranslationKey?: string;
+  showBreadcrumbs?: boolean;
 }
 
-export default function PageHeader({ 
-  title, 
-  description, 
-  icon, 
-  actions,
-  translationKey,
-  descriptionTranslationKey
-}: PageHeaderProps) {
+export default function PageHeader({ title, description, children }: PageHeaderProps) {
   return (
-    <div className="flex justify-between items-start mb-6">
-      <div className="flex items-center">
-        {icon && (
-          <div className="mr-3 text-blue-600 dark:text-blue-400 p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-            {icon}
-          </div>
+    <div className="flex items-center justify-between space-y-2">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
+        {description && (
+          <p className="text-muted-foreground">
+            {description}
+          </p>
         )}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
-          {description && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {description}
-            </p>
-          )}
-        </div>
       </div>
-      {actions && <div className="flex space-x-2">{actions}</div>}
+      {children && (
+        <div className="flex items-center space-x-2">
+          {children}
+        </div>
+      )}
     </div>
   );
 } 

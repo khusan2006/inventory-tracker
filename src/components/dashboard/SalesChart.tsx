@@ -5,30 +5,14 @@ import { useMonthlySalesData, formatCurrency } from '@/hooks/useSalesData';
 import { ArrowUpRight, Loader2 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 
-// Use a different approach for Chart.js import
-import dynamic from 'next/dynamic';
-const ChartComponent = dynamic(() => import('chart.js/auto').then((mod) => {
-  // Required to avoid SSR issues with Chart.js
-  if (typeof window === 'undefined') return () => null;
-  return function ChartRenderer({ chartRef, data }: any) {
-    useEffect(() => {
-      if (!chartRef.current) return;
 
-      const ctx = chartRef.current.getContext('2d');
-      if (!ctx) return;
-      
-      const chart = new mod.Chart(ctx, data);
-      
-      return () => {
-        chart.destroy();
-      };
-    }, [chartRef, data]);
-    
-    return null;
-  };
-}), { ssr: false });
 
-export default function SalesChart() {
+
+interface SalesChartProps {
+  data: any[];
+}
+
+export default function SalesChart({ data }: SalesChartProps) {
   const { t } = useTranslation();
   const chartRef = useRef<HTMLCanvasElement>(null);
   const { data: monthlySales, isLoading, error } = useMonthlySalesData();
@@ -116,8 +100,8 @@ export default function SalesChart() {
                 padding: isSmallScreen ? 8 : 12,
                 displayColors: false,
                 callbacks: {
-                  label: function(context: any) {
-                    return formatCurrency(context.parsed.y);
+                  label: function(context: unknown) {
+                    return formatCurrency((context as { parsed: { y: number } }).parsed.y);
                   }
                 }
               },
@@ -148,17 +132,18 @@ export default function SalesChart() {
                   font: {
                     size: isSmallScreen ? 9 : 11,
                   },
-                  callback: function(value: any) {
+                  callback: function(value: unknown) {
+                    const numericValue = Number(value);
                     // Format y-axis values differently on mobile
                     if (isSmallScreen) {
                       // For mobile: abbreviate numbers (e.g., 1K, 2.5K)
-                      if (value >= 1000) {
-                        return '$' + (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'K';
+                      if (numericValue >= 1000) {
+                        return '$' + (numericValue / 1000).toFixed(numericValue % 1000 === 0 ? 0 : 1) + 'K';
                       }
-                      return '$' + value;
+                      return '$' + numericValue;
                     }
                     // For desktop: full format with commas
-                    return '$' + value.toLocaleString();
+                    return '$' + numericValue.toLocaleString();
                   }
                 },
                 beginAtZero: true,

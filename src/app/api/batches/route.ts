@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
+import { authOptions } from "@/lib/authOptions"; // MODIFIED
 
 interface BatchWithProduct {
   id: string;
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
     console.log(`New batch created with ID: ${newBatch.id} for product ${newBatch.productId} in company ${userCompanyId}`);
     
     return NextResponse.json(newBatch, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating batch:', error);
     return NextResponse.json(
       { error: 'Failed to create batch' },
@@ -308,7 +308,7 @@ export async function PATCH(request: NextRequest) {
     console.log(`Updated batch with ID: ${data.id} for company ${userCompanyId}`);
     
     return NextResponse.json(updatedBatch);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error updating batch:', error);
     return NextResponse.json(
       { error: 'Failed to update batch' },

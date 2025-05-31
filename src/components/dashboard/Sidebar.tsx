@@ -1,34 +1,21 @@
 "use client";
 
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
 import { 
-  LayoutDashboard, 
+  Home, 
   Package, 
   ShoppingCart, 
-  Users, 
-  Settings,
-  TruckIcon,
-  BarChart3,
-  LogOut,
-  ChevronDown,
-  ChevronRight,
+  Settings, 
   Calendar,
-  Tag,
-  Layers,
-  RefreshCw,
-  PieChart,
-  Car,
-  Box,
-  ListChecks,
-  TrendingUp,
-  X,
-  Zap
+  FileText,
+  ChevronDown,
+  LogOut,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
-import { Button } from '../ui/button';
-import React from 'react';
+import { signOut } from 'next-auth/react';
 
 interface SidebarProps {
   className?: string;
@@ -39,13 +26,12 @@ interface SidebarProps {
 export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
-  const { data: session } = useSession();
 
   const menuItems = [
     { 
       name: t('admin.dashboard'), 
       href: '/dashboard',
-      icon: <LayoutDashboard size={20} />
+      icon: <Home size={20} />
     },
     { 
       name: t('admin.inventory'), 
@@ -55,7 +41,7 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
     { 
       name: t('admin.categories'), 
       href: '/dashboard/categories',
-      icon: <Tag size={20} />
+      icon: <FileText size={20} />
     },
     { 
       name: t('admin.salesHistory'), 
@@ -65,22 +51,22 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
     { 
       name: t('admin.batchHistory'), 
       href: '/dashboard/batches',
-      icon: <Layers size={20} />
+      icon: <FileText size={20} />
     },
     { 
       name: t('admin.suppliers'), 
       href: '/dashboard/suppliers',
-      icon: <TruckIcon size={20} />
+      icon: <FileText size={20} />
     },
     { 
       name: t('admin.reports'), 
       href: '/dashboard/analytics',
-      icon: <PieChart size={20} />
+      icon: <FileText size={20} />
     },
     { 
       name: t('admin.monthRollover'), 
       href: '/dashboard/rollover',
-      icon: <RefreshCw size={20} />,
+      icon: <FileText size={20} />,
       subItems: [
         {
           name: t('admin.monthlyReports'), 
@@ -105,7 +91,7 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
   const sidebarContent = (
     <div className={`h-full w-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col ${className}`}>
       <div className="h-16 flex items-center p-4 border-b border-gray-200 dark:border-slate-700">
-        <Car className="text-blue-600 dark:text-blue-400 mr-2" size={24} />
+        <Home className="text-blue-600 dark:text-blue-400 mr-2" size={24} />
         <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">{t('home.title')}</h2>
       </div>
       <nav className="flex-1 overflow-y-auto py-2 hide-scrollbar">
@@ -140,7 +126,7 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
                       {hasActiveSubItem || (isActive && item.subItems) ? (
                         <ChevronDown size={16} />
                       ) : (
-                        <ChevronRight size={16} />
+                        <ChevronDown size={16} />
                       )}
                     </span>
                   )}
@@ -181,12 +167,6 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
         </ul>
       </nav>
       <div className="p-4 border-t border-gray-200 dark:border-slate-700 sticky bottom-0 bg-white dark:bg-slate-800 mt-auto">
-        {session?.user && (
-          <div className="mb-3 text-center">
-            <p className="text-sm font-medium text-gray-800 dark:text-white">{session.user.name || session.user.email}</p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">{session.user.companyId ? t('common.companyUser') : t('common.user')}</p>
-          </div>
-        )}
         <Button 
           variant="outline" 
           className="w-full" 

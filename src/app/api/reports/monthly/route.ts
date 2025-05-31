@@ -7,7 +7,7 @@ import {
 } from '@/types/inventory';
 import { Product, Batch } from '@/types/inventory';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 // GET a monthly report
 export async function GET(request: NextRequest) {

@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { ArrowLeft, Package, Calendar, AlertTriangle, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useBatch } from '@/hooks/useBatches';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
-import Header from '@/components/admin/Header';
-import { Calendar, DollarSign, Package, ChevronLeft, Tag, Truck, FileText, AlertCircle } from 'lucide-react';
 
 interface BatchDetails {
   id: string;
@@ -36,7 +41,6 @@ interface Sale {
 
 export default function BatchDetailsPage() {
   const params = useParams();
-  const router = useRouter();
   const batchId = params.id as string;
   
   const [batch, setBatch] = useState<BatchDetails | null>(null);
@@ -87,59 +91,9 @@ export default function BatchDetailsPage() {
   // Calculate utilization percentage
   const utilizationPercentage = batch ? (totalQuantitySold / batch.initialQuantity) * 100 : 0;
   
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
-  
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-  
-  // Get relative time
-  const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diff < 60) {
-      return 'Just now';
-    } else if (diff < 3600) {
-      return `${Math.floor(diff / 60)} minutes ago`;
-    } else if (diff < 86400) {
-      return `${Math.floor(diff / 3600)} hours ago`;
-    } else if (diff < 2592000) {
-      return `${Math.floor(diff / 86400)} days ago`;
-    } else if (diff < 31536000) {
-      return `${Math.floor(diff / 2592000)} months ago`;
-    } else {
-      return `${Math.floor(diff / 31536000)} years ago`;
-    }
-  };
-  
-  // Format expiration date
-  const formatExpirationDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-  
   if (isLoading) {
     return (
       <>
-        <Header />
         <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900 p-6">
           <div className="flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -153,10 +107,9 @@ export default function BatchDetailsPage() {
   if (error || !batch) {
     return (
       <>
-        <Header />
         <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900 p-6">
           <div className="flex justify-center items-center h-full flex-col">
-            <AlertCircle size={48} className="text-red-500 mb-4" />
+            <AlertTriangle size={48} className="text-red-500 mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               {error || 'Batch not found'}
             </h2>
@@ -167,7 +120,7 @@ export default function BatchDetailsPage() {
               href="/admin/batches"
               className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               legacyBehavior>
-              <ChevronLeft size={18} className="mr-2" />
+              <ArrowLeft size={18} className="mr-2" />
               Back to Batches
             </Link>
           </div>
@@ -178,7 +131,6 @@ export default function BatchDetailsPage() {
   
   return (
     <>
-      <Header />
       <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900">
         <div className="p-3 sm:p-6">
           <div className="flex items-center mb-4 sm:mb-6">
@@ -186,7 +138,7 @@ export default function BatchDetailsPage() {
               href="/admin/batches"
               className="flex items-center text-blue-600 dark:text-blue-400 hover:underline mr-3 sm:mr-4"
               legacyBehavior>
-              <ChevronLeft size={16} className="mr-1" />
+              <ArrowLeft size={16} className="mr-1" />
               <span className="text-sm sm:text-base">Back</span>
             </Link>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">

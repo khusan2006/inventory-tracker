@@ -47,8 +47,8 @@ const InventoryByCategoryChart = () => {
         }
         const data: InventoryByCategoryData = await response.json();
         setChartData(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : String(err));
         console.error('Error fetching inventory by category data:', err);
       } finally {
         setIsLoading(false);
@@ -120,22 +120,22 @@ const InventoryByCategoryChart = () => {
         titleColor: '#fff',
         bodyColor: '#fff',
         callbacks: {
-          label: function(context: any) {
-            let label = context.label || '';
+          label: function(context: unknown) {
+            let label = (context as { label?: string }).label || '';
             if (label) {
               label += ': ';
             }
-            const value = context.raw;
-            if (value !== null) {
+            const value = (context as { raw?: string }).raw;
+            if (value !== null && value !== undefined) {
               // Use t() for pluralization
               label += value + ' ' + t('common.item', { count: parseInt(value) });
             }
             return label;
           },
           // Optional: to show percentage in tooltip
-          // afterLabel: function(context: any) {
-          //   const total = context.chart.getDatasetMeta(0).total;
-          //   const value = context.raw;
+          // afterLabel: function(context: unknown) {
+          //   const total = (context as { chart: any }).chart.getDatasetMeta(0).total;
+          //   const value = (context as { raw?: number }).raw;
           //   const percentage = ((value / total) * 100).toFixed(1) + '%';
           //   return '(' + percentage + ')';
           // }

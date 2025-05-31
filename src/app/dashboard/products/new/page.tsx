@@ -102,9 +102,9 @@ export default function AddProductPage() {
 
       // Redirect to the product list page
       router.push('/dashboard/products');
-    } catch (err: any) {
-      console.error('Error adding product:', err);
-      setError(err.message || 'An error occurred while creating the product');
+    } catch (error: unknown) {
+      console.error('Error creating product:', error);
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }

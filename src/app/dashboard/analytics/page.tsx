@@ -5,15 +5,13 @@ import {
   PieChart, 
   BarChart, 
   Activity, 
-  Calendar, 
   Download, 
   TrendingUp, 
-  TrendingDown,
   DollarSign,
   ArrowRight,
   Package
 } from 'lucide-react';
-import { useRecentSalesData, formatCurrency } from '@/hooks/useSalesData';
+import {  formatCurrency } from '@/hooks/useSalesData';
 import { useInventory } from '@/hooks/useInventory';
 import SalesOverviewChart from './components/SalesOverviewChart';
 import CategoryPieChart from './components/CategoryPieChart';
@@ -21,7 +19,6 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 export default function AnalyticsPage() {
   const { t } = useTranslation();
-  const { data: salesData, isLoading: salesLoading } = useRecentSalesData();
   const { data: inventory, isLoading: inventoryLoading } = useInventory();
   const [timeRange, setTimeRange] = useState('30d'); // 7d, 30d, 90d, 1y
   

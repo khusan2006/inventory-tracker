@@ -7,9 +7,6 @@ import {
   BarChart3, 
   Package, 
   Calendar, 
-  DollarSign, 
-  Truck, 
-  FileText, 
   ShoppingCart, 
   AlertTriangle,
   Plus,
@@ -17,7 +14,7 @@ import {
   MinusCircle,
   X
 } from 'lucide-react';
-import { Batch, calculateBatchProfit, getBatchesForSale } from '@/types/inventory';
+import { Batch, calculateBatchProfit } from '@/types/inventory';
 import AddBatchForm from '@/components/inventory/AddBatchForm';
 import { useProduct } from '@/hooks/useProducts';
 import { useProductBatches } from '@/hooks/useProductBatches';
@@ -25,6 +22,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useTranslation } from '@/hooks/useTranslation';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 // Define Product interface with the correct category type
 interface Product {
@@ -92,7 +90,7 @@ export default function ProductDetailPage() {
   const quickAction = searchParams.get('action');
   const [simulationQuantity, setSimulationQuantity] = useState(1);
   const [showAddBatchForm, setShowAddBatchForm] = useState(false);
-  const [saleModalOpen, setSaleModalOpen] = useState(false);
+  const [showQuickSell, setShowQuickSell] = useState(false);
 
   // Use React Query hooks for cached data
   const { 
@@ -115,7 +113,7 @@ export default function ProductDetailPage() {
   // Set up sale modal based on URL parameter
   useEffect(() => {
     if (quickAction === 'sell') {
-      setSaleModalOpen(true);
+      setShowQuickSell(true);
     }
   }, [quickAction]);
 
@@ -580,7 +578,7 @@ export default function ProductDetailPage() {
             <div className="p-4">
               <AddBatchForm 
                 productId={id as string} 
-                onSubmit={(newBatch) => {
+                onSubmit={() => {
                   setShowAddBatchForm(false);
                   refetchBatches();
                 }}

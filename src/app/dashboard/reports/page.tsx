@@ -99,7 +99,7 @@ export default function ReportsPage() {
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Month-End Procedures</h3>
                 <p className="text-sm">
-                  Use the monthly rollover feature to finalize each month's data and carry over your inventory to the next month.
+                  Use the monthly rollover feature to finalize each month&apos;s data and carry over your inventory to the next month.
                 </p>
               </div>
             </div>

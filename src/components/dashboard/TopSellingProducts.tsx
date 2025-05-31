@@ -6,16 +6,6 @@ import { Package, BarChart2, ExternalLink, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/useTranslation';
 
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  imageUrl?: string;
-  quantity: number;
-  revenue: number;
-  profit: number;
-}
-
 export default function TopSellingProducts() {
   const { t } = useTranslation();
   const { data: products, isLoading, error } = useTopSellingProducts();
@@ -87,7 +77,7 @@ export default function TopSellingProducts() {
         </div>
       ) : (
         <div className="space-y-4">
-          {displayProducts.map((product, index) => (
+          {displayProducts.map((product) => (
             <div key={product.id} className="flex items-start sm:items-center">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gray-100 dark:bg-slate-700 flex-shrink-0 flex items-center justify-center mr-3">
                 <Package className="h-5 w-5 text-gray-400" />

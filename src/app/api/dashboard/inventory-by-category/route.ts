@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
-export async function GET(request: Request) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -11,6 +11,16 @@ export async function GET(request: Request) {
   const userCompanyId = session.user.companyId;
 
   try {
+    const categories = await prisma.category.findMany({
+      include: {
+        products: {
+          include: {
+            batches: true
+          }
+        }
+      }
+    });
+
     const categoriesWithProductCounts = await prisma.category.findMany({
       where: {
         companyId: userCompanyId,

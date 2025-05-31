@@ -3,41 +3,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-// import Header from '@/components/admin/Header'; // REMOVED
-import { Package, Truck, Trash2, Edit, Plus, Layers, DollarSign, Calendar, MinusCircle, PlusCircle, ShoppingCart, X, AlertTriangle, XCircle, Search, Filter, XSquare, MoreHorizontal } from 'lucide-react';
+import { Package,  Trash2, Edit, Plus, Layers,  MinusCircle, PlusCircle,  X,  XCircle, Search, Filter, XSquare, MoreHorizontal } from 'lucide-react';
 import BatchesModal from '@/components/inventory/BatchesModal';
 import QuickSellModal from '@/components/inventory/QuickSellModal';
 import { useInventory } from '@/hooks/useInventory';
-import { useProductBatches } from '@/hooks/useProductBatches';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast'; // Added for notifications
 import { useQueryClient } from '@tanstack/react-query'; // Added for query invalidation if needed
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"; // MODIFIED: Keep this import as is for now
 
-// Updated Product interface to handle category as either string or object
-interface Product {
-  id: string;
-  sku: string;
-  name: string;
-  category: string | { id: string; name: string; color?: string; };
-  description?: string;
-  sellingPrice: number;
-  totalStock: number;
-  fitment?: string;
-  minStockLevel?: number;
-  location?: string;
-  imageUrl?: string;
-  supplier?: string;
-  batchCount: number;
-  avgPurchasePrice: number;
-  monthlyQuantity: number;
-  soldQuantity: number;
-}
+
+
 
 export default function ProductsPage() {
   const router = useRouter();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<{id: string, name: string} | null>(null);
   const [quickSellProduct, setQuickSellProduct] = useState<{id: string, name: string} | null>(null);
   
@@ -215,17 +196,7 @@ export default function ProductsPage() {
     // Only calculate once per component lifecycle to prevent infinite loops
     if (!calculatedMonthlyDataRef.current && !isLoading && products.length > 0) {
       const calculateMonthlyData = async () => {
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-        
-        // We'll only calculate this for products that have batches to save API calls
-        const productsWithBatches = products.filter(p => p.batchCount > 0);
-        
-        // No longer directly calling hooks inside useEffect
-        // This was causing the "Invalid hook call" error
-        
-        // Mark as calculated
+
         calculatedMonthlyDataRef.current = true;
       };
       
@@ -255,8 +226,7 @@ export default function ProductsPage() {
         const savedItemsPerPage = localStorage.getItem('itemsPerPage');
         if (savedItemsPerPage) {
           const value = Number(savedItemsPerPage);
-          // If "All" is selected (value of 0), use a large number instead of products.length
-          // This prevents the infinite loop caused by dependency on products.length
+         
           if (value === 0) {
             setItemsPerPage(1000); // Use a large number instead of products.length
           } else {

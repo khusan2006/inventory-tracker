@@ -85,7 +85,7 @@ export function useMonthlySalesData() {
       
       // Prepare array for all months (even those with no sales)
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      let monthlyData: MonthlySalesData[] = monthNames.map((month, index) => ({
+      const monthlyData: MonthlySalesData[] = monthNames.map((month) => ({
         month,
         total: 0
       }));

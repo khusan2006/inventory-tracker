@@ -5,16 +5,14 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, 
   Calendar, 
-  DollarSign, 
   Package, 
-  BarChart3, 
   ChevronLeft,
   ChevronRight,
   Download,
   RefreshCw,
   AlertTriangle
 } from 'lucide-react';
-import { MonthlyReport, MonthlyProductReport } from '@/types/inventory';
+import { MonthlyReport } from '@/types/inventory';
 
 export default function MonthlyReportPage() {
   const router = useRouter();
@@ -51,9 +49,9 @@ export default function MonthlyReportPage() {
       
       const data = await response.json();
       setReport(data);
-    } catch (err: any) {
-      console.error('Error fetching report:', err);
-      setError(err.message || 'Failed to load report data');
+    } catch (error: unknown) {
+      console.error('Error fetching monthly report data:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch monthly report');
     } finally {
       setIsLoading(false);
     }
@@ -122,9 +120,9 @@ export default function MonthlyReportPage() {
       
       alert(`Month successfully rolled over from ${monthNames[selectedMonth-1]} ${selectedYear} to ${monthNames[data.nextMonth-1]} ${data.nextYear}`);
       
-    } catch (err: any) {
-      console.error('Error during rollover:', err);
-      alert(`Failed to process month rollover: ${err.message}`);
+    } catch (error: unknown) {
+      console.error('Error during rollover:', error);
+      alert(`Failed to process month rollover: ${error instanceof Error ? error.message : 'An error occurred'}`);
     } finally {
       setIsRollingOver(false);
     }
@@ -171,15 +169,7 @@ export default function MonthlyReportPage() {
   };
   
   // Format dates for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-  
+
   return (
     <>
       <div className="p-6">

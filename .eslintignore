@@ -1,0 +1,4 @@
+src/generated/prisma/**
+src/generated/prisma/runtime/react-native.js
+src/generated/prisma/runtime/wasm.js
+src/generated/prisma/wasm.js 

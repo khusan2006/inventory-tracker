@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { X, Calendar, DollarSign, Package, Plus, Truck, FilePlus, RefreshCw } from 'lucide-react';
+import { X, Calendar, DollarSign, Package, Plus, FilePlus, RefreshCw } from 'lucide-react';
 import { Batch } from '@/types/inventory';
 import { useProductBatches } from '@/hooks/useProductBatches';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
@@ -89,7 +89,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
       const previousProduct = queryClient.getQueryData<{
         id: string;
         totalStock: number;
-        [key: string]: any;
+        [key: string]: unknown;
       }>(productKeys.detail(productId));
       
       // Create optimistic batch with temporary ID

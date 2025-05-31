@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust if your authOptions are elsewhere
+import { authOptions } from "@/lib/authOptions"; // MODIFIED
 
 // GET all products or filter by ID
 export async function GET(request: NextRequest) {
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     
     console.log(`New product created: ${newProduct.name} (${newProduct.id}), SKU: ${newProduct.sku} for company ${userCompanyId}`);
     return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating product:', error);
     return NextResponse.json(
       { error: 'Failed to create product' },

@@ -50,10 +50,10 @@ export function DialogTrigger({ children, asChild = false }: DialogTriggerProps)
   
   // If the children is a React element, add the onClick handler
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
+    return React.cloneElement(children as React.ReactElement<{ onClick?: (e: React.MouseEvent<HTMLElement>) => void }>, {
       onClick: (e: React.MouseEvent<HTMLElement>) => {
         // Call the original onClick if it exists
-        const originalClick = (children as any).props.onClick;
+        const originalClick = (children as { props?: { onClick?: (e: React.MouseEvent<HTMLElement>) => void } }).props?.onClick;
         if (originalClick) {
           originalClick(e);
         }

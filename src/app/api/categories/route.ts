@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust if your authOptions are elsewhere
+import { authOptions } from "@/lib/authOptions"; // MODIFIED
 
 // GET all categories or a specific category by ID
 export async function GET(request: NextRequest) {

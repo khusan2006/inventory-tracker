@@ -1,7 +1,9 @@
-const { PrismaClient } = require('../generated/prisma');
-const { faker } = require('@faker-js/faker');
+import { PrismaClient } from '../generated/prisma';
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
+
+const DEFAULT_COMPANY_ID = 'clw80d74t0000sky398oyg7u8'; // Replace with a real or consistent dummy ID
 
 // Define auto parts categories with realistic names
 const autoPartsCategories = [
@@ -115,12 +117,13 @@ async function seedProducts(count = 50) {
     // First, let's create or ensure our categories exist
     const categoryPromises = autoPartsCategories.map(async (cat) => {
       return prisma.category.upsert({
-        where: { name: cat.name },
+        where: { name_companyId: { name: cat.name, companyId: DEFAULT_COMPANY_ID } },
         update: { color: cat.color },
         create: {
           name: cat.name,
           description: `${cat.name} parts and components`,
-          color: cat.color
+          color: cat.color,
+          companyId: DEFAULT_COMPANY_ID
         }
       });
     });
@@ -148,12 +151,12 @@ async function seedProducts(count = 50) {
         categoryId: category.id,
         description: faker.lorem.paragraph(),
         sellingPrice: parseFloat(faker.commerce.price({ min: 9.99, max: 599.99 })),
-        totalStock: faker.number.int({ min: 0, max: 100 }),
         minStockLevel: faker.number.int({ min: 5, max: 20 }),
         fitment: generateFitment(),
         location: faker.helpers.arrayElement(locations),
         supplier: faker.helpers.arrayElement(suppliers),
         imageUrl: `https://source.unsplash.com/300x300/?auto,parts,${categoryName.toLowerCase()}`,
+        companyId: DEFAULT_COMPANY_ID
       };
       
       products.push(product);
@@ -193,7 +196,8 @@ async function seedProducts(count = 50) {
             currentQuantity,
             status: currentQuantity > 0 ? 'active' : 'depleted',
             supplier: product.supplier,
-            invoiceNumber: `INV-${faker.string.alphanumeric(8).toUpperCase()}`
+            invoiceNumber: `INV-${faker.string.alphanumeric(8).toUpperCase()}`,
+            companyId: DEFAULT_COMPANY_ID
           }
         });
       }
@@ -208,8 +212,14 @@ async function seedProducts(count = 50) {
       }
     });
     
+    // Define a simple type for Batch for this script
+    interface ScriptBatch {
+      currentQuantity: number;
+      // Add other properties if needed by the script, otherwise this is enough
+    }
+
     for (const product of productsWithBatches) {
-      const totalStock = product.batches.reduce((sum: number, batch: any) => sum + batch.currentQuantity, 0);
+      const totalStock = product.batches.reduce((sum: number, batch: ScriptBatch) => sum + batch.currentQuantity, 0);
       
       await prisma.product.update({
         where: { id: product.id },
@@ -243,6 +253,7 @@ async function seedProducts(count = 50) {
             profit,
             profitMargin: parseFloat(profitMargin),
             saleDate: faker.date.recent(),
+            companyId: DEFAULT_COMPANY_ID
           }
         });
       }

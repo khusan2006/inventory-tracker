@@ -1,8 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Clock, ShoppingBag, Package, ArrowRight, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRecentActivity } from "@/hooks/useSalesData";
 import { useTranslation } from '@/hooks/useTranslation';
@@ -18,7 +17,7 @@ export default function RecentActivity() {
           <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-36">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <Activity className="h-6 w-6 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );

@@ -1,159 +1,136 @@
 "use client";
-
 import React from 'react';
-import { Calendar, RefreshCw, ArrowRight, Clock, FileCheck, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar, FileText, Info, TrendingUp, HelpCircle, Edit3, Settings } from "lucide-react";
+import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function RolloverPage() {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: <Calendar size={38} className="text-blue-500 dark:text-blue-400" />,
+      title: t('rolloverPage.monthlyRollover.title'),
+      description: t('rolloverPage.monthlyRollover.description'),
+      link: "/dashboard/rollover/monthly",
+      bgColor: "bg-blue-50 dark:bg-blue-900/20",
+      borderColor: "hover:border-blue-300 dark:hover:border-blue-600",
+      shadowColor: "hover:shadow-blue-500/10",
+      textColor: "text-blue-600 dark:text-blue-300",
+    },
+    {
+      icon: <FileText size={38} className="text-green-500 dark:text-green-400" />,
+      title: t('rolloverPage.rolloverHistory.title'),
+      description: t('rolloverPage.rolloverHistory.description'),
+      link: "#", // Placeholder link
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+      borderColor: "hover:border-green-300 dark:hover:border-green-600",
+      shadowColor: "hover:shadow-green-500/10",
+      textColor: "text-green-600 dark:text-green-300",
+      disabled: true,
+    },
+    {
+      icon: <TrendingUp size={38} className="text-purple-500 dark:text-purple-400" />,
+      title: t('rolloverPage.trendAnalysis.title'),
+      description: t('rolloverPage.trendAnalysis.description'),
+      link: "#", // Placeholder link
+      bgColor: "bg-purple-50 dark:bg-purple-900/20",
+      borderColor: "hover:border-purple-300 dark:hover:border-purple-600",
+      shadowColor: "hover:shadow-purple-500/10",
+      textColor: "text-purple-600 dark:text-purple-300",
+      disabled: true,
+    },
+    {
+      icon: <Edit3 size={38} className="text-yellow-500 dark:text-yellow-400" />,
+      title: t('rolloverPage.adjustments.title'),
+      description: t('rolloverPage.adjustments.description'),
+      link: "#", // Placeholder link
+      bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+      borderColor: "hover:border-yellow-300 dark:hover:border-yellow-600",
+      shadowColor: "hover:shadow-yellow-500/10",
+      textColor: "text-yellow-600 dark:text-yellow-300",
+      disabled: true,
+    },
+    {
+      icon: <HelpCircle size={38} className="text-red-500 dark:text-red-400" />,
+      title: t('rolloverPage.support.title'),
+      description: t('rolloverPage.support.description'),
+      link: "#", // Placeholder link
+      bgColor: "bg-red-50 dark:bg-red-900/20",
+      borderColor: "hover:border-red-300 dark:hover:border-red-600",
+      shadowColor: "hover:shadow-red-500/10",
+      textColor: "text-red-600 dark:text-red-300",
+      disabled: true,
+    },
+     {
+      icon: <Settings size={38} className="text-indigo-500 dark:text-indigo-400" />,
+      title: t('rolloverPage.settings.title'),
+      description: t('rolloverPage.settings.description'),
+      link: "#", // Placeholder link
+      bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
+      borderColor: "hover:border-indigo-300 dark:hover:border-indigo-600",
+      shadowColor: "hover:shadow-indigo-500/10",
+      textColor: "text-indigo-600 dark:text-indigo-300",
+      disabled: true,
+    },
+  ];
+
   return (
-    <>
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Month Rollover</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Finalize your monthly reports and prepare for the next accounting period
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Link
-              href="/dashboard/rollover/monthly"
-              className="block p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
+    <div className="p-6 bg-gray-50 dark:bg-slate-900 min-h-screen">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+          {t('rolloverPage.headerTitle')}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
+          {t('rolloverPage.headerSubtitle')}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {features.map((feature, index) => (
+          <Link key={index} href={feature.disabled ? "#" : feature.link} passHref>
+            <div
+              className={`p-6 rounded-xl shadow-lg transition-all duration-300 ease-in-out 
+                        ${feature.bgColor} 
+                        ${feature.borderColor} 
+                        ${feature.shadowColor} 
+                        ${feature.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105'}`}
             >
-              <div className="flex items-start">
-                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
-                  <Calendar size={24} />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Monthly Reports</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-3">View, export, and finalize your monthly inventory and sales reports</p>
-                  <div className="flex items-center text-blue-600 dark:text-blue-400">
-                    <span className="text-sm font-medium">View monthly reports</span>
-                    <ArrowRight size={16} className="ml-1" />
-                  </div>
-                </div>
-              </div>
-            </Link>
-            
-            <div className="block p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
-              <div className="flex items-start">
-                <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 mr-4">
-                  <Clock size={24} />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Quarterly Reports</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-3">View and export quarterly summaries of your business performance</p>
-                  <div className="flex items-center text-gray-500 dark:text-gray-400">
-                    <span className="text-sm font-medium">Coming soon</span>
-                  </div>
-                </div>
+              <div className="mb-4">{feature.icon}</div>
+              <h2 className={`text-xl font-semibold mb-2 ${feature.textColor.replace("text-", "text-")}`}>
+                {feature.title}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                {feature.description}
+              </p>
+              <div className={`text-sm font-medium ${feature.textColor}`}>
+                {feature.disabled ? t('comingSoon') : t('rolloverPage.viewFeature')}
+                 {!feature.disabled && <span className="ml-1">→</span>}
               </div>
             </div>
-          </div>
-          
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden mb-8">
-            <div className="p-6 border-b border-gray-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Month Rollover Guide</h2>
-            </div>
-            
-            <div className="p-6">
-              <div className="space-y-6">
-                <div className="flex">
-                  <div className="flex-shrink-0 flex h-6 items-center">
-                    <div className="h-full w-0.5 bg-indigo-600 dark:bg-indigo-500"></div>
-                  </div>
-                  <div className="flex items-start ml-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">
-                        1
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Review current month data</h3>
-                      <p className="mt-1 text-gray-600 dark:text-gray-400">
-                        Make sure all sales, purchases, and inventory adjustments are properly recorded for the current month before proceeding with rollover.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex">
-                  <div className="flex-shrink-0 flex h-6 items-center">
-                    <div className="h-full w-0.5 bg-indigo-600 dark:bg-indigo-500"></div>
-                  </div>
-                  <div className="flex items-start ml-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">
-                        2
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Export monthly report</h3>
-                      <p className="mt-1 text-gray-600 dark:text-gray-400">
-                        Export your monthly report to CSV for your records and accounting purposes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex">
-                  <div className="flex-shrink-0 flex h-6 items-center">
-                    <div className="h-full w-0.5 bg-indigo-600 dark:bg-indigo-500"></div>
-                  </div>
-                  <div className="flex items-start ml-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">
-                        3
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Finalize the month</h3>
-                      <p className="mt-1 text-gray-600 dark:text-gray-400">
-                        Click on "Rollover to Next Month" button to close the current accounting period and prepare for the next month.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex">
-                  <div className="flex-shrink-0 flex h-6 items-center">
-                    <div className="h-full w-0.5 bg-transparent"></div>
-                  </div>
-                  <div className="flex items-start ml-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">
-                        4
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">Verify rollover success</h3>
-                      <p className="mt-1 text-gray-600 dark:text-gray-400">
-                        Ensure the system has properly transitioned to the new month and that beginning inventory balances are correct.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300">Important Note</h3>
-                <div className="mt-2 text-sm text-amber-700 dark:text-amber-400">
-                  <p>
-                    Monthly rollover is a critical accounting procedure. Once a month is finalized, you cannot edit its data.
-                    Make sure all transactions are properly recorded before proceeding with the month-end rollover.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-12 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
+        <div className="flex items-center mb-4">
+          <Info size={24} className="text-blue-600 dark:text-blue-400 mr-3" />
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            {t('rolloverPage.importantNotes.title')}
+          </h2>
+        </div>
+        <div className="text-gray-700 dark:text-gray-300 space-y-3">
+          <p>
+            {t('rolloverPage.importantNotes.p1')}
+          </p>
+          <p>
+            {t('rolloverPage.importantNotes.p2')}
+          </p>
+           <p className="text-sm text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-md">
+            <strong>{t('rolloverPage.importantNotes.warningTitle')}</strong> {t('rolloverPage.importantNotes.warningText')}
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
 } 

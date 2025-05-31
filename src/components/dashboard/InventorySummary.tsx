@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { useInventory } from '@/hooks/useInventory';
-import { Loader2, Package, AlertTriangle } from 'lucide-react';
+import { Loader2, Package, AlertTriangle  } from 'lucide-react';
 import { formatCurrency } from '@/hooks/useSalesData';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -80,7 +80,7 @@ export default function InventorySummary() {
       totalValue,
       categories,
     };
-  }, [inventory]);
+  }, [inventory, t]);
   
   if (isLoading) {
     return (

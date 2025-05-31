@@ -1,12 +1,5 @@
-import { 
-  TrendingUp, 
-  ShoppingBag, 
-  Users, 
-  DollarSign,
-  ArrowUp,
-  ArrowDown,
-  Car
-} from 'lucide-react';
+import React from 'react';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface StatCardProps {

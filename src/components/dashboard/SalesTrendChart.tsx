@@ -48,8 +48,8 @@ const SalesTrendChart = () => {
         }
         const data: SalesTrendData = await response.json();
         setChartData(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : String(err));
         console.error('Error fetching sales trend data:', err);
       } finally {
         setIsLoading(false);
@@ -148,13 +148,14 @@ const SalesTrendChart = () => {
         titleColor: '#fff',
         bodyColor: '#fff',
         callbacks: {
-          label: function(context: any) {
-            let label = context.dataset.label || '';
+          label: function(context: unknown) {
+            let label = (context as { dataset: { label?: string } }).dataset.label || '';
             if (label) {
               label += ': ';
             }
-            if (context.parsed.y !== null) {
-              label += new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+            const yValue = (context as { parsed?: { y?: number } }).parsed?.y;
+            if (yValue !== null && yValue !== undefined) {
+              label += new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD' }).format(yValue);
             }
             return label;
           }

@@ -11,6 +11,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, ru, uz } from 'date-fns/locale';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useRecentActivity } from "@/hooks/useSalesData";
 
 interface ActivityItemDto {
   id: string;
@@ -20,14 +21,14 @@ interface ActivityItemDto {
   productName?: string;
   quantity?: number;
   value?: number;
-  details?: Record<string, any>; 
+  details?: Record<string, unknown>;
 }
 
 interface ActivityItem extends Omit<ActivityItemDto, 'timestamp'> {
   timestamp: Date;
 }
 
-const ActivityTypeIcon = ({ type }: { type: ActivityItem['type'] }) => {
+const ActivityTypeIcon = ({ type }: { type: unknown }) => {
   switch (type) {
     case 'sale':
       return <ShoppingBag size={18} className="text-green-500" />;
@@ -40,7 +41,7 @@ const ActivityTypeIcon = ({ type }: { type: ActivityItem['type'] }) => {
   }
 };
 
-const RecentActivityFeed = () => {
+export default function RecentActivityFeed() {
   const { t, i18n } = useTranslation();
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,8 +62,8 @@ const RecentActivityFeed = () => {
           timestamp: new Date(item.timestamp)
         })); 
         setActivities(formattedData);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : String(err));
         console.error('Error fetching recent activity data:', err);
       } finally {
         setIsLoading(false);
@@ -174,6 +175,4 @@ const RecentActivityFeed = () => {
       </ul>
     </div>
   );
-};
-
-export default RecentActivityFeed; 
+} 

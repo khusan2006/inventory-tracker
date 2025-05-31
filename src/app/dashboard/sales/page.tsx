@@ -1,64 +1,62 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
-  ArrowDownUp, 
   DollarSign, 
   Search, 
   X, 
-  Loader2, 
-  FileText, 
   Tag, 
-  Package, 
   ShoppingCart, 
-  ArrowUpDown, 
   ChevronLeft, 
   ChevronRight, 
-  AlertCircle,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  RefreshCw,
+  Download,
+  PlusCircle,
+  FileDown,
 } from 'lucide-react';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { getTimeAgo, formatCurrency } from '@/hooks/useSalesData';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
-
-interface Sale {
-  id: string;
-  productId: string;
-  productName: string;
-  batchId: string;
-  quantity: number;
-  salePrice: number;
-  purchasePrice: number;
-  profit: number;
-  profitMargin: number;
-  saleDate: string;
-  category: string | null;
-}
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { toast } from "sonner";
+import { fetchSalesData } from "@/app/api/sales";
 
 interface SortConfig {
   key: keyof Sale | null;
   direction: 'ascending' | 'descending';
 }
 
-export default function SalesHistoryPage() {
-  const router = useRouter();
+const ITEMS_PER_PAGE = 10;
+
+interface SaleProduct {
+  productName: string;
+  quantity: number;
+  // Add other relevant product properties if known/used
+}
+
+// Local Sale interface to include all used properties.
+// TODO: Reconcile this with the Sale type from @/types/inventory
+interface Sale {
+  id: string;
+  customerName?: string;
+  products: SaleProduct[];
+  saleDate: string;
+  status?: string;
+  totalAmount?: number;
+  // Fields from previously seen local interface or common usage
+  productName: string; // Used in some filter logic, might be legacy or part of products
+  category?: string | null;
+  quantity: number; // Total quantity for the sale, or sum of product quantities
+  salePrice: number; // Overall sale price, or to be deprecated if using totalAmount
+  profit: number; // Required to avoid undefined issues
+  profitMargin: number; // Required to avoid undefined issues
+}
+
+export default function SalesPage() {
   const { t } = useTranslation();
   const [sales, setSales] = useState<Sale[]>([]);
-  const [filteredSales, setFilteredSales] = useState<Sale[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -79,70 +77,33 @@ export default function SalesHistoryPage() {
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Active tab
+  const [activeTab, setActiveTab] = useState("all");
   
   // Fetch sales data
-  useEffect(() => {
-    async function fetchSales() {
-      try {
-        setIsLoading(true);
-        let url = '/api/sales';
-        
-        // Add date filters if they exist
-        const params = new URLSearchParams();
-        params.append('startDate', dateRange.start);
-        params.append('endDate', dateRange.end);
-        
-        if (params.toString()) {
-          url += `?${params.toString()}`;
-        }
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch sales data');
-        }
-        
-        const data = await response.json();
-        setSales(data);
-        
-        // Default sort by date descending (newest first)
-        const sortedData = [...data].sort((a, b) => 
-          new Date(b.saleDate).getTime() - new Date(a.saleDate).getTime()
-        );
-        
-        setFilteredSales(sortedData);
-        setTotalPages(Math.ceil(sortedData.length / itemsPerPage));
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching sales:', err);
-        setError('Failed to load sales data. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
+  const loadSales = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Pass dateRange to fetchSalesData if API supports it
+      const params: Record<string, string> = {};
+      if (dateRange.start) params.startDate = dateRange.start;
+      if (dateRange.end) params.endDate = dateRange.end;
+      
+      const data = await fetchSalesData(params);
+      setSales(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(t("salesPage.fetchError")));
+      toast.error(String(t("salesPage.fetchErrorToast")));
+    } finally {
+      setIsLoading(false);
     }
-    
-    fetchSales();
-  }, [dateRange, itemsPerPage]);
+  }, [t, dateRange]);
   
-  // Handle search and filtering
   useEffect(() => {
-    if (searchText.trim() === '') {
-      setFilteredSales(sales);
-    } else {
-      const lowercasedSearch = searchText.toLowerCase();
-      const filtered = sales.filter(sale => 
-        sale.productName.toLowerCase().includes(lowercasedSearch) ||
-        (sale.category && sale.category.toLowerCase().includes(lowercasedSearch))
-      );
-      setFilteredSales(filtered);
-    }
-    
-    // Reset to first page when search changes
-    setCurrentPage(1);
-    setTotalPages(Math.ceil(filteredSales.length / itemsPerPage));
-  }, [searchText, sales, itemsPerPage]);
+    loadSales();
+  }, [loadSales]);
   
   // Handle sorting
   const handleSort = (key: keyof Sale) => {
@@ -153,42 +114,6 @@ export default function SalesHistoryPage() {
     }
     
     setSortConfig({ key, direction });
-    
-    const sortedData = [...filteredSales].sort((a, b) => {
-      // Check for null or undefined values
-      const valueA = a[key] ?? '';
-      const valueB = b[key] ?? '';
-      
-      if (valueA < valueB) {
-        return direction === 'ascending' ? -1 : 1;
-      }
-      if (valueA > valueB) {
-        return direction === 'ascending' ? 1 : -1;
-      }
-      return 0;
-    });
-    
-    setFilteredSales(sortedData);
-  };
-  
-  // Get current page items
-  const getCurrentPageItems = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredSales.slice(startIndex, endIndex);
-  };
-  
-  // Handle page changes
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-    }
-  };
-  
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
-    }
   };
   
   const clearFilters = () => {
@@ -203,47 +128,132 @@ export default function SalesHistoryPage() {
     });
   };
   
+  // Get time ago for display
+  const getRelativeTime = (dateString: string) => {
+    return getTimeAgo(new Date(dateString));
+  };
+  
+  const filteredSalesMemo = useMemo(() => {
+    let filtered = sales.filter((sale) => {
+      const searchTermLower = searchText.toLowerCase();
+      return (
+        sale.productName.toLowerCase().includes(searchTermLower) ||
+        (sale.category && sale.category.toLowerCase().includes(searchTermLower))
+      );
+    });
+
+    if (activeTab === "completed") {
+      filtered = filtered.filter((sale) => sale.status === "Completed");
+    } else if (activeTab === "pending") {
+      filtered = filtered.filter((sale) => sale.status === "Pending");
+    } else if (activeTab === "cancelled") {
+      filtered = filtered.filter((sale) => sale.status === "Cancelled");
+    }
+
+    if (sortConfig.key !== null) {
+      filtered.sort((a, b) => {
+        const valueA = a[sortConfig.key!] ?? '';
+        const valueB = b[sortConfig.key!] ?? '';
+        
+        if (valueA < valueB) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (valueA > valueB) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return filtered;
+  }, [sales, searchText, activeTab, sortConfig]);
+
+  const totalPagesMemo = useMemo(() => Math.ceil(filteredSalesMemo.length / ITEMS_PER_PAGE), [filteredSalesMemo.length]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText, activeTab, filteredSalesMemo.length]);
+
+  const currentSales = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredSalesMemo.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredSalesMemo, currentPage]);
+
+  // Calculate totals using the filtered data
+  const totalSales = filteredSalesMemo.length;
+  const totalRevenue = filteredSalesMemo.reduce((sum, sale) => sum + (sale.salePrice * sale.quantity), 0);
+  const totalProfit = filteredSalesMemo.reduce((sum, sale) => sum + sale.profit, 0);
+  const averageProfitMargin = totalSales > 0 
+    ? filteredSalesMemo.reduce((sum, sale) => sum + sale.profitMargin, 0) / totalSales
+    : 0;
+
+  // Handle page changes
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+  
+  const handleNextPage = () => {
+    if (currentPage < totalPagesMemo) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, 'MMM d, yyyy');
   };
 
-  // Get time ago for display
-  const getRelativeTime = (dateString: string) => {
-    return getTimeAgo(new Date(dateString));
-  };
-  
-  // Calculate totals
-  const totalSales = filteredSales.length;
-  const totalQuantity = filteredSales.reduce((sum, sale) => sum + sale.quantity, 0);
-  const totalRevenue = filteredSales.reduce((sum, sale) => sum + (sale.salePrice * sale.quantity), 0);
-  const totalProfit = filteredSales.reduce((sum, sale) => sum + sale.profit, 0);
-  const averageProfitMargin = totalSales > 0 
-    ? filteredSales.reduce((sum, sale) => sum + sale.profitMargin, 0) / totalSales
-    : 0;
-  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+        <RefreshCw className="h-10 w-10 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] text-center p-4">
+        <FileDown className="h-12 w-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-semibold text-red-600 mb-2">
+          {t("salesPage.errorLoadingTitle")}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+        <Button onClick={loadSales}>
+          <RefreshCw className="mr-2 h-4 w-4" /> {t("salesPage.retry")}
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900">
-        <div className="p-3 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('sales.salesHistory')}</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {t('sales.viewing')} {new Date(dateRange.start).toLocaleDateString()} {t('common.to')} {new Date(dateRange.end).toLocaleDateString()}
-              </p>
-            </div>
-            
-            <Button 
-              className="inline-flex items-center"
-              onClick={() => {/* Export CSV function here */}}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              {t('sales.exportCSV')}
-            </Button>
-          </div>
-          
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+      <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-800 dark:text-white">
+          {t('sales.salesHistory')}
+        </h2>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            {t('sales.exportCSV')}
+          </Button>
+          <Button>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            {t('sales.addSale')}
+          </Button>
+        </div>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="all">{t("salesPage.tabs.all")}</TabsTrigger>
+          <TabsTrigger value="completed">{t("salesPage.tabs.completed")}</TabsTrigger>
+          <TabsTrigger value="pending">{t("salesPage.tabs.pending")}</TabsTrigger>
+          <TabsTrigger value="cancelled">{t("salesPage.tabs.cancelled")}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="all" className="space-y-4">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
             <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-3 sm:p-4">
@@ -367,179 +377,147 @@ export default function SalesHistoryPage() {
                 </button>
                 
                 <div className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('sales.foundCount', { count: filteredSales.length })}
+                  {t('sales.foundCount', { count: filteredSalesMemo.length })}
                 </div>
               </div>
             </div>
-            
-            {isLoading ? (
-              <div className="p-8 text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">{t('sales.loading')}</p>
-              </div>
-            ) : error ? (
-              <div className="p-8 text-center">
-                <p className="text-red-500 dark:text-red-400 mb-2">{error}</p>
-              </div>
-            ) : filteredSales.length === 0 ? (
-              <div className="p-8 text-center">
-                <ShoppingCart size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
-                <p className="text-gray-600 dark:text-gray-300">{t('sales.noResults')}</p>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">{t('common.tryAdjusting')}</p>
-              </div>
-            ) : (
-              <>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-                    <thead className="bg-gray-50 dark:bg-slate-700">
-                      <tr>
-                        <th 
-                          className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('saleDate')}
-                        >
-                          <div className="flex items-center">
-                            {t('common.date')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('productName')}
-                        >
-                          <div className="flex items-center">
-                            {t('sales.product')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('category')}
-                        >
-                          <div className="flex items-center">
-                            {t('inventory.category')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('quantity')}
-                        >
-                          <div className="flex items-center justify-end">
-                            {t('sales.qty')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('salePrice')}
-                        >
-                          <div className="flex items-center justify-end">
-                            {t('common.price')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                          onClick={() => handleSort('profit')}
-                        >
-                          <div className="flex items-center justify-end">
-                            {t('common.profit')}
-                            <ArrowUpDown size={14} className="ml-1" />
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                      {getCurrentPageItems().map((sale) => (
-                        <tr 
-                          key={sale.id}
-                          className="hover:bg-gray-50 dark:hover:bg-slate-700"
-                        >
-                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-                            <div>{formatDate(sale.saleDate)}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{getRelativeTime(sale.saleDate)}</div>
-                          </td>
-                          <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100 max-w-[150px] truncate">
-                            {sale.productName}
-                          </td>
-                          <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-                            {sale.category || t('sales.uncategorized')}
-                          </td>
-                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {sale.quantity}
-                          </td>
-                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
-                            {formatCurrency(sale.salePrice)}
-                          </td>
-                          <td className={`px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm font-medium text-right ${
-                            sale.profit < 0 
-                              ? 'text-red-600 dark:text-red-400' 
-                              : 'text-green-600 dark:text-green-400'
-                          }`}>
-                            {formatCurrency(sale.profit)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="px-3 py-3 flex items-center justify-between border-t border-gray-200 dark:border-slate-700">
-                    <div className="flex-1 flex justify-between sm:hidden">
-                      <button
-                        onClick={handlePrevPage}
-                        disabled={currentPage === 1}
-                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {t('common.previous')}
-                      </button>
-                      <button
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
-                        className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {t('common.next')}
-                      </button>
-                    </div>
-                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
-                          {t('common.showing')} <span className="font-medium">{((currentPage - 1) * itemsPerPage) + 1}</span> {t('common.to')} <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredSales.length)}</span> {t('common.of')} <span className="font-medium">{filteredSales.length}</span> {t('common.results')}
-                        </p>
-                      </div>
-                      <div>
-                        <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                          <button
-                            onClick={() => handlePrevPage()}
-                            disabled={currentPage === 1}
-                            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span className="sr-only">{t('common.previous')}</span>
-                            <ChevronLeft className="h-5 w-5" />
-                          </button>
-                          <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-600 bg-blue-50 dark:bg-blue-900/20 text-sm font-medium text-blue-600 dark:text-blue-400">
-                            {currentPage}
-                          </span>
-                          <button
-                            onClick={() => handleNextPage()}
-                            disabled={currentPage === totalPages}
-                            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span className="sr-only">{t('common.next')}</span>
-                            <ChevronRight className="h-5 w-5" />
-                          </button>
-                        </nav>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
           </div>
-        </div>
-      </div>
-    </>
+          
+          {/* Table */}
+          {currentSales.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead className="bg-gray-50 dark:bg-slate-700">
+                  <tr>
+                    <th 
+                      className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('saleDate')}
+                    >
+                      <div className="flex items-center">
+                        {t('common.date')}
+                        {sortConfig.key === 'saleDate' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('productName')}
+                    >
+                      <div className="flex items-center">
+                        {t('sales.product')}
+                        {sortConfig.key === 'productName' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('category')}
+                    >
+                      <div className="flex items-center">
+                        {t('inventory.category')}
+                        {sortConfig.key === 'category' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('quantity')}
+                    >
+                      <div className="flex items-center justify-end">
+                        {t('sales.qty')}
+                        {sortConfig.key === 'quantity' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('salePrice')}
+                    >
+                      <div className="flex items-center justify-end">
+                        {t('common.price')}
+                        {sortConfig.key === 'salePrice' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-3 py-2.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
+                      onClick={() => handleSort('profit')}
+                    >
+                      <div className="flex items-center justify-end">
+                        {t('common.profit')}
+                        {sortConfig.key === 'profit' && (sortConfig.direction === 'ascending' ? '▲' : '▼')}
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                  {currentSales.map((sale) => (
+                    <tr 
+                      key={sale.id}
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                    >
+                      <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                        <div>{formatDate(sale.saleDate)}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{getRelativeTime(sale.saleDate)}</div>
+                      </td>
+                      <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100 max-w-[150px] truncate">
+                        {sale.productName}
+                      </td>
+                      <td className="px-3 py-2.5 text-xs sm:text-sm text-gray-900 dark:text-gray-100">
+                        {sale.category || t('sales.uncategorized')}
+                      </td>
+                      <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
+                        {sale.quantity}
+                      </td>
+                      <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
+                        {formatCurrency(sale.salePrice)}
+                      </td>
+                      <td className={`px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm font-medium text-right ${
+                        sale.profit < 0 
+                          ? 'text-red-600 dark:text-red-400' 
+                          : 'text-green-600 dark:text-green-400'
+                      }`}>
+                        {formatCurrency(sale.profit)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <ShoppingCart size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
+              <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+                {t('sales.noResults')}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('common.tryAdjusting')}
+              </p>
+            </div>
+          )}
+          
+          {totalPagesMemo > 1 && (
+            <div className="flex items-center justify-between pt-6">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="mr-2 h-4 w-4"/>
+                {t('common.previous')}
+              </Button>
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                {t('common.pageInfo', { currentPage, totalPages: totalPagesMemo })}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPagesMemo}
+              >
+                {t('common.next')}
+                <ChevronRight className="ml-2 h-4 w-4"/>
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 } 

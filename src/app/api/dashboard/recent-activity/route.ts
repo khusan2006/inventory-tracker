@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 interface ActivityItem {
   id: string;
@@ -14,7 +14,7 @@ interface ActivityItem {
   details?: Record<string, any>; // For any other specific details
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -77,9 +77,11 @@ export async function GET(request: Request) {
     const recentActivities = allActivities.slice(0, finalLimit);
 
     return NextResponse.json(recentActivities);
-
-  } catch (error) {
-    console.error('[API_DASHBOARD_RECENT_ACTIVITY_GET]', error);
-    return NextResponse.json({ error: 'Failed to fetch recent activity' }, { status: 500 });
+  } catch (error: unknown) {
+    console.error('Error fetching recent activity:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch recent activity' },
+      { status: 500 }
+    );
   }
 } 

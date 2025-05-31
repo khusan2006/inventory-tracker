@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prismadb';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
-
-interface SaleWithProduct {
-  id: string;
-  productId: string;
-  productName: string;
-  batchId: string;
-  quantity: number;
-  salePrice: number;
-  purchasePrice: number;
-  profit: number;
-  profitMargin: number;
-  saleDate: string;
-  category: string | null;
-}
+import { authOptions } from "@/lib/authOptions";
 
 // GET all sales
 export async function GET(request: NextRequest) {
@@ -29,9 +15,9 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const batchId = searchParams.get('batchId'); // Keep if direct batch filtering is needed
+    const batchId = searchParams.get('batchId');
 
-    let whereClause: any = { companyId: userCompanyId }; // Base filter by companyId
+    const whereClause: any = { companyId: userCompanyId };
 
     if (startDate && endDate) {
       const nextDay = new Date(endDate);

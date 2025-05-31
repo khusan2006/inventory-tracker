@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Truck, Filter, Search, Package, Database, Download, X } from 'lucide-react';
+import { Plus, Search, Package, Calendar, AlertTriangle, Edit, Trash2, ChevronLeft, ChevronRight, Truck, Filter, Database, Download, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { getTimeAgo } from '@/hooks/useSalesData';
 import { useTranslation } from '@/hooks/useTranslation';
