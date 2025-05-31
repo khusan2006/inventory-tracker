@@ -20,8 +20,7 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // We'll initialize with a placeholder and update it once mounted
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('light'); // Default to light initially
   const [mounted, setMounted] = useState(false);
 
   // Function to actually apply the theme to the DOM
@@ -35,20 +34,18 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   };
 
   useEffect(() => {
-    // Only run this once when the component mounts
-    setMounted(true);
+    setMounted(true); // Set mounted to true first
 
     // Determine initial theme
     const storedTheme = localStorage.getItem('theme') as Theme | null;
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // Set the initial theme
+    // Set the initial theme state
     const initialTheme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
-    setTheme(initialTheme);
-    
-    // Apply it immediately
+    setTheme(initialTheme); 
+    // Apply it to the DOM after state is set
     applyTheme(initialTheme);
-  }, []);
+  }, []); // Empty dependency array, runs once on mount
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -56,9 +53,9 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     applyTheme(newTheme);
   };
 
-  // To avoid hydration mismatch, only render children when mounted
+  // If not mounted, return null to prevent children from rendering prematurely
   if (!mounted) {
-    return <div style={{ visibility: 'hidden' }}>{children}</div>;
+    return null; 
   }
 
   return (

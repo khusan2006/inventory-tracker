@@ -471,7 +471,11 @@ export default function SalesHistoryPage() {
                           <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 text-right">
                             {formatCurrency(sale.salePrice)}
                           </td>
-                          <td className="px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 text-right">
+                          <td className={`px-3 py-2.5 whitespace-nowrap text-xs sm:text-sm font-medium text-right ${
+                            sale.profit < 0 
+                              ? 'text-red-600 dark:text-red-400' 
+                              : 'text-green-600 dark:text-green-400'
+                          }`}>
                             {formatCurrency(sale.profit)}
                           </td>
                         </tr>

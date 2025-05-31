@@ -50,7 +50,7 @@ export default function InventorySummary() {
       // Update category data
       const categoryName = typeof product.category === 'object' && product.category !== null && 'name' in product.category
         ? product.category.name
-        : (product.category as string) || 'Uncategorized';
+        : (product.category as string) || t('common.uncategorized');
         
       const existingCategory = categoryMap.get(categoryName);
       

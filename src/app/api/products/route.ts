@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       data: {
         ...data, // Spread existing data
         sellingPrice: parseFloat(data.sellingPrice),
-        totalStock: parseInt(data.totalStock || '0'),
+        totalStock: 0, // ALWAYS 0 on creation. Batches will update this.
         minStockLevel: parseInt(data.minStockLevel || '0'),
         companyId: userCompanyId, // Assign companyId
         // Ensure all fields from schema are covered or have defaults
@@ -177,7 +177,6 @@ export async function PATCH(request: NextRequest) {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
     if (data.sellingPrice !== undefined) updateData.sellingPrice = parseFloat(data.sellingPrice);
-    if (data.totalStock !== undefined) updateData.totalStock = parseInt(data.totalStock);
     if (data.minStockLevel !== undefined) updateData.minStockLevel = parseInt(data.minStockLevel);
     if (data.location !== undefined) updateData.location = data.location;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;

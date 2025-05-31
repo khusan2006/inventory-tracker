@@ -275,8 +275,9 @@ export async function PATCH(request: NextRequest) {
     if (data.purchasePrice !== undefined) updateData.purchasePrice = parseFloat(data.purchasePrice);
     if (data.initialQuantity !== undefined) updateData.initialQuantity = parseInt(data.initialQuantity);
     if (data.currentQuantity !== undefined) {
-      updateData.currentQuantity = parseInt(data.currentQuantity);
-      updateData.status = parseInt(data.currentQuantity) > 0 ? 'active' : 'depleted';
+      const newCurrentQuantity = Math.max(0, parseInt(data.currentQuantity)); // Ensure not negative
+      updateData.currentQuantity = newCurrentQuantity;
+      updateData.status = newCurrentQuantity > 0 ? 'active' : 'depleted';
     }
     if (data.supplier !== undefined) updateData.supplier = data.supplier;
     if (data.invoiceNumber !== undefined) updateData.invoiceNumber = data.invoiceNumber;

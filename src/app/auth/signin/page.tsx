@@ -5,6 +5,9 @@ import { signIn, getCsrfToken } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -71,61 +74,60 @@ export default function SignInPage() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-      <form 
-        onSubmit={handleSubmit} 
-        style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}
-      >
-        {/* Hidden CSRF token input - NextAuth.js might not require this for Credentials if handling submissions via its API route properly */}
-        {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
-        <h2>Sign In</h2>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
-          />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-8 sm:p-10 space-y-6 w-full max-w-md">
+        <div className="text-center">
+           <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Sign In to Your Account
+          </h2>
         </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px' }}
-          />
-        </div>
-        <button 
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
+          <div>
+            <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 w-full"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-1 w-full"
+              placeholder="Password"
+            />
+          </div>
+          <Button 
             type="submit" 
             disabled={loading || !csrfToken}
-            style={{
-                padding: '0.75rem', 
-                backgroundColor: (loading || !csrfToken) ? '#ccc' : '#0070f3', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
-                cursor: (loading || !csrfToken) ? 'not-allowed' : 'pointer'
-            }}
-        >
-          {loading ? 'Signing In...' : 'Sign In'}
-        </button>
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-          <p style={{ margin: 0 }}>
-            Don't have an account?{' '}
-            <Link href="/auth/signup" legacyBehavior>
-              <a style={{ color: '#0070f3', textDecoration: 'underline', cursor: 'pointer' }}>
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 dark:focus:ring-offset-slate-800"
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </Button>
+          <div className="text-sm text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Don't have an account?{' '}
+              <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                 Sign Up
-              </a>
-            </Link>
-          </p>
-        </div>
-      </form>
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 } 

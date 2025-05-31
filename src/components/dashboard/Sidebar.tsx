@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -19,13 +19,27 @@ import {
   Layers,
   RefreshCw,
   PieChart,
-  Car
+  Car,
+  Box,
+  ListChecks,
+  TrendingUp,
+  X,
+  Zap
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Button } from '../ui/button';
+import React from 'react';
 
-export default function Sidebar({ className = "", isMobile = false }: { className?: string, isMobile?: boolean }) {
+interface SidebarProps {
+  className?: string;
+  isOpen?: boolean;
+  setMobileSidebarOpen?: (open: boolean) => void;
+}
+
+export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
+  const { data: session } = useSession();
 
   const menuItems = [
     { 
@@ -82,7 +96,13 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
     },
   ];
 
-  return (
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/auth/signin' });
+  };
+
+  const isMobile = typeof isOpen !== 'undefined';
+
+  const sidebarContent = (
     <div className={`h-full w-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col ${className}`}>
       <div className="h-16 flex items-center p-4 border-b border-gray-200 dark:border-slate-700">
         <Car className="text-blue-600 dark:text-blue-400 mr-2" size={24} />
@@ -98,8 +118,13 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
             
             return (
               <li key={item.href}>
-                <Link 
+                <Link
                   href={item.href}
+                  onClick={() => {
+                    if (isMobile && setMobileSidebarOpen) {
+                      setMobileSidebarOpen(false);
+                    }
+                  }}
                   className={`flex items-center px-4 py-2 text-sm transition-colors ${
                     isActive || hasActiveSubItem
                       ? 'bg-blue-50 text-blue-600 border-r-4 border-blue-600 dark:bg-slate-700 dark:text-blue-400 dark:border-blue-400' 
@@ -120,7 +145,6 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
                     </span>
                   )}
                 </Link>
-                
                 {item.subItems && (hasActiveSubItem || (isActive && item.subItems)) && (
                   <ul className="mt-1 ml-9 space-y-1">
                     {item.subItems.map(subItem => {
@@ -130,6 +154,11 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
                         <li key={subItem.href}>
                           <Link
                             href={subItem.href}
+                            onClick={() => {
+                              if (isMobile && setMobileSidebarOpen) {
+                                setMobileSidebarOpen(false);
+                              }
+                            }}
                             className={`flex items-center px-4 py-2 text-sm transition-colors rounded-md ${
                               isSubActive
                                 ? 'bg-blue-100 text-blue-600 dark:bg-slate-600 dark:text-blue-400'
@@ -147,19 +176,54 @@ export default function Sidebar({ className = "", isMobile = false }: { classNam
                   </ul>
                 )}
               </li>
-            )
+            );
           })}
         </ul>
       </nav>
       <div className="p-4 border-t border-gray-200 dark:border-slate-700 sticky bottom-0 bg-white dark:bg-slate-800 mt-auto">
-        <button 
-          onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+        {session?.user && (
+          <div className="mb-3 text-center">
+            <p className="text-sm font-medium text-gray-800 dark:text-white">{session.user.name || session.user.email}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">{session.user.companyId ? t('common.companyUser') : t('common.user')}</p>
+          </div>
+        )}
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={handleSignOut}
         >
-          <LogOut size={20} className="mr-3" />
+          <LogOut className="mr-2 h-4 w-4" />
           {t('common.logout')}
-        </button>
+        </Button>
       </div>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <React.Fragment>
+        {isOpen && setMobileSidebarOpen && (
+          <div 
+            className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+        <div 
+          className={`fixed inset-y-0 left-0 z-40 transform transition-transform ease-in-out duration-300 md:hidden 
+            ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+            ${className || ''}`
+          }
+        >
+          {sidebarContent}
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <div className={className}>
+      {sidebarContent}
     </div>
   );
 } 

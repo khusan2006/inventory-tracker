@@ -6,55 +6,75 @@ import { Button } from '@/components/ui/button'; // Assuming you have a Button c
 import Link from 'next/link';
 import LanguageSelector from '@/components/LanguageSelector';
 import ThemeToggle from '@/components/ThemeToggle';
+import { Menu } from "lucide-react"; // Import Menu icon
 
-interface HeaderProps {
+export interface HeaderProps {
   title?: string;
   description?: string;
   icon?: ReactNode;
   actions?: ReactNode;
+  wrapperClassName?: string;
+  toggleMobileSidebar?: () => void; // Add prop type
 }
 
-export default function Header({ title, description, icon, actions }: HeaderProps) {
+export default function Header({
+  title,
+  description,
+  icon,
+  actions,
+  wrapperClassName,
+  toggleMobileSidebar,
+}: HeaderProps) {
   const { data: session, status } = useSession();
   const isLoading = status === 'loading';
 
   return (
-    <header className="flex items-center justify-between mb-6 py-4 border-b">
-      {(title || icon) ? (
-        <div className="flex items-center">
-          {icon && (
-            <div className="mr-3 text-primary p-1.5 bg-primary/10 rounded-lg">
-              {icon}
-            </div>
-          )}
-          {title && (
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
-              {description && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {description}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div />
-      )}
-
-      <div className="flex items-center space-x-3">
+    <header className={`flex items-center justify-between ${wrapperClassName ? wrapperClassName : 'py-4 border-b'}`}>
+      <div className="flex items-center">
+        {/* Hamburger Menu for Mobile */}
+        {toggleMobileSidebar && (
+          <Button 
+            variant="outline"
+            size="icon" 
+            className="md:hidden mr-3 ml-1"
+            onClick={toggleMobileSidebar}
+            aria-label="Open sidebar"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+        {/* Original icon prop handling - if you decide to use it alongside title */}
+        {icon && !title && (
+           <div className="mr-3 text-primary p-1.5 bg-primary/10 rounded-lg md:hidden">
+             {icon}
+           </div>
+        )}
+        {icon && title && (
+          <div className="mr-3 text-primary p-1.5 bg-primary/10 rounded-lg hidden md:block">
+            {icon}
+          </div>
+        )}
+        {title && (
+          <div className="flex flex-col">
+            <h1 className="text-lg md:text-xl font-semibold text-foreground">{title}</h1>
+            {description && (
+              <p className="text-xs md:text-sm text-muted-foreground hidden md:block">{description}</p>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex items-center space-x-2 md:space-x-3">
         {actions && <div className="flex space-x-2">{actions}</div>}
         
         <LanguageSelector />
         <ThemeToggle />
 
         {isLoading && (
-            <p className="text-sm text-gray-500">Loading...</p>
+            <div className="w-20 h-8 bg-gray-200 dark:bg-slate-700 rounded animate-pulse md:w-24"></div>
         )}
 
-        {session?.user && (
-          <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Welcome, {session.user.name || session.user.email}</span>
+        {session?.user && !isLoading && (
+          <div className="flex items-center space-x-2 md:space-x-3">
             <Button 
               variant="outline" 
               size="sm"
@@ -66,7 +86,7 @@ export default function Header({ title, description, icon, actions }: HeaderProp
         )}
 
         {!session && !isLoading && (
-          <Link href="/auth/signin" passHref>
+          <Link href="/auth/signin" passHref legacyBehavior={false}>
             <Button variant="default" size="sm">Sign In</Button>
           </Link>
         )}

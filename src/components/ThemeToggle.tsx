@@ -7,71 +7,37 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
   const { t } = useTranslation();
   
-  // Safety mechanism to prevent error
-  let theme: 'light' | 'dark' = 'light';
-  let toggleTheme = () => {};
+  // Directly use the theme and toggleTheme from context
+  // The ThemeProvider will handle the initial theme loading and DOM manipulation
+  const { theme, toggleTheme } = useTheme(); 
   
-  try {
-    // Attempt to use the ThemeProvider context
-    const themeContext = useTheme();
-    theme = themeContext.theme;
-    toggleTheme = themeContext.toggleTheme;
-  } catch (error) {
-    // If ThemeProvider context isn't available, use direct DOM manipulation
-    const toggle = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-        setCurrentTheme('light');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-        setCurrentTheme('dark');
-      }
-    };
-    
-    toggleTheme = toggle;
-  }
-  
-  // Check if we're mounted to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
-    
-    // Set initial theme if we're not using the context
-    try {
-      useTheme();
-    } catch (error) {
-      const isDark = document.documentElement.classList.contains('dark');
-      setCurrentTheme(isDark ? 'dark' : 'light');
-    }
   }, []);
   
   if (!mounted) {
-    // Return a placeholder while we wait for client-side hydration
+    // Return a placeholder or null to avoid hydration mismatch until theme is known
+    // Matching the ThemeProvider's strategy of not rendering actual UI until mounted might be good
     return (
       <button 
         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        aria-label="Theme toggle"
+        aria-label={t('common.darkMode')} // Default or loading label
       >
-        <Moon size={20} className="text-slate-800" />
+        <Moon size={20} className="text-slate-800" /> 
       </button>
     );
   }
 
-  const displayTheme = currentTheme !== 'light' ? currentTheme : theme;
-  
   return (
     <button
       onClick={toggleTheme}
       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-      aria-label={displayTheme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
-      title={displayTheme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
+      aria-label={theme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
+      title={theme === 'dark' ? t('common.lightMode') : t('common.darkMode')}
     >
-      {displayTheme === 'dark' ? (
+      {theme === 'dark' ? (
         <Sun size={20} className="text-amber-300" />
       ) : (
         <Moon size={20} className="text-slate-800" />

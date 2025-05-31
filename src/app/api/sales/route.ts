@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
     let whereClause: any = { companyId: userCompanyId }; // Base filter by companyId
 
     if (startDate && endDate) {
-      whereClause.saleDate = { gte: new Date(startDate), lte: new Date(endDate) };
+      const nextDay = new Date(endDate);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      nextDay.setUTCHours(0, 0, 0, 0);
+      whereClause.saleDate = { gte: new Date(startDate), lt: nextDay };
     }
     if (batchId) {
       // Ensure the batch itself belongs to the company if filtering by batchId directly

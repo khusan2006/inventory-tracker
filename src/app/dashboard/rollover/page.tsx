@@ -1,14 +1,12 @@
 "use client";
 
 import React from 'react';
-import Header from '@/components/admin/Header';
 import { Calendar, RefreshCw, ArrowRight, Clock, FileCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function RolloverPage() {
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Month Rollover</h1>
@@ -17,8 +15,8 @@ export default function RolloverPage() {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <Link 
-              href="/admin/rollover/monthly"
+            <Link
+              href="/dashboard/rollover/monthly"
               className="block p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
             >
               <div className="flex items-start">

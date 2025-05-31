@@ -80,7 +80,6 @@ export default function TopSellingProducts() {
           </button>
         </div>
       </div>
-      
       {displayProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-4 min-h-[200px]">
           <Package className="h-10 w-10 text-gray-400 mb-2" />
@@ -127,10 +126,10 @@ export default function TopSellingProducts() {
             </div>
           ))}
           
-          <Link 
-            href="/admin/sales" 
+          <Link
+            href="/admin/sales"
             className="flex items-center justify-center mt-4 text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline py-2"
-          >
+            legacyBehavior>
             {t('dashboard.viewAllSales')}
             <ExternalLink className="ml-1 h-3 w-3" />
           </Link>

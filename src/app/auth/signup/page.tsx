@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -49,87 +53,93 @@ export default function SignUpPage() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-      <form 
-        onSubmit={handleSubmit} 
-        style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px', width: '100%', maxWidth: '400px' }}
-      >
-        <h2>Create Account</h2>
-        <div>
-          <label htmlFor="name">Full Name</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-          />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-8 sm:p-10 space-y-6 w-full max-w-md">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Create Your Account
+          </h2>
         </div>
-        <div>
-          <label htmlFor="companyName">Company Name</label>
-          <input
-            id="companyName"
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-          />
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{ padding: '0.5rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%' }}
-          />
-        </div>
-        <button 
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="mt-1 w-full"
+              placeholder="Your Name"
+            />
+          </div>
+          <div>
+            <Label htmlFor="companyName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Company Name</Label>
+            <Input
+              id="companyName"
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+              className="mt-1 w-full"
+              placeholder="Your Company LLC"
+            />
+          </div>
+          <div>
+            <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email address</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 w-full"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              className="mt-1 w-full"
+              placeholder="Create a password (min. 6 characters)"
+            />
+          </div>
+          <div>
+            <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={6}
+              className="mt-1 w-full"
+              placeholder="Confirm your password"
+            />
+          </div>
+          <Button 
             type="submit" 
             disabled={loading}
-            style={{
-                padding: '0.75rem', 
-                backgroundColor: loading ? '#ccc' : '#0070f3', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
-                cursor: loading ? 'not-allowed' : 'pointer'
-            }}
-        >
-          {loading ? 'Creating Account...' : 'Create Account'}
-        </button>
-        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-          Already have an account? <a href="/auth/signin" style={{ color: '#0070f3', textDecoration: 'none' }}>Sign In</a>
-        </p>
-      </form>
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 dark:focus:ring-offset-slate-800"
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </Button>
+          <div className="text-sm text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Already have an account?{' '}
+              <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 } 

@@ -69,10 +69,10 @@ export default function Home() {
           <p className="text-xl mb-8 text-gray-700 dark:text-gray-300">
             {t('home.welcomeMessage')}
           </p>
-          <Link 
+          <Link
             href="/dashboard"
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
-          >
+            legacyBehavior>
             {t('admin.dashboard')}
           </Link>
         </div>

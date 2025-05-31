@@ -163,10 +163,10 @@ export default function BatchDetailsPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               The requested batch details could not be loaded
             </p>
-            <Link 
+            <Link
               href="/admin/batches"
               className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
+              legacyBehavior>
               <ChevronLeft size={18} className="mr-2" />
               Back to Batches
             </Link>
@@ -182,10 +182,10 @@ export default function BatchDetailsPage() {
       <main className="flex-1 overflow-auto bg-gray-50 dark:bg-slate-900">
         <div className="p-3 sm:p-6">
           <div className="flex items-center mb-4 sm:mb-6">
-            <Link 
+            <Link
               href="/admin/batches"
               className="flex items-center text-blue-600 dark:text-blue-400 hover:underline mr-3 sm:mr-4"
-            >
+              legacyBehavior>
               <ChevronLeft size={16} className="mr-1" />
               <span className="text-sm sm:text-base">Back</span>
             </Link>
