@@ -14059,7 +14059,6 @@ export namespace Prisma {
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    sku_companyId?: ProductSkuCompanyIdCompoundUniqueInput
     AND?: ProductWhereInput | ProductWhereInput[]
     OR?: ProductWhereInput[]
     NOT?: ProductWhereInput | ProductWhereInput[]
@@ -14081,7 +14080,7 @@ export namespace Prisma {
     batches?: BatchListRelationFilter
     sales?: SaleListRelationFilter
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
-  }, "id" | "sku_companyId">
+  }, "id">
 
   export type ProductOrderByWithAggregationInput = {
     id?: SortOrder
@@ -15780,11 +15779,6 @@ export namespace Prisma {
   export type CategoryScalarRelationFilter = {
     is?: CategoryWhereInput
     isNot?: CategoryWhereInput
-  }
-
-  export type ProductSkuCompanyIdCompoundUniqueInput = {
-    sku: string
-    companyId: string
   }
 
   export type ProductCountOrderByAggregateInput = {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslation';
 import PageHeader from '@/components/ui/PageHeader';
 import { 
   Package,
@@ -23,6 +24,7 @@ interface Category {
 
 export default function AddProductPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,7 +47,7 @@ export default function AddProductPage() {
       try {
         const response = await fetch('/api/categories');
         if (!response.ok) {
-          throw new Error('Failed to fetch categories');
+          throw new Error(t('inventory.fetchCategoriesError'));
         }
         const data = await response.json();
         setCategories(data);
@@ -56,7 +58,7 @@ export default function AddProductPage() {
     };
 
     fetchCategories();
-  }, []);
+  }, [t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -74,7 +76,7 @@ export default function AddProductPage() {
     try {
       // Validation
       if (!formData.name || !formData.sku || !formData.categoryId || !formData.sellingPrice) {
-        throw new Error('Name, SKU, category, and selling price are required');
+        throw new Error(t('inventory.requiredFieldsValidation'));
       }
 
       // Parse numeric values
@@ -97,14 +99,14 @@ export default function AddProductPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create product');
+        throw new Error(data.error || t('inventory.createProductError'));
       }
 
       // Redirect to the product list page
       router.push('/dashboard/products');
     } catch (error: unknown) {
       console.error('Error creating product:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setError(error instanceof Error ? error.message : t('inventory.unexpectedError'));
     } finally {
       setIsLoading(false);
     }
@@ -113,8 +115,8 @@ export default function AddProductPage() {
   return (
     <div className="p-6 space-y-6">
       <PageHeader 
-        title="Add New Product" 
-        description="Create a new product in your inventory" 
+        title={t('inventory.addNewProductTitle')} 
+        description={t('inventory.addNewProductDescription')} 
         icon={<Package className="h-6 w-6" />}
       />
 
@@ -124,9 +126,9 @@ export default function AddProductPage() {
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
             <div>
               <p className="font-medium">{error}</p>
-              {error.includes('required') && (
+              {error.includes(t('inventory.requiredFieldsValidation')) && (
                 <p className="text-sm mt-1">
-                  Please make sure all fields marked with an asterisk (*) are filled out correctly.
+                  {t('inventory.requiredFieldsHelp')}
                 </p>
               )}
             </div>
@@ -136,35 +138,35 @@ export default function AddProductPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-base">
-              Product Name <span className="text-red-500">*</span>
+              {t('inventory.productNameRequired')}
             </Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter product name"
+              placeholder={t('inventory.productNamePlaceholder')}
               required
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="sku" className="text-base">
-              SKU <span className="text-red-500">*</span>
+              {t('inventory.skuRequired')}
             </Label>
             <Input
               id="sku"
               name="sku"
               value={formData.sku}
               onChange={handleInputChange}
-              placeholder="e.g. BP-2023-001"
+              placeholder={t('inventory.skuPlaceholder')}
               required
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="categoryId" className="text-base">
-              Category <span className="text-red-500">*</span>
+              {t('inventory.categoryRequired')}
             </Label>
             <select
               id="categoryId"
@@ -174,7 +176,7 @@ export default function AddProductPage() {
               className="w-full h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-gray-800 dark:text-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               required
             >
-              <option value="">Select a category</option>
+              <option value="">{t('inventory.selectCategory')}</option>
               {categories.map(category => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -185,7 +187,7 @@ export default function AddProductPage() {
 
           <div className="space-y-2">
             <Label htmlFor="sellingPrice" className="text-base">
-              Selling Price <span className="text-red-500">*</span>
+              {t('inventory.sellingPriceRequired')}
             </Label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
@@ -200,7 +202,7 @@ export default function AddProductPage() {
                 value={formData.sellingPrice}
                 onChange={handleInputChange}
                 className="pl-7"
-                placeholder="0.00"
+                placeholder={t('inventory.sellingPricePlaceholder')}
                 required
               />
             </div>
@@ -208,34 +210,34 @@ export default function AddProductPage() {
 
           <div className="md:col-span-2 space-y-2">
             <Label htmlFor="description" className="text-base">
-              Description
+              {t('inventory.description')}
             </Label>
             <Textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Product description"
+              placeholder={t('inventory.descriptionPlaceholder')}
               rows={4}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="supplier" className="text-base">
-              Default Supplier
+              {t('inventory.defaultSupplier')}
             </Label>
             <Input
               id="supplier"
               name="supplier"
               value={formData.supplier}
               onChange={handleInputChange}
-              placeholder="e.g. ABC Auto Parts Inc."
+              placeholder={t('inventory.defaultSupplierPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="minStockLevel" className="text-base">
-              Minimum Stock Level
+              {t('inventory.minimumStockLevel')}
             </Label>
             <Input
               id="minStockLevel"
@@ -244,46 +246,46 @@ export default function AddProductPage() {
               min="0"
               value={formData.minStockLevel}
               onChange={handleInputChange}
-              placeholder="0"
+              placeholder={t('inventory.minimumStockLevelPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="location" className="text-base">
-              Storage Location
+              {t('inventory.storageLocationLabel')}
             </Label>
             <Input
               id="location"
               name="location"
               value={formData.location}
               onChange={handleInputChange}
-              placeholder="e.g. Warehouse A, Shelf B3"
+              placeholder={t('inventory.storageLocationPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="fitment" className="text-base">
-              Vehicle Fitment
+              {t('inventory.vehicleFitment')}
             </Label>
             <Input
               id="fitment"
               name="fitment"
               value={formData.fitment}
               onChange={handleInputChange}
-              placeholder="e.g. Toyota Camry 2018-2023"
+              placeholder={t('inventory.vehicleFitmentPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="imageUrl" className="text-base">
-              Image URL
+              {t('inventory.imageUrl')}
             </Label>
             <Input
               id="imageUrl"
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleInputChange}
-              placeholder="https://example.com/image.jpg"
+              placeholder={t('inventory.imageUrlPlaceholder')}
             />
           </div>
         </div>
@@ -296,7 +298,7 @@ export default function AddProductPage() {
             className="flex items-center"
           >
             <X className="mr-2 h-4 w-4" />
-            Cancel
+            {t('common.cancel')}
           </Button>
           
           <Button 
@@ -307,12 +309,12 @@ export default function AddProductPage() {
             {isLoading ? (
               <>
                 <span className="mr-2 h-4 w-4 border-t-2 border-b-2 border-white rounded-full animate-spin" />
-                Saving...
+                {t('common.saving')}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Save Product
+                {t('inventory.saveProduct')}
               </>
             )}
           </Button>

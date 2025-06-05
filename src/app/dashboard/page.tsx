@@ -8,6 +8,7 @@ import { Package, ListChecks, DollarSign, AlertTriangle } from 'lucide-react';
 import SalesTrendChart from '@/components/dashboard/SalesTrendChart';
 import InventoryByCategoryChart from '@/components/dashboard/InventoryByCategoryChart';
 import RecentActivityFeed from '@/components/dashboard/RecentActivityFeed';
+import RolloverStatusCard from '@/components/dashboard/RolloverStatusCard';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface DashboardStats {
@@ -108,6 +109,16 @@ export default function DashboardHomePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SalesTrendChart />
         <InventoryByCategoryChart />
+      </div>
+
+      {/* Rollover Status Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <RolloverStatusCard />
+        </div>
+        <div className="lg:col-span-2">
+          {/* Quick Actions or additional info can go here */}
+        </div>
       </div>
 
       {/* Recent Activity Section */}

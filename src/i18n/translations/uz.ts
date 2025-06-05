@@ -92,7 +92,7 @@ const uzTranslation = {
     applyFilters: "Filtrlarni qo'llash"
   },
   home: {
-    title: "Avto qismlar boshqaruvchisi",
+    title: "Admin panel boshqaruvi",
     welcomeMessage: "Avto qismlar inventarizatsiya tizimiga xush kelibsiz",
     recentActivity: "So'nggi faoliyat",
     orderButton: "Yangi buyurtma",
@@ -265,7 +265,36 @@ const uzTranslation = {
     errorLoadingProducts: "Mahsulotlarni yuklashda xatolik. Qayta urinib ko'ring.",
     deleteProductTitle: "Mahsulotni o'chirish",
     deleteProductConfirmation: "{{productName}} mahsulotini o'chirishga ishonchingiz komilmi?",
-    deleteProductWarning: "Bu amalni qaytarib bo'lmaydi. Mahsulotni o'chirish barcha bog'liq partiyalar va sotuv qaydlarini ham o'chiradi."
+    deleteProductWarning: "Bu amalni qaytarib bo'lmaydi. Mahsulotni o'chirish barcha bog'liq partiyalar va sotuv qaydlarini ham o'chiradi.",
+    addNewProductTitle: "Yangi mahsulot qo'shish",
+    addNewProductDescription: "Inventaringizda yangi mahsulot yarating",
+    productName: "Mahsulot nomi",
+    productNameRequired: "Mahsulot nomi *",
+    productNamePlaceholder: "Mahsulot nomini kiriting",
+    skuRequired: "SKU *",
+    skuPlaceholder: "masalan, BP-2023-001",
+    categoryRequired: "Kategoriya *",
+    selectCategory: "Kategoriyani tanlang",
+    sellingPriceRequired: "Sotuv narxi *",
+    sellingPricePlaceholder: "0.00",
+    description: "Tavsif",
+    descriptionPlaceholder: "Mahsulot tavsifi",
+    defaultSupplier: "Asosiy ta'minotchi",
+    defaultSupplierPlaceholder: "masalan, ABC Avto Zapchasti OOO",
+    minimumStockLevel: "Minimal zaxira darajasi",
+    minimumStockLevelPlaceholder: "0",
+    storageLocationLabel: "Saqlash joyi",
+    storageLocationPlaceholder: "masalan, Ombor A, Javon B3",
+    vehicleFitment: "Avtomobil moslik",
+    vehicleFitmentPlaceholder: "masalan, Toyota Camry 2018-2023",
+    imageUrl: "Rasm URL",
+    imageUrlPlaceholder: "https://example.com/image.jpg",
+    saveProduct: "Mahsulotni saqlash",
+    requiredFieldsValidation: "Nomi, SKU, kategoriya va sotuv narxi majburiy maydonlardir",
+    requiredFieldsHelp: "Iltimos, yulduzcha (*) bilan belgilangan barcha maydonlar to'g'ri to'ldirilganligiga ishonch hosil qiling.",
+    unexpectedError: "Kutilmagan xatolik yuz berdi",
+    fetchCategoriesError: "Kategoriyalarni olishda xatolik",
+    createProductError: "Mahsulot yaratishda xatolik"
   },
   batches: {
     batchHistory: "Partiyalar tarixi",
@@ -556,6 +585,171 @@ const uzTranslation = {
     deselectAll: "Tanlashni bekor qilish",
     delete: "O'chirish",
     edit: "Tahrirlash"
+  },
+  rolloverPage: {
+    headerTitle: "Oylik o'tkazma boshqaruvi",
+    headerSubtitle: "Oylik inventar o'tkazmalarini boshqaring va tarixiy ma'lumotlarni kuzating",
+    monthlyRollover: {
+      title: "Oylik o'tkazma",
+      description: "Oylik inventar o'tkazmasini qayta ishlang va keng qamrovli hisobotlar yarating",
+      initiateRollover: "O'tkazmani boshlash",
+      alreadyRolledOver: "Allaqachon o'tkazilgan",
+      totalRevenue: "Umumiy daromad",
+      totalCOGS: "Umumiy tannarx",
+      totalProfit: "Umumiy foyda",
+      productsReported: "Hisobotdagi mahsulotlar",
+      detailedReportTitle: "Batafsil oylik hisobot",
+      loadingReport: "Oylik hisobot yuklanmoqda...",
+      fetchError: "Oylik hisobotni yuklashda xatolik",
+      fetchErrorToast: "Oylik hisobot ma'lumotlarini yuklashda xatolik",
+      rolloverSuccessToast: "Oylik o'tkazma muvaffaqiyatli yakunlandi",
+      rolloverErrorToast: "Oylik o'tkazmani yakunlashda xatolik",
+      errorTitle: "Hisobotni yuklashda xatolik",
+      retry: "Qayta urinish",
+      noDataTitle: "Ma'lumotlar mavjud emas",
+      noDataText: "Joriy davr uchun oylik hisobot ma'lumotlari mavjud emas.",
+      refresh: "Yangilash",
+      rolloverCompleteMessage: "{{month}}/{{year}} uchun oylik o'tkazma yakunlandi.",
+      rolloverProgress: "O'tkazma jarayoni",
+      rolloverInProgressMessage: "Iltimos, oylik o'tkazma qayta ishlanayotganda kuting. Bu bir necha daqiqa vaqt olishi mumkin.",
+      confirmRolloverTitle: "Oylik o'tkazmani tasdiqlash",
+      confirmRolloverDescriptionP1: "Siz oylik o'tkazma jarayonini boshlashga tayyormisiz. Bu joriy oy uchun barcha ma'lumotlarni yakunlaydi va tizimni keyingi davrga tayyorlaydi.",
+      confirmRolloverDescriptionP2: "Muhim:",
+      confirmRolloverDescriptionP3: "{{month}}/{{year}} uchun barcha tranzaksiyalar bloklanadi va o'zgartirib bo'lmaydi.",
+      confirmRolloverDescriptionP4: "O'tkazma bilan davom etishni istaysizmi?",
+      cancel: "Bekor qilish",
+      processing: "Qayta ishlanmoqda...",
+      confirmAndProceed: "Tasdiqlash va davom etish",
+      table: {
+        product: "Mahsulot",
+        startingInventory: "Boshlang'ich inventar",
+        purchases: "Sotib olishlar",
+        sales: "Sotuvlar",
+        endingInventory: "Yakuniy inventar",
+        cogs: "Tannarx",
+        revenue: "Daromad",
+        profit: "Foyda"
+      },
+      understanding: {
+        title: "O'tkazma jarayonini tushunish",
+        description: "Oylik o'tkazma jarayoni aniq hisob-kitob va inventar boshqaruvi uchun juda muhimdir. U joriy oy ma'lumotlarini yakunlaydi va tizimni keyingi operatsion davrga tayyorlaydi.",
+        dataFinalization: {
+          title: "Ma'lumotlarni yakunlash",
+          description: "O'tkazma boshlangandan so'ng, joriy oy uchun barcha tranzaksiyalar bloklanadi. Bu hisobot uchun ma'lumotlar yaxlitligini ta'minlaydi."
+        },
+        inventoryCarryOver: {
+          title: "Inventarni o'tkazish",
+          description: "Joriy oyning yakuniy inventar miqdori avtomatik ravishda keyingi oyning boshlang'ich inventariga aylanadi."
+        },
+        importantNote: "Iltimos, oy uchun barcha sotuvlar, sotib olishlar va tuzatmalar aniq qayd etilganligiga ishonch hosil qiling",
+        before: "dan oldin",
+        cannotUndo: "o'tkazmani boshlash. Bu amalni qaytarib bo'lmaydi.",
+        important: "Muhim:"
+      }
+    },
+    rolloverHistory: {
+      title: "O'tkazmalar tarixi",
+      description: "Turli davrlar bo'yicha tarixiy o'tkazma ma'lumotlari va tendentsiyalarini ko'ring va tahlil qiling"
+    },
+    trendAnalysis: {
+      title: "Tendentsiyalar tahlili",
+      description: "Kelajakdagi zaxira boshqaruvini optimallashtirish uchun inventar tendentsiyalari va naqshlarini tahlil qiling"
+    },
+    adjustments: {
+      title: "Inventar tuzatmalari",
+      description: "Inventar hisoblariga qo'lda tuzatmalar kiriting va tuzatmalar tarixini kuzating"
+    },
+    support: {
+      title: "Yordam va qo'llab-quvvatlash",
+      description: "O'tkazma jarayonlari bo'yicha yordam oling va hujjatlar resurslariga kiring"
+    },
+    settings: {
+      title: "O'tkazma sozlamalari",
+      description: "O'tkazma parametrlarini, chegaralarini va avtomatlashtirish sozlamalarini sozlang"
+    },
+    viewFeature: "Xususiyatni ko'rish",
+    importantNotes: {
+      title: "Muhim eslatmalar",
+      p1: "Oylik o'tkazmalar aniq moliyaviy hisobotni ta'minlash uchun har bir hisob davrining oxirida amalga oshirilishi kerak.",
+      p2: "O'tkazma jarayonini boshlashdan oldin barcha kutilayotgan tranzaksiyalar yakunlanganligiga ishonch hosil qiling.",
+      warningTitle: "Ogohlantirish:",
+      warningText: "O'tkazma operatsiyalarini bekor qilib bo'lmaydi. Davom etishdan oldin barcha ma'lumotlar zaxiralanganligiga ishonch hosil qiling."
+    }
+  },
+  comingSoon: "Tez orada",
+  monthlyRollover: {
+    title: "Oylik o'tkazish",
+    description: "Oylik inventar ma'lumotlarini ko'rib chiqish va yakunlash",
+    initiateRollover: "O'tkazishni boshlash",
+    alreadyRolledOver: "Allaqachon o'tkazilgan",
+    totalRevenue: "Umumiy daromad",
+    totalCOGS: "Umumiy tannarx",
+    totalProfit: "Umumiy foyda",
+    productsReported: "Hisobotdagi mahsulotlar",
+    loadingReport: "Oylik hisobot yuklanmoqda...",
+    fetchError: "Oylik hisobotni olishda xatolik",
+    errorTitle: "Hisobotni yuklashda xatolik",
+    retry: "Qayta urinish",
+    noDataTitle: "Ma'lumot yo'q",
+    noDataText: "Ushbu davr uchun oylik hisobot ma'lumotlari yo'q.",
+    refresh: "Yangilash",
+    detailedReportTitle: "Mahsulotlar bo'yicha batafsil hisobot",
+    rolloverProgress: "O'tkazish jarayoni",
+    rolloverInProgressMessage: "Iltimos, oylik o'tkazishni qayta ishlayotganimizni kuting. Bu bir necha daqiqa vaqt olishi mumkin.",
+    rolloverCompleteMessage: "{{month}}/{{year}} uchun o'tkazish muvaffaqiyatli yakunlandi.",
+    rolloverSuccessMessage: "Oylik o'tkazish muvaffaqiyatli yakunlandi!",
+    rolloverErrorMessage: "Oylik o'tkazishni yakunlashda xatolik",
+    downloadExcel: "Excel yuklab olish",
+    downloadingExcel: "Yuklanmoqda...",
+    excelDownloadSuccess: "Excel hisobot muvaffaqiyatli yuklandi!",
+    excelDownloadError: "Excel hisobotni yuklashda xatolik",
+    confirmRolloverTitle: "Oylik o'tkazishni tasdiqlash",
+    confirmRolloverDescriptionP1: "Siz oylik o'tkazish jarayonini boshlashga tayyorsiz. Bu joriy oy uchun barcha ma'lumotlarni yakunlaydi va tizimni keyingi oyga tayyorlaydi.",
+    confirmRolloverDescriptionP2: "Muhim:",
+    confirmRolloverDescriptionP3: "{{month}}/{{year}} uchun barcha operatsiyalar bloklangan bo'ladi va o'zgartirilmaydi.",
+    confirmRolloverDescriptionP4: "O'tkazishni davom ettirishga ishonchingiz komilmi?",
+    cancel: "Bekor qilish",
+    processing: "Qayta ishlanmoqda...",
+    confirmAndProceed: "Tasdiqlash va davom etish",
+    table: {
+      product: "Mahsulot",
+      startingInventory: "Boshlang'ich inventar",
+      purchases: "Xaridlar",
+      sales: "Sotuvlar",
+      endingInventory: "Yakuniy inventar",
+      cogs: "Tannarx",
+      revenue: "Daromad",
+      profit: "Foyda"
+    },
+    understanding: {
+      title: "O'tkazishni tushunish",
+      description: "Oylik o'tkazish jarayoni aniq hisob-kitob va inventar boshqaruvi uchun muhimdir. U joriy oy ma'lumotlarini yakunlaydi va tizimni keyingi ish davriga tayyorlaydi.",
+      dataFinalization: {
+        title: "Ma'lumotlarni yakunlash",
+        description: "O'tkazish boshlangandan so'ng joriy oy uchun barcha operatsiyalar bloklanadi. Bu hisobot uchun ma'lumotlar yaxlitligini ta'minlaydi."
+      },
+      inventoryCarryOver: {
+        title: "Inventar o'tkazish",
+        description: "Joriy oyning yakuniy inventar miqdori avtomatik ravishda keyingi oyning boshlang'ich inventariga aylanadi."
+      },
+      importantNote: "Iltimos, oy uchun barcha sotuvlar, xaridlar va tuzatishlar aniq qayd etilganligiga ishonch hosil qiling",
+      before: "oldin",
+      cannotUndo: "o'tkazishni boshlash. Bu amalni bekor qilib bo'lmaydi.",
+      important: "Muhim:"
+    }
+  },
+  rollover: {
+    monthlyRollover: "Oylik o'tkazish",
+    completed: "Yakunlangan",
+    pending: "Kutilmoqda",
+    inProgress: "Jarayonda",
+    previousMonth: "Oldingi oy",
+    currentMonth: "Joriy oy",
+    nextRollover: "Keyingi o'tkazish",
+    inDays: "{{days}} kundan keyin",
+    today: "Bugun",
+    manage: "Boshqarish",
+    downloadReport: "Hisobotni yuklash"
   }
 };
 

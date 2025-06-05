@@ -266,7 +266,36 @@ const enTranslation = {
     errorLoadingProducts: "Error loading products. Please try again.",
     deleteProductTitle: "Delete Product",
     deleteProductConfirmation: "Are you sure you want to delete {{productName}}?",
-    deleteProductWarning: "This action cannot be undone. Deleting the product will also delete all associated batches and sales records."
+    deleteProductWarning: "This action cannot be undone. Deleting the product will also delete all associated batches and sales records.",
+    addNewProductTitle: "Add New Product",
+    addNewProductDescription: "Create a new product in your inventory",
+    productName: "Product Name",
+    productNameRequired: "Product Name *",
+    productNamePlaceholder: "Enter product name",
+    skuRequired: "SKU *",
+    skuPlaceholder: "e.g. BP-2023-001",
+    categoryRequired: "Category *",
+    selectCategory: "Select a category",
+    sellingPriceRequired: "Selling Price *",
+    sellingPricePlaceholder: "0.00",
+    description: "Description",
+    descriptionPlaceholder: "Product description",
+    defaultSupplier: "Default Supplier",
+    defaultSupplierPlaceholder: "e.g. ABC Auto Parts Inc.",
+    minimumStockLevel: "Minimum Stock Level",
+    minimumStockLevelPlaceholder: "0",
+    storageLocationLabel: "Storage Location",
+    storageLocationPlaceholder: "e.g. Warehouse A, Shelf B3",
+    vehicleFitment: "Vehicle Fitment",
+    vehicleFitmentPlaceholder: "e.g. Toyota Camry 2018-2023",
+    imageUrl: "Image URL",
+    imageUrlPlaceholder: "https://example.com/image.jpg",
+    saveProduct: "Save Product",
+    requiredFieldsValidation: "Name, SKU, category, and selling price are required",
+    requiredFieldsHelp: "Please make sure all fields marked with an asterisk (*) are filled out correctly.",
+    unexpectedError: "An unexpected error occurred",
+    fetchCategoriesError: "Failed to fetch categories",
+    createProductError: "Failed to create product"
   },
   batches: {
     batchHistory: "Batch History",
@@ -557,6 +586,117 @@ const enTranslation = {
     deselectAll: "Deselect All",
     delete: "Delete",
     edit: "Edit"
+  },
+  rolloverPage: {
+    headerTitle: "Month Rollover Management",
+    headerSubtitle: "Manage monthly inventory rollovers and track historical data",
+    monthlyRollover: {
+      title: "Monthly Rollover",
+      description: "Process monthly inventory rollover and generate reports for the current period"
+    },
+    rolloverHistory: {
+      title: "Rollover History",
+      description: "View and analyze historical rollover data and trends across different periods"
+    },
+    trendAnalysis: {
+      title: "Trend Analysis",
+      description: "Analyze inventory trends and patterns to optimize future stock management"
+    },
+    adjustments: {
+      title: "Inventory Adjustments",
+      description: "Make manual adjustments to inventory counts and track adjustment history"
+    },
+    support: {
+      title: "Help & Support",
+      description: "Get assistance with rollover processes and access documentation resources"
+    },
+    settings: {
+      title: "Rollover Settings",
+      description: "Configure rollover parameters, thresholds, and automation preferences"
+    },
+    viewFeature: "View Feature",
+    importantNotes: {
+      title: "Important Notes",
+      p1: "Monthly rollovers should be performed at the end of each accounting period to ensure accurate financial reporting.",
+      p2: "Make sure all pending transactions are completed before initiating a rollover process.",
+      warningTitle: "Warning:",
+      warningText: "Rollover operations cannot be undone. Please ensure all data is backed up before proceeding."
+    }
+  },
+  comingSoon: "Coming Soon",
+  monthlyRollover: {
+    title: "Monthly Rollover",
+    description: "Review and finalize your monthly inventory data",
+    initiateRollover: "Initiate Rollover",
+    alreadyRolledOver: "Already Rolled Over",
+    totalRevenue: "Total Revenue",
+    totalCOGS: "Total COGS",
+    totalProfit: "Total Profit",
+    productsReported: "Products Reported",
+    loadingReport: "Loading monthly report...",
+    fetchError: "Failed to fetch monthly report",
+    errorTitle: "Error Loading Report",
+    retry: "Retry",
+    noDataTitle: "No Data Available",
+    noDataText: "No monthly report data available for this period.",
+    refresh: "Refresh",
+    detailedReportTitle: "Detailed Product Report",
+    rolloverProgress: "Rollover in Progress",
+    rolloverInProgressMessage: "Please wait while we process the monthly rollover. This may take a few moments.",
+    rolloverCompleteMessage: "The rollover for {{month}}/{{year}} has been completed successfully.",
+    rolloverSuccessMessage: "Monthly rollover completed successfully!",
+    rolloverErrorMessage: "Failed to complete monthly rollover",
+    downloadExcel: "Download Excel",
+    downloadingExcel: "Downloading...",
+    excelDownloadSuccess: "Excel report downloaded successfully!",
+    excelDownloadError: "Failed to download Excel report",
+    confirmRolloverTitle: "Confirm Monthly Rollover",
+    confirmRolloverDescriptionP1: "You are about to initiate the monthly rollover process. This will finalize all data for the current month and prepare the system for the next month.",
+    confirmRolloverDescriptionP2: "Important:",
+    confirmRolloverDescriptionP3: "All transactions for {{month}}/{{year}} will be locked and cannot be modified.",
+    confirmRolloverDescriptionP4: "Are you sure you want to proceed with the rollover?",
+    cancel: "Cancel",
+    processing: "Processing...",
+    confirmAndProceed: "Confirm and Proceed",
+    table: {
+      product: "Product",
+      startingInventory: "Starting Inventory",
+      purchases: "Purchases",
+      sales: "Sales",
+      endingInventory: "Ending Inventory",
+      cogs: "COGS",
+      revenue: "Revenue",
+      profit: "Profit"
+    },
+    understanding: {
+      title: "Understanding Your Rollover",
+      description: "The Monthly Rollover process is crucial for accurate accounting and inventory management. It finalizes the current month's data and prepares the system for the next operational period.",
+      dataFinalization: {
+        title: "Data Finalization",
+        description: "Once a rollover is initiated, all transactions for the current month are locked. This ensures data integrity for reporting."
+      },
+      inventoryCarryOver: {
+        title: "Inventory Carry-Over",
+        description: "Ending inventory counts from the current month automatically become the starting inventory for the next month."
+      },
+      importantNote: "Please ensure all sales, purchases, and adjustments for the month are accurately recorded",
+      before: "before",
+      cannotUndo: "initiating the rollover. This action cannot be undone.",
+      important: "Important:"
+    }
+  },
+  rollover: {
+    monthlyRollover: "Monthly Rollover",
+    completed: "Completed",
+    pending: "Pending",
+    inProgress: "In Progress",
+    previousMonth: "Previous Month",
+    currentMonth: "Current Month",
+    nextRollover: "Next Rollover",
+    inDays: "in {{days}} days",
+    today: "Today",
+    manage: "Manage",
+    downloadReport: "Download Report"
   }
 };
 

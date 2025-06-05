@@ -192,7 +192,39 @@ const ruTranslation = {
     notSpecified: "Не указано",
     notSet: "Не задано",
     belowMinimumStockLevel: "Ниже минимального уровня запаса",
-    productNotFound: "Товар не найден"
+    productNotFound: "Товар не найден",
+    deleteProductTitle: "Удалить товар",
+    deleteProductDescription: "Это действие навсегда удалит этот товар.",
+    deleteProductConfirmation: "Это действие навсегда удалит товар '{name}'. Это действие нельзя отменить.",
+    addNewProductTitle: "Добавить новый товар",
+    addNewProductDescription: "Создать новый товар в вашем инвентаре",
+    productName: "Название товара",
+    productNameRequired: "Название товара *",
+    productNamePlaceholder: "Введите название товара",
+    skuRequired: "SKU *",
+    skuPlaceholder: "например, BP-2023-001",
+    categoryRequired: "Категория *",
+    selectCategory: "Выберите категорию",
+    sellingPriceRequired: "Цена продажи *",
+    sellingPricePlaceholder: "0.00",
+    description: "Описание",
+    descriptionPlaceholder: "Описание товара",
+    defaultSupplier: "Поставщик по умолчанию",
+    defaultSupplierPlaceholder: "например, ООО «Автозапчасти»",
+    minimumStockLevel: "Минимальный уровень запаса",
+    minimumStockLevelPlaceholder: "0",
+    storageLocationLabel: "Место хранения",
+    storageLocationPlaceholder: "например, Склад А, Полка Б3",
+    vehicleFitment: "Совместимость с автомобилем",
+    vehicleFitmentPlaceholder: "например, Toyota Camry 2018-2023",
+    imageUrl: "URL изображения",
+    imageUrlPlaceholder: "https://example.com/image.jpg",
+    saveProduct: "Сохранить товар",
+    requiredFieldsValidation: "Название, SKU, категория и цена продажи являются обязательными",
+    requiredFieldsHelp: "Пожалуйста, убедитесь, что все поля, отмеченные звездочкой (*), заполнены правильно.",
+    unexpectedError: "Произошла неожиданная ошибка",
+    fetchCategoriesError: "Не удалось загрузить категории",
+    createProductError: "Не удалось создать товар"
   },
   batches: {
     batchHistory: "История партий",
@@ -483,6 +515,171 @@ const ruTranslation = {
     deselectAll: "Отменить все",
     delete: "Удалить",
     edit: "Редактировать"
+  },
+  rolloverPage: {
+    headerTitle: "Управление месячным переносом",
+    headerSubtitle: "Управление ежемесячными переносами инвентаря и отслеживание исторических данных",
+    monthlyRollover: {
+      title: "Ежемесячный перенос",
+      description: "Обработка ежемесячного переноса инвентаря и создание подробных отчетов",
+      initiateRollover: "Запустить перенос",
+      alreadyRolledOver: "Уже перенесено",
+      totalRevenue: "Общая выручка",
+      totalCOGS: "Общая себестоимость",
+      totalProfit: "Общая прибыль",
+      productsReported: "Товаров в отчете",
+      detailedReportTitle: "Подробный месячный отчет",
+      loadingReport: "Загрузка месячного отчета...",
+      fetchError: "Не удалось загрузить месячный отчет",
+      fetchErrorToast: "Ошибка загрузки данных месячного отчета",
+      rolloverSuccessToast: "Ежемесячный перенос завершен успешно",
+      rolloverErrorToast: "Не удалось завершить ежемесячный перенос",
+      errorTitle: "Ошибка загрузки отчета",
+      retry: "Повторить",
+      noDataTitle: "Данные недоступны",
+      noDataText: "Данные месячного отчета для текущего периода недоступны.",
+      refresh: "Обновить",
+      rolloverCompleteMessage: "Ежемесячный перенос за {{month}}/{{year}} завершен.",
+      rolloverProgress: "Выполняется перенос",
+      rolloverInProgressMessage: "Пожалуйста, подождите, пока обрабатывается ежемесячный перенос. Это может занять несколько минут.",
+      confirmRolloverTitle: "Подтвердить ежемесячный перенос",
+      confirmRolloverDescriptionP1: "Вы собираетесь запустить процесс ежемесячного переноса. Это финализирует все данные за текущий месяц и подготовит систему к следующему периоду.",
+      confirmRolloverDescriptionP2: "Важно:",
+      confirmRolloverDescriptionP3: "Все транзакции за {{month}}/{{year}} будут заблокированы и не смогут быть изменены.",
+      confirmRolloverDescriptionP4: "Вы уверены, что хотите продолжить с переносом?",
+      cancel: "Отмена",
+      processing: "Обработка...",
+      confirmAndProceed: "Подтвердить и продолжить",
+      table: {
+        product: "Товар",
+        startingInventory: "Начальные запасы",
+        purchases: "Закупки",
+        sales: "Продажи",
+        endingInventory: "Конечные запасы",
+        cogs: "Себестоимость",
+        revenue: "Выручка",
+        profit: "Прибыль"
+      },
+      understanding: {
+        title: "Понимание процесса переноса",
+        description: "Процесс ежемесячного переноса крайне важен для точного учета и управления инвентарем. Он финализирует данные текущего месяца и подготавливает систему к следующему операционному периоду.",
+        dataFinalization: {
+          title: "Финализация данных",
+          description: "После запуска переноса все транзакции за текущий месяц блокируются. Это обеспечивает целостность данных для отчетности."
+        },
+        inventoryCarryOver: {
+          title: "Перенос инвентаря",
+          description: "Конечные остатки инвентаря текущего месяца автоматически становятся начальными остатками следующего месяца."
+        },
+        importantNote: "Пожалуйста, убедитесь, что все продажи, закупки и корректировки за месяц точно записаны",
+        before: "перед",
+        cannotUndo: "запуском переноса. Это действие нельзя отменить.",
+        important: "Важно:"
+      }
+    },
+    rolloverHistory: {
+      title: "История переносов",
+      description: "Просмотр и анализ исторических данных переносов и тенденций за разные периоды"
+    },
+    trendAnalysis: {
+      title: "Анализ тенденций",
+      description: "Анализ трендов и закономерностей инвентаря для оптимизации будущего управления запасами"
+    },
+    adjustments: {
+      title: "Корректировки инвентаря",
+      description: "Внесение ручных корректировок в подсчеты инвентаря и отслеживание истории корректировок"
+    },
+    support: {
+      title: "Помощь и поддержка",
+      description: "Получение помощи с процессами переноса и доступ к документации"
+    },
+    settings: {
+      title: "Настройки переноса",
+      description: "Настройка параметров переноса, пороговых значений и предпочтений автоматизации"
+    },
+    viewFeature: "Посмотреть функцию",
+    importantNotes: {
+      title: "Важные заметки",
+      p1: "Ежемесячные переносы следует выполнять в конце каждого отчетного периода для обеспечения точной финансовой отчетности.",
+      p2: "Убедитесь, что все незавершенные транзакции завершены перед началом процесса переноса.",
+      warningTitle: "Предупреждение:",
+      warningText: "Операции переноса нельзя отменить. Пожалуйста, убедитесь, что все данные сохранены перед продолжением."
+    }
+  },
+  comingSoon: "Скоро будет",
+  monthlyRollover: {
+    title: "Месячный перенос",
+    description: "Обзор и завершение месячных данных инвентаря",
+    initiateRollover: "Начать перенос",
+    alreadyRolledOver: "Уже перенесено",
+    totalRevenue: "Общая выручка",
+    totalCOGS: "Общая себестоимость",
+    totalProfit: "Общая прибыль",
+    productsReported: "Товаров в отчете",
+    loadingReport: "Загрузка месячного отчета...",
+    fetchError: "Не удалось получить месячный отчет",
+    errorTitle: "Ошибка загрузки отчета",
+    retry: "Повторить",
+    noDataTitle: "Нет данных",
+    noDataText: "Нет данных месячного отчета для этого периода.",
+    refresh: "Обновить",
+    detailedReportTitle: "Детальный отчет по товарам",
+    rolloverProgress: "Выполняется перенос",
+    rolloverInProgressMessage: "Пожалуйста, подождите, пока мы обрабатываем месячный перенос. Это может занять несколько минут.",
+    rolloverCompleteMessage: "Перенос за {{month}}/{{year}} был успешно завершен.",
+    rolloverSuccessMessage: "Месячный перенос успешно завершен!",
+    rolloverErrorMessage: "Не удалось завершить месячный перенос",
+    downloadExcel: "Скачать Excel",
+    downloadingExcel: "Скачивание...",
+    excelDownloadSuccess: "Excel отчет успешно скачан!",
+    excelDownloadError: "Не удалось скачать Excel отчет",
+    confirmRolloverTitle: "Подтвердить месячный перенос",
+    confirmRolloverDescriptionP1: "Вы собираетесь начать процесс месячного переноса. Это завершит все данные за текущий месяц и подготовит систему к следующему месяцу.",
+    confirmRolloverDescriptionP2: "Важно:",
+    confirmRolloverDescriptionP3: "Все транзакции за {{month}}/{{year}} будут заблокированы и не могут быть изменены.",
+    confirmRolloverDescriptionP4: "Вы уверены, что хотите продолжить перенос?",
+    cancel: "Отмена",
+    processing: "Обработка...",
+    confirmAndProceed: "Подтвердить и продолжить",
+    table: {
+      product: "Товар",
+      startingInventory: "Начальный запас",
+      purchases: "Закупки",
+      sales: "Продажи", 
+      endingInventory: "Конечный запас",
+      cogs: "Себестоимость",
+      revenue: "Выручка",
+      profit: "Прибыль"
+    },
+    understanding: {
+      title: "Понимание переноса",
+      description: "Процесс месячного переноса важен для точного учета и управления запасами. Он завершает данные текущего месяца и подготавливает систему к следующему операционному периоду.",
+      dataFinalization: {
+        title: "Завершение данных",
+        description: "После начала переноса все транзакции текущего месяца блокируются. Это обеспечивает целостность данных для отчетности."
+      },
+      inventoryCarryOver: {
+        title: "Перенос запасов",
+        description: "Конечные остатки запасов текущего месяца автоматически становятся начальными запасами следующего месяца."
+      },
+      importantNote: "Пожалуйста, убедитесь, что все продажи, закупки и корректировки за месяц точно записаны",
+      before: "перед",
+      cannotUndo: "началом переноса. Это действие нельзя отменить.",
+      important: "Важно:"
+    }
+  },
+  rollover: {
+    monthlyRollover: "Месячный перенос",
+    completed: "Завершено",
+    pending: "Ожидается",
+    inProgress: "В процессе",
+    previousMonth: "Предыдущий месяц",
+    currentMonth: "Текущий месяц",
+    nextRollover: "Следующий перенос",
+    inDays: "через {{days}} дней",
+    today: "Сегодня",
+    manage: "Управлять",
+    downloadReport: "Скачать отчет"
   }
 };
 

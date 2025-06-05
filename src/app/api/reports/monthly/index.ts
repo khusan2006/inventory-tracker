@@ -29,24 +29,56 @@ export interface MonthlyReportData {
 }
 
 export async function fetchMonthlyReportData(year: number, month: number): Promise<MonthlyReportData> {
-  const response = await fetch(`/api/reports/monthly?year=${year}&month=${month}`);
-  
+  const response = await fetch(`/api/reports/monthly?year=${year}&month=${month}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
   if (!response.ok) {
     throw new Error(`Failed to fetch monthly report: ${response.statusText}`);
   }
-  
+
   const data = await response.json();
   
-  // Transform the API response to match the expected interface
+  if (!data.hasData || !data.report) {
+    throw new Error('No data available for this period');
+  }
+
+  const report = data.report;
+  
+  // Handle both finalized reports (with reportData) and live reports
+  const reportData = report.reportData || report;
+  
+  // Transform the products data from the report
+  const productsData: ProductMonthlyData[] = reportData.products?.map((product: any) => ({
+    id: product.productId || product.id,
+    name: product.productName || product.name,
+    category: product.category,
+    totalSold: product.soldQuantity || 0,
+    totalRevenue: product.revenue || 0,
+    totalCOGS: product.cost || 0,
+    profitMargin: product.profitMargin || 0,
+    productId: product.productId || product.id,
+    productName: product.productName || product.name,
+    startingInventory: product.startingQuantity || 0,
+    purchases: product.purchasedQuantity || 0,
+    sales: product.soldQuantity || 0,
+    endingInventory: product.endingQuantity || 0,
+    costOfGoodsSold: product.cost || 0,
+    revenue: product.revenue || 0,
+    profit: product.profit || 0,
+  })) || [];
+
   return {
-    year: data.year,
-    month: data.month,
-    isRolledOver: data.isFinalized,
+    year: report.year,
+    month: report.month,
+    isRolledOver: report.isFinalized || false,
     summary: {
-      totalRevenue: data.totalSales,
-      totalCostOfGoodsSold: data.totalSales - data.totalProfit,
+      totalRevenue: reportData.totalRevenue || report.totalSales || 0,
+      totalCostOfGoodsSold: reportData.totalCost || (reportData.totalRevenue - reportData.totalProfit) || 0,
     },
-    productsData: data.reportData?.productsData || [],
+    productsData,
   };
 }
 

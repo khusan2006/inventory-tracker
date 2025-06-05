@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,7 +34,7 @@ import {
   ProductMonthlyData,
   MonthlyReportData,
 } from "@/app/api/reports/monthly";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle, Download, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function MonthlyRolloverPage() {
   const { t } = useTranslation();
@@ -43,54 +43,153 @@ export default function MonthlyRolloverPage() {
   const [isRolloverLoading, setIsRolloverLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRolloverDialog, setShowRolloverDialog] = useState(false);
-  const [currentMonthYear, setCurrentMonthYear] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Add state for selected month/year navigation
+  const [selectedYear, setSelectedYear] = useState<number>();
+  const [selectedMonth, setSelectedMonth] = useState<number>();
+
+  // Use useMemo to get current date values
+  const { currentYear: todayYear, currentMonth: todayMonth } = useMemo(() => {
+    const date = new Date();
+    return {
+      currentYear: date.getFullYear(),
+      currentMonth: date.getMonth() + 1,
+    };
+  }, []);
+
+  // Initialize selected date to current date
+  useEffect(() => {
+    if (!selectedYear && !selectedMonth) {
+      setSelectedYear(todayYear);
+      setSelectedMonth(todayMonth);
+    }
+  }, [todayYear, todayMonth, selectedYear, selectedMonth]);
+
+  // Create display values
+  const displayYear = selectedYear || todayYear;
+  const displayMonth = selectedMonth || todayMonth;
+  const currentMonthYear = `${displayYear}-${String(displayMonth).padStart(2, "0")}`;
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                     'July', 'August', 'September', 'October', 'November', 'December'];
+  const isCurrentMonth = displayYear === todayYear && displayMonth === todayMonth;
 
   const fetchMonthlyReport = useCallback(async () => {
+    if (!selectedYear || !selectedMonth) return;
+    
     setIsLoading(true);
     setError(null);
-    try {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      setCurrentMonthYear(
-        `${year}-${month.toString().padStart(2, "0")}`
-      );
 
-      const data = await fetchMonthlyReportData(year, month);
+    try {
+      const data = await fetchMonthlyReportData(selectedYear, selectedMonth);
       setReportData(data);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("monthlyRollover.fetchError")
-      );
-      toast.error(t("monthlyRollover.fetchErrorToast"));
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
     } finally {
       setIsLoading(false);
     }
-  }, [t]);
+  }, [selectedYear, selectedMonth]);
 
   useEffect(() => {
-    fetchMonthlyReport();
-  }, [fetchMonthlyReport]);
+    if (selectedYear && selectedMonth) {
+      fetchMonthlyReport();
+    }
+  }, [fetchMonthlyReport, selectedYear, selectedMonth]);
 
   const handleRollover = async () => {
+    if (!selectedYear || !selectedMonth) return;
+    
     setIsRolloverLoading(true);
-    setShowRolloverDialog(false);
 
     try {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      await initiateMonthlyRollover(year, month);
-      toast.success(t("monthlyRollover.rolloverSuccessToast"));
-      fetchMonthlyReport();
+      await initiateMonthlyRollover(selectedYear, selectedMonth);
+
+      toast.success(t("monthlyRollover.rolloverSuccessMessage"));
+      setShowRolloverDialog(false);
+      await fetchMonthlyReport();
     } catch (err) {
       toast.error(
-        err instanceof Error
-          ? err.message
-          : t("monthlyRollover.rolloverErrorToast")
+        err instanceof Error ? err.message : t("monthlyRollover.rolloverErrorMessage")
       );
     } finally {
       setIsRolloverLoading(false);
+    }
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    if (!selectedYear || !selectedMonth) return;
+    
+    let newMonth = selectedMonth;
+    let newYear = selectedYear;
+    
+    if (direction === 'prev') {
+      newMonth -= 1;
+      if (newMonth < 1) {
+        newMonth = 12;
+        newYear -= 1;
+      }
+    } else {
+      newMonth += 1;
+      if (newMonth > 12) {
+        newMonth = 1;
+        newYear += 1;
+      }
+    }
+    
+    setSelectedYear(newYear);
+    setSelectedMonth(newMonth);
+  };
+
+  const handleExcelDownload = async () => {
+    if (!reportData) return;
+    
+    setIsDownloading(true);
+    
+    try {
+      const response = await fetch(
+        `/api/reports/monthly/export?year=${reportData.year}&month=${reportData.month}`,
+        {
+          method: 'GET',
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to download Excel report');
+      }
+      
+      // Get the blob from response
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Get filename from response headers or create default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `Monthly_Rollover_Report_${reportData.year}_${reportData.month}.xlsx`;
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(t("monthlyRollover.excelDownloadSuccess"));
+    } catch (error) {
+      console.error('Error downloading Excel report:', error);
+      toast.error(t("monthlyRollover.excelDownloadError"));
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -164,26 +263,77 @@ export default function MonthlyRolloverPage() {
       <header className="mb-6 md:mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-              {t("monthlyRollover.title")} - {currentMonthYear}
-            </h1>
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                {t("monthlyRollover.title")}
+              </h1>
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateMonth('prev')}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="px-3 py-1 text-sm font-medium min-w-[140px] text-center">
+                  {monthNames[displayMonth - 1]} {displayYear}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateMonth('next')}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              {!isCurrentMonth && (
+                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
+                  Historical
+                </span>
+              )}
+            </div>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
               {t("monthlyRollover.description")}
             </p>
           </div>
           <div className="flex space-x-2 mt-4 md:mt-0">
-            <Button
-              onClick={() => setShowRolloverDialog(true)}
-              disabled={isRolloverLoading || reportData.isRolledOver}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {reportData.isRolledOver
-                ? t("monthlyRollover.alreadyRolledOver")
-                : t("monthlyRollover.initiateRollover")}
-            </Button>
+            {reportData?.isRolledOver && (
+              <Button
+                onClick={handleExcelDownload}
+                disabled={isDownloading}
+                className="bg-green-600 hover:bg-green-700 text-white"
+                variant="outline"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t("monthlyRollover.downloadingExcel")}
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    {t("monthlyRollover.downloadExcel")}
+                  </>
+                )}
+              </Button>
+            )}
+            {/* Only show rollover button for current month */}
+            {isCurrentMonth && (
+              <Button
+                onClick={() => setShowRolloverDialog(true)}
+                disabled={isRolloverLoading || reportData?.isRolledOver}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {reportData?.isRolledOver
+                  ? t("monthlyRollover.alreadyRolledOver")
+                  : t("monthlyRollover.initiateRollover")}
+              </Button>
+            )}
           </div>
         </div>
-        {reportData.isRolledOver && (
+        {reportData?.isRolledOver && (
           <div className="mt-4 p-3 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-md">
             <p className="text-sm text-green-700 dark:text-green-300">
               {t("monthlyRollover.rolloverCompleteMessage", {
@@ -260,32 +410,40 @@ export default function MonthlyRolloverPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reportData.productsData.map((item: ProductMonthlyData) => (
-                    <TableRow key={item.productId}>
-                      <TableCell className="font-medium">
-                        {item.productName}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {item.startingInventory}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {item.purchases}
-                      </TableCell>
-                      <TableCell className="text-right">{item.sales}</TableCell>
-                      <TableCell className="text-right">
-                        {item.endingInventory}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        ${item.costOfGoodsSold.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        ${item.revenue.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        ${item.profit.toFixed(2)}
+                  {reportData.productsData && reportData.productsData.length > 0 ? (
+                    reportData.productsData.map((item: ProductMonthlyData) => (
+                      <TableRow key={item.productId}>
+                        <TableCell className="font-medium">
+                          {item.productName}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.startingInventory}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.purchases}
+                        </TableCell>
+                        <TableCell className="text-right">{item.sales}</TableCell>
+                        <TableCell className="text-right">
+                          {item.endingInventory}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${item.costOfGoodsSold.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${item.revenue.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${item.profit.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        No product data available for this period.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -336,31 +494,31 @@ export default function MonthlyRolloverPage() {
       </AlertDialog>
       <div className="mt-12 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
           <div className="flex items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Understanding Your Rollover</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t("monthlyRollover.understanding.title")}</h2>
           </div>
           
           <div className="text-gray-700 dark:text-gray-300 space-y-4">
             <p>
-              The <strong>Monthly Rollover</strong> process is crucial for accurate accounting and inventory management. It finalizes the current month&apos;s data and prepares the system for the next operational period.
+              {t("monthlyRollover.understanding.description")}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Data Finalization</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{t("monthlyRollover.understanding.dataFinalization.title")}</h3>
                 <p className="text-sm">
-                  Once a rollover is initiated, all transactions for the current month are locked. This ensures data integrity for reporting.
+                  {t("monthlyRollover.understanding.dataFinalization.description")}
                 </p>
               </div>
               
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Inventory Carry-Over</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{t("monthlyRollover.understanding.inventoryCarryOver.title")}</h3>
                 <p className="text-sm">
-                  Ending inventory counts from the current month automatically become the starting inventory for the next month.
+                  {t("monthlyRollover.understanding.inventoryCarryOver.description")}
                 </p>
               </div>
             </div>
             <p className="text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-md">
-              <strong>Important:</strong> Please ensure all sales, purchases, and adjustments for the month are accurately recorded <strong>before</strong> initiating the rollover. This action cannot be undone.
+              <strong>{t("monthlyRollover.understanding.important")}</strong> {t("monthlyRollover.understanding.importantNote")} <strong>{t("monthlyRollover.understanding.before")}</strong> {t("monthlyRollover.understanding.cannotUndo")}
             </p>
           </div>
         </div>

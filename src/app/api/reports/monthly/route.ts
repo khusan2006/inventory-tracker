@@ -12,92 +12,134 @@ import { authOptions } from "@/lib/authOptions";
 // GET a monthly report
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
+  
   if (!session?.user?.companyId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const userCompanyId = session.user.companyId;
 
   try {
     const { searchParams } = new URL(request.url);
-    const yearParam = searchParams.get('year');
-    const monthParam = searchParams.get('month');
-    
-    if (!yearParam || !monthParam) {
-      return NextResponse.json({ error: 'Year and month parameters are required' }, { status: 400 });
-    }
-    
-    const year = parseInt(yearParam);
-    const month = parseInt(monthParam) - 1;
-    
-    if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
-      return NextResponse.json({ error: 'Invalid year or month' }, { status: 400 });
-    }
-    
-    const existingReport = await prisma.monthlyReport.findUnique({
+    const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
+    const month = parseInt(searchParams.get('month') || (new Date().getMonth() + 1).toString());
+
+    // Convert month to 0-based for database
+    const dbMonth = month - 1;
+
+    console.log(`Fetching monthly report for ${year}-${month} (db month: ${dbMonth}) for company: ${session.user.companyId}`);
+
+    // First, try to get the finalized monthly report
+    const monthlyReport = await prisma.monthlyReport.findUnique({
       where: {
         year_month_companyId: {
-          year,
-          month,
-          companyId: userCompanyId
+          year: year,
+          month: dbMonth,
+          companyId: session.user.companyId
         }
       }
     });
-    
-    if (existingReport && existingReport.isFinalized) {
-      return NextResponse.json(existingReport);
-    }
-    
-    const { startDate, endDate } = getMonthDateRange(year, month);
-    
-    const dbProducts = await prisma.product.findMany({
-      where: { companyId: userCompanyId },
-      include: { category: true }
-    });
-    const products: Product[] = dbProducts.map(p => ({ ...p, category: p.category?.name || 'Uncategorized', description: p.description || undefined, location: p.location || undefined, imageUrl: p.imageUrl || undefined, fitment: p.fitment || undefined }));
 
-    const dbBatches = await prisma.batch.findMany({ where: { companyId: userCompanyId } });
-    const batches: Batch[] = dbBatches.map(b => ({ ...b, purchaseDate: b.purchaseDate.toISOString(), status: b.status as any, supplier: b.supplier || undefined, invoiceNumber: b.invoiceNumber || undefined, notes: b.notes || undefined }));
+    if (monthlyReport && monthlyReport.isFinalized) {
+      // Return finalized report data
+      console.log(`Found finalized monthly report for ${year}-${month}`);
+      
+      let reportData = null;
+      if (monthlyReport.reportData && typeof monthlyReport.reportData === 'object') {
+        reportData = monthlyReport.reportData;
+      }
 
-    const salesData = await prisma.sale.findMany({
-      where: {
-        companyId: userCompanyId,
-        saleDate: { gte: new Date(startDate), lte: new Date(endDate) }
-      },
-      include: { product: true }
-    });
-    const transformedSales = salesData.map(s => ({ ...s, saleDate: s.saleDate.toISOString(), customerId: s.customerId || undefined, invoiceNumber: s.invoiceNumber || undefined }));
-    
-    const reportData = generateMonthlyReport(products, batches, transformedSales, year, month);
-    
-    if (!existingReport) {
-      const newReport = await prisma.monthlyReport.create({
-        data: {
-          year, month, companyId: userCompanyId,
-          totalSales: reportData.totalRevenue,
-          totalProfit: reportData.totalProfit,
-          averageProfitMargin: reportData.avgProfitMargin,
-          isFinalized: false,
-          reportData: reportData as any
-        }
+      return NextResponse.json({
+        report: {
+          id: monthlyReport.id,
+          year: monthlyReport.year,
+          month: monthlyReport.month + 1, // Convert back to 1-based
+          totalSales: monthlyReport.totalSales,
+          totalProfit: monthlyReport.totalProfit,
+          averageProfitMargin: monthlyReport.averageProfitMargin,
+          isFinalized: monthlyReport.isFinalized,
+          createdAt: monthlyReport.createdAt,
+          updatedAt: monthlyReport.updatedAt,
+          reportData: reportData
+        },
+        hasData: true
       });
-      return NextResponse.json(newReport);
     }
+
+    // No finalized report exists, generate live report data
+    console.log(`No finalized report found for ${year}-${month}, generating live data...`);
     
-    const updatedReport = await prisma.monthlyReport.update({
-      where: {
-        id: existingReport.id,
+    const { startDate, endDate } = getMonthDateRange(year, dbMonth);
+
+    // Get current data for live report generation
+    const [dbProducts, dbBatches, salesData] = await Promise.all([
+      prisma.product.findMany({ 
+        where: { companyId: session.user.companyId }, 
+        include: { category: true } 
+      }),
+      prisma.batch.findMany({ 
+        where: { companyId: session.user.companyId } 
+      }),
+      prisma.sale.findMany({
+        where: { 
+          companyId: session.user.companyId, 
+          saleDate: { gte: new Date(startDate), lte: new Date(endDate) } 
+        },
+        include: { product: true }
+      })
+    ]);
+
+    // Transform data for report generation
+    const products: Product[] = dbProducts.map(p => ({ 
+      ...p, 
+      category: p.category?.name || 'Uncategorized', 
+      description: p.description || undefined, 
+      location: p.location || undefined, 
+      imageUrl: p.imageUrl || undefined, 
+      fitment: p.fitment || undefined 
+    }));
+
+    const batches: Batch[] = dbBatches.map(b => ({ 
+      ...b, 
+      purchaseDate: b.purchaseDate.toISOString(), 
+      status: b.status as any, 
+      supplier: b.supplier || undefined, 
+      invoiceNumber: b.invoiceNumber || undefined, 
+      notes: b.notes || undefined 
+    }));
+
+    const transformedSales = salesData.map(s => ({ 
+      ...s, 
+      saleDate: s.saleDate.toISOString(), 
+      customerId: s.customerId || undefined, 
+      invoiceNumber: s.invoiceNumber || undefined 
+    }));
+
+    // Generate live monthly report
+    const liveReportData = generateMonthlyReport(products, batches, transformedSales, year, dbMonth);
+
+    console.log(`Generated live report for ${year}-${month} with ${liveReportData.products.length} products`);
+
+    return NextResponse.json({
+      report: {
+        id: null, // No ID since it's not saved
+        year: year,
+        month: month, // Already 1-based
+        totalSales: liveReportData.totalRevenue,
+        totalProfit: liveReportData.totalProfit,
+        averageProfitMargin: liveReportData.avgProfitMargin,
+        isFinalized: false, // Live data is not finalized
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        reportData: liveReportData
       },
-      data: {
-        totalSales: reportData.totalRevenue,
-        totalProfit: reportData.totalProfit,
-        averageProfitMargin: reportData.avgProfitMargin,
-        reportData: reportData as any
-      }
+      hasData: true
     });
-    return NextResponse.json(updatedReport);
+
   } catch (error) {
-    console.error('Error generating/fetching monthly report:', error);
-    return NextResponse.json({ error: 'Failed to generate/fetch monthly report' }, { status: 500 });
+    console.error('Error fetching monthly report:', error);
+    return NextResponse.json({
+      error: 'Failed to fetch monthly report',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
 

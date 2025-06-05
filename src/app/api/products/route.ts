@@ -78,24 +78,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Check if SKU already exists for this company
-    const existingProduct = await prisma.product.findFirst({
-      where: {
-        sku: {
-          equals: data.sku,
-          mode: 'insensitive'
-        },
-        companyId: userCompanyId // Scoped by companyId
-      }
-    });
-    
-    if (existingProduct) {
-      return NextResponse.json(
-        { error: 'A product with this SKU already exists in your company' },
-        { status: 409 }
-      );
-    }
-    
     const newProduct = await prisma.product.create({
       data: {
         ...data, // Spread existing data
@@ -145,20 +127,6 @@ export async function PATCH(request: NextRequest) {
     
     if (!existingProduct) {
       return NextResponse.json({ error: 'Product not found for your company' }, { status: 404 });
-    }
-    
-    if (data.sku && data.sku !== existingProduct.sku) {
-      const productWithSameSku = await prisma.product.findFirst({
-        where: {
-          id: { not: data.id },
-          sku: { equals: data.sku, mode: 'insensitive' },
-          companyId: userCompanyId // Scoped by companyId
-        }
-      });
-      
-      if (productWithSameSku) {
-        return NextResponse.json({ error: 'A product with this SKU already exists in your company' }, { status: 409 });
-      }
     }
     
     if (data.categoryId && data.categoryId !== existingProduct.categoryId) {

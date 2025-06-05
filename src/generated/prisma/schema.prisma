@@ -84,7 +84,6 @@ model Product {
   companyId     String
   company       Company  @relation(fields: [companyId], references: [id])
 
-  @@unique([sku, companyId])
   @@map("products")
 }
 
