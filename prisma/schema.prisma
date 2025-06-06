@@ -26,6 +26,7 @@ model Company {
   batches        Batch[]
   sales          Sale[]
   debts          Debt[]
+  refunds        Refund[]
   monthlyReports MonthlyReport[]
 
   @@map("companies")
@@ -43,6 +44,7 @@ model User {
   company   Company   @relation(fields: [companyId], references: [id])
   accounts  Account[] // Added for next-auth
   sessions  Session[] // Added for next-auth
+  processedRefunds Refund[] // Refunds processed by this user
 
   @@map("users")
 }
@@ -83,6 +85,7 @@ model Product {
   batches       Batch[]
   sales         Sale[]
   debts         Debt[]
+  refunds       Refund[]
   companyId     String
   company       Company  @relation(fields: [companyId], references: [id])
 
@@ -106,6 +109,7 @@ model Batch {
   product         Product  @relation(fields: [productId], references: [id])
   sales           Sale[]
   debts           Debt[]
+  refunds         Refund[]
   companyId       String
   company         Company  @relation(fields: [companyId], references: [id])
 
@@ -131,6 +135,7 @@ model Sale {
   batch         Batch    @relation(fields: [batchId], references: [id])
   companyId     String
   company       Company  @relation(fields: [companyId], references: [id])
+  refunds       Refund[] // One sale can have multiple refunds
 
   @@map("sales")
 }
@@ -211,4 +216,59 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Refund {
+  id                String        @id @default(cuid())
+  refundNumber      String        @unique // Auto-generated: REF-2025-001
+  originalSaleId    String
+  productId         String
+  batchId           String
+  quantity          Int
+  unitPrice         Decimal       @db.Decimal(10,2)
+  totalRefundAmount Decimal       @db.Decimal(10,2)
+  refundType        RefundType    @default(CASH)
+  reason            RefundReason  @default(OTHER)
+  customReason      String?
+  refundDate        DateTime      @default(now())
+  processedBy       String        // User ID who processed the refund
+  itemCondition     ItemCondition @default(NEW)
+  returnToInventory Boolean       @default(true)
+  companyId         String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  originalSale Sale    @relation(fields: [originalSaleId], references: [id], onDelete: Cascade)
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  batch        Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  company      Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  processedByUser User @relation(fields: [processedBy], references: [id])
+
+  @@index([companyId])
+  @@index([originalSaleId])
+  @@index([refundDate])
+  @@map("refunds")
+}
+
+enum RefundType {
+  CASH
+  STORE_CREDIT
+  EXCHANGE
+}
+
+enum RefundReason {
+  DEFECTIVE
+  WRONG_ITEM
+  CUSTOMER_CHANGE_MIND
+  DUPLICATE_ORDER
+  NOT_AS_DESCRIBED
+  OTHER
+}
+
+enum ItemCondition {
+  NEW
+  OPENED
+  DAMAGED
+  DEFECTIVE
 }

@@ -44,6 +44,11 @@ export type Batch = $Result.DefaultSelection<Prisma.$BatchPayload>
  */
 export type Sale = $Result.DefaultSelection<Prisma.$SalePayload>
 /**
+ * Model Debt
+ * 
+ */
+export type Debt = $Result.DefaultSelection<Prisma.$DebtPayload>
+/**
  * Model MonthlyReport
  * 
  */
@@ -63,6 +68,59 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
  * 
  */
 export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTokenPayload>
+/**
+ * Model Refund
+ * 
+ */
+export type Refund = $Result.DefaultSelection<Prisma.$RefundPayload>
+
+/**
+ * Enums
+ */
+export namespace $Enums {
+  export const RefundType: {
+  CASH: 'CASH',
+  STORE_CREDIT: 'STORE_CREDIT',
+  EXCHANGE: 'EXCHANGE'
+};
+
+export type RefundType = (typeof RefundType)[keyof typeof RefundType]
+
+
+export const RefundReason: {
+  DEFECTIVE: 'DEFECTIVE',
+  WRONG_ITEM: 'WRONG_ITEM',
+  CUSTOMER_CHANGE_MIND: 'CUSTOMER_CHANGE_MIND',
+  DUPLICATE_ORDER: 'DUPLICATE_ORDER',
+  NOT_AS_DESCRIBED: 'NOT_AS_DESCRIBED',
+  OTHER: 'OTHER'
+};
+
+export type RefundReason = (typeof RefundReason)[keyof typeof RefundReason]
+
+
+export const ItemCondition: {
+  NEW: 'NEW',
+  OPENED: 'OPENED',
+  DAMAGED: 'DAMAGED',
+  DEFECTIVE: 'DEFECTIVE'
+};
+
+export type ItemCondition = (typeof ItemCondition)[keyof typeof ItemCondition]
+
+}
+
+export type RefundType = $Enums.RefundType
+
+export const RefundType: typeof $Enums.RefundType
+
+export type RefundReason = $Enums.RefundReason
+
+export const RefundReason: typeof $Enums.RefundReason
+
+export type ItemCondition = $Enums.ItemCondition
+
+export const ItemCondition: typeof $Enums.ItemCondition
 
 /**
  * ##  Prisma Client ʲˢ
@@ -250,6 +308,16 @@ export class PrismaClient<
   get sale(): Prisma.SaleDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.debt`: Exposes CRUD operations for the **Debt** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Debts
+    * const debts = await prisma.debt.findMany()
+    * ```
+    */
+  get debt(): Prisma.DebtDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.monthlyReport`: Exposes CRUD operations for the **MonthlyReport** model.
     * Example usage:
     * ```ts
@@ -288,6 +356,16 @@ export class PrismaClient<
     * ```
     */
   get verificationToken(): Prisma.VerificationTokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.refund`: Exposes CRUD operations for the **Refund** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Refunds
+    * const refunds = await prisma.refund.findMany()
+    * ```
+    */
+  get refund(): Prisma.RefundDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -734,10 +812,12 @@ export namespace Prisma {
     Product: 'Product',
     Batch: 'Batch',
     Sale: 'Sale',
+    Debt: 'Debt',
     MonthlyReport: 'MonthlyReport',
     Account: 'Account',
     Session: 'Session',
-    VerificationToken: 'VerificationToken'
+    VerificationToken: 'VerificationToken',
+    Refund: 'Refund'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -756,7 +836,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "company" | "user" | "category" | "product" | "batch" | "sale" | "monthlyReport" | "account" | "session" | "verificationToken"
+      modelProps: "company" | "user" | "category" | "product" | "batch" | "sale" | "debt" | "monthlyReport" | "account" | "session" | "verificationToken" | "refund"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1204,6 +1284,80 @@ export namespace Prisma {
           }
         }
       }
+      Debt: {
+        payload: Prisma.$DebtPayload<ExtArgs>
+        fields: Prisma.DebtFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DebtFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DebtFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          findFirst: {
+            args: Prisma.DebtFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DebtFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          findMany: {
+            args: Prisma.DebtFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>[]
+          }
+          create: {
+            args: Prisma.DebtCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          createMany: {
+            args: Prisma.DebtCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DebtCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>[]
+          }
+          delete: {
+            args: Prisma.DebtDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          update: {
+            args: Prisma.DebtUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          deleteMany: {
+            args: Prisma.DebtDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DebtUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DebtUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>[]
+          }
+          upsert: {
+            args: Prisma.DebtUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebtPayload>
+          }
+          aggregate: {
+            args: Prisma.DebtAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDebt>
+          }
+          groupBy: {
+            args: Prisma.DebtGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DebtGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DebtCountArgs<ExtArgs>
+            result: $Utils.Optional<DebtCountAggregateOutputType> | number
+          }
+        }
+      }
       MonthlyReport: {
         payload: Prisma.$MonthlyReportPayload<ExtArgs>
         fields: Prisma.MonthlyReportFieldRefs
@@ -1500,6 +1654,80 @@ export namespace Prisma {
           }
         }
       }
+      Refund: {
+        payload: Prisma.$RefundPayload<ExtArgs>
+        fields: Prisma.RefundFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RefundFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RefundFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          findFirst: {
+            args: Prisma.RefundFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RefundFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          findMany: {
+            args: Prisma.RefundFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>[]
+          }
+          create: {
+            args: Prisma.RefundCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          createMany: {
+            args: Prisma.RefundCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RefundCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>[]
+          }
+          delete: {
+            args: Prisma.RefundDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          update: {
+            args: Prisma.RefundUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          deleteMany: {
+            args: Prisma.RefundDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RefundUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RefundUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>[]
+          }
+          upsert: {
+            args: Prisma.RefundUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RefundPayload>
+          }
+          aggregate: {
+            args: Prisma.RefundAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRefund>
+          }
+          groupBy: {
+            args: Prisma.RefundGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RefundGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RefundCountArgs<ExtArgs>
+            result: $Utils.Optional<RefundCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1590,10 +1818,12 @@ export namespace Prisma {
     product?: ProductOmit
     batch?: BatchOmit
     sale?: SaleOmit
+    debt?: DebtOmit
     monthlyReport?: MonthlyReportOmit
     account?: AccountOmit
     session?: SessionOmit
     verificationToken?: VerificationTokenOmit
+    refund?: RefundOmit
   }
 
   /* Types for Logging */
@@ -1693,6 +1923,8 @@ export namespace Prisma {
     products: number
     batches: number
     sales: number
+    debts: number
+    refunds: number
     monthlyReports: number
   }
 
@@ -1702,6 +1934,8 @@ export namespace Prisma {
     products?: boolean | CompanyCountOutputTypeCountProductsArgs
     batches?: boolean | CompanyCountOutputTypeCountBatchesArgs
     sales?: boolean | CompanyCountOutputTypeCountSalesArgs
+    debts?: boolean | CompanyCountOutputTypeCountDebtsArgs
+    refunds?: boolean | CompanyCountOutputTypeCountRefundsArgs
     monthlyReports?: boolean | CompanyCountOutputTypeCountMonthlyReportsArgs
   }
 
@@ -1754,6 +1988,20 @@ export namespace Prisma {
   /**
    * CompanyCountOutputType without action
    */
+  export type CompanyCountOutputTypeCountDebtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebtWhereInput
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeCountRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
   export type CompanyCountOutputTypeCountMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MonthlyReportWhereInput
   }
@@ -1766,11 +2014,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
+    processedRefunds: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    processedRefunds?: boolean | UserCountOutputTypeCountProcessedRefundsArgs
   }
 
   // Custom InputTypes
@@ -1796,6 +2046,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProcessedRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
   }
 
 
@@ -1837,11 +2094,15 @@ export namespace Prisma {
   export type ProductCountOutputType = {
     batches: number
     sales: number
+    debts: number
+    refunds: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     batches?: boolean | ProductCountOutputTypeCountBatchesArgs
     sales?: boolean | ProductCountOutputTypeCountSalesArgs
+    debts?: boolean | ProductCountOutputTypeCountDebtsArgs
+    refunds?: boolean | ProductCountOutputTypeCountRefundsArgs
   }
 
   // Custom InputTypes
@@ -1869,6 +2130,20 @@ export namespace Prisma {
     where?: SaleWhereInput
   }
 
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountDebtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebtWhereInput
+  }
+
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
+  }
+
 
   /**
    * Count Type BatchCountOutputType
@@ -1876,10 +2151,14 @@ export namespace Prisma {
 
   export type BatchCountOutputType = {
     sales: number
+    debts: number
+    refunds: number
   }
 
   export type BatchCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sales?: boolean | BatchCountOutputTypeCountSalesArgs
+    debts?: boolean | BatchCountOutputTypeCountDebtsArgs
+    refunds?: boolean | BatchCountOutputTypeCountRefundsArgs
   }
 
   // Custom InputTypes
@@ -1898,6 +2177,51 @@ export namespace Prisma {
    */
   export type BatchCountOutputTypeCountSalesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SaleWhereInput
+  }
+
+  /**
+   * BatchCountOutputType without action
+   */
+  export type BatchCountOutputTypeCountDebtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebtWhereInput
+  }
+
+  /**
+   * BatchCountOutputType without action
+   */
+  export type BatchCountOutputTypeCountRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
+  }
+
+
+  /**
+   * Count Type SaleCountOutputType
+   */
+
+  export type SaleCountOutputType = {
+    refunds: number
+  }
+
+  export type SaleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    refunds?: boolean | SaleCountOutputTypeCountRefundsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SaleCountOutputType without action
+   */
+  export type SaleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SaleCountOutputType
+     */
+    select?: SaleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SaleCountOutputType without action
+   */
+  export type SaleCountOutputTypeCountRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
   }
 
 
@@ -2066,6 +2390,8 @@ export namespace Prisma {
     products?: boolean | Company$productsArgs<ExtArgs>
     batches?: boolean | Company$batchesArgs<ExtArgs>
     sales?: boolean | Company$salesArgs<ExtArgs>
+    debts?: boolean | Company$debtsArgs<ExtArgs>
+    refunds?: boolean | Company$refundsArgs<ExtArgs>
     monthlyReports?: boolean | Company$monthlyReportsArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["company"]>
@@ -2098,6 +2424,8 @@ export namespace Prisma {
     products?: boolean | Company$productsArgs<ExtArgs>
     batches?: boolean | Company$batchesArgs<ExtArgs>
     sales?: boolean | Company$salesArgs<ExtArgs>
+    debts?: boolean | Company$debtsArgs<ExtArgs>
+    refunds?: boolean | Company$refundsArgs<ExtArgs>
     monthlyReports?: boolean | Company$monthlyReportsArgs<ExtArgs>
     _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -2112,6 +2440,8 @@ export namespace Prisma {
       products: Prisma.$ProductPayload<ExtArgs>[]
       batches: Prisma.$BatchPayload<ExtArgs>[]
       sales: Prisma.$SalePayload<ExtArgs>[]
+      debts: Prisma.$DebtPayload<ExtArgs>[]
+      refunds: Prisma.$RefundPayload<ExtArgs>[]
       monthlyReports: Prisma.$MonthlyReportPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -2518,6 +2848,8 @@ export namespace Prisma {
     products<T extends Company$productsArgs<ExtArgs> = {}>(args?: Subset<T, Company$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     batches<T extends Company$batchesArgs<ExtArgs> = {}>(args?: Subset<T, Company$batchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sales<T extends Company$salesArgs<ExtArgs> = {}>(args?: Subset<T, Company$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    debts<T extends Company$debtsArgs<ExtArgs> = {}>(args?: Subset<T, Company$debtsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    refunds<T extends Company$refundsArgs<ExtArgs> = {}>(args?: Subset<T, Company$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyReports<T extends Company$monthlyReportsArgs<ExtArgs> = {}>(args?: Subset<T, Company$monthlyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3060,6 +3392,54 @@ export namespace Prisma {
   }
 
   /**
+   * Company.debts
+   */
+  export type Company$debtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    where?: DebtWhereInput
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    cursor?: DebtWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Company.refunds
+   */
+  export type Company$refundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    cursor?: RefundWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
    * Company.monthlyReports
    */
   export type Company$monthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3285,6 +3665,7 @@ export namespace Prisma {
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    processedRefunds?: boolean | User$processedRefundsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3325,6 +3706,7 @@ export namespace Prisma {
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    processedRefunds?: boolean | User$processedRefundsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3340,6 +3722,7 @@ export namespace Prisma {
       company: Prisma.$CompanyPayload<ExtArgs>
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
+      processedRefunds: Prisma.$RefundPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3746,6 +4129,7 @@ export namespace Prisma {
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    processedRefunds<T extends User$processedRefundsArgs<ExtArgs> = {}>(args?: Subset<T, User$processedRefundsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4223,6 +4607,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.processedRefunds
+   */
+  export type User$processedRefundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    cursor?: RefundWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
   }
 
   /**
@@ -5647,6 +6055,8 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     batches?: boolean | Product$batchesArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
+    debts?: boolean | Product$debtsArgs<ExtArgs>
+    refunds?: boolean | Product$refundsArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -5714,6 +6124,8 @@ export namespace Prisma {
     category?: boolean | CategoryDefaultArgs<ExtArgs>
     batches?: boolean | Product$batchesArgs<ExtArgs>
     sales?: boolean | Product$salesArgs<ExtArgs>
+    debts?: boolean | Product$debtsArgs<ExtArgs>
+    refunds?: boolean | Product$refundsArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -5732,6 +6144,8 @@ export namespace Prisma {
       category: Prisma.$CategoryPayload<ExtArgs>
       batches: Prisma.$BatchPayload<ExtArgs>[]
       sales: Prisma.$SalePayload<ExtArgs>[]
+      debts: Prisma.$DebtPayload<ExtArgs>[]
+      refunds: Prisma.$RefundPayload<ExtArgs>[]
       company: Prisma.$CompanyPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -6147,6 +6561,8 @@ export namespace Prisma {
     category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     batches<T extends Product$batchesArgs<ExtArgs> = {}>(args?: Subset<T, Product$batchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sales<T extends Product$salesArgs<ExtArgs> = {}>(args?: Subset<T, Product$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    debts<T extends Product$debtsArgs<ExtArgs> = {}>(args?: Subset<T, Product$debtsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    refunds<T extends Product$refundsArgs<ExtArgs> = {}>(args?: Subset<T, Product$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6636,6 +7052,54 @@ export namespace Prisma {
   }
 
   /**
+   * Product.debts
+   */
+  export type Product$debtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    where?: DebtWhereInput
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    cursor?: DebtWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Product.refunds
+   */
+  export type Product$refundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    cursor?: RefundWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
    * Product without action
    */
   export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6926,6 +7390,8 @@ export namespace Prisma {
     companyId?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
     sales?: boolean | Batch$salesArgs<ExtArgs>
+    debts?: boolean | Batch$debtsArgs<ExtArgs>
+    refunds?: boolean | Batch$refundsArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     _count?: boolean | BatchCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["batch"]>
@@ -6986,6 +7452,8 @@ export namespace Prisma {
   export type BatchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     sales?: boolean | Batch$salesArgs<ExtArgs>
+    debts?: boolean | Batch$debtsArgs<ExtArgs>
+    refunds?: boolean | Batch$refundsArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     _count?: boolean | BatchCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -7003,6 +7471,8 @@ export namespace Prisma {
     objects: {
       product: Prisma.$ProductPayload<ExtArgs>
       sales: Prisma.$SalePayload<ExtArgs>[]
+      debts: Prisma.$DebtPayload<ExtArgs>[]
+      refunds: Prisma.$RefundPayload<ExtArgs>[]
       company: Prisma.$CompanyPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -7415,6 +7885,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     sales<T extends Batch$salesArgs<ExtArgs> = {}>(args?: Subset<T, Batch$salesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    debts<T extends Batch$debtsArgs<ExtArgs> = {}>(args?: Subset<T, Batch$debtsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    refunds<T extends Batch$refundsArgs<ExtArgs> = {}>(args?: Subset<T, Batch$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7878,6 +8350,54 @@ export namespace Prisma {
   }
 
   /**
+   * Batch.debts
+   */
+  export type Batch$debtsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    where?: DebtWhereInput
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    cursor?: DebtWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Batch.refunds
+   */
+  export type Batch$refundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    cursor?: RefundWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
    * Batch without action
    */
   export type BatchDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8185,6 +8705,8 @@ export namespace Prisma {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     batch?: boolean | BatchDefaultArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
+    refunds?: boolean | Sale$refundsArgs<ExtArgs>
+    _count?: boolean | SaleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sale"]>
 
   export type SaleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8249,6 +8771,8 @@ export namespace Prisma {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     batch?: boolean | BatchDefaultArgs<ExtArgs>
     company?: boolean | CompanyDefaultArgs<ExtArgs>
+    refunds?: boolean | Sale$refundsArgs<ExtArgs>
+    _count?: boolean | SaleCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SaleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -8267,6 +8791,7 @@ export namespace Prisma {
       product: Prisma.$ProductPayload<ExtArgs>
       batch: Prisma.$BatchPayload<ExtArgs>
       company: Prisma.$CompanyPayload<ExtArgs>
+      refunds: Prisma.$RefundPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8680,6 +9205,7 @@ export namespace Prisma {
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     batch<T extends BatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BatchDefaultArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    refunds<T extends Sale$refundsArgs<ExtArgs> = {}>(args?: Subset<T, Sale$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9119,6 +9645,30 @@ export namespace Prisma {
   }
 
   /**
+   * Sale.refunds
+   */
+  export type Sale$refundsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    cursor?: RefundWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
    * Sale without action
    */
   export type SaleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9134,6 +9684,1256 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SaleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Debt
+   */
+
+  export type AggregateDebt = {
+    _count: DebtCountAggregateOutputType | null
+    _avg: DebtAvgAggregateOutputType | null
+    _sum: DebtSumAggregateOutputType | null
+    _min: DebtMinAggregateOutputType | null
+    _max: DebtMaxAggregateOutputType | null
+  }
+
+  export type DebtAvgAggregateOutputType = {
+    quantity: number | null
+    unitPrice: number | null
+    totalAmount: number | null
+    purchasePrice: number | null
+  }
+
+  export type DebtSumAggregateOutputType = {
+    quantity: number | null
+    unitPrice: number | null
+    totalAmount: number | null
+    purchasePrice: number | null
+  }
+
+  export type DebtMinAggregateOutputType = {
+    id: string | null
+    quantity: number | null
+    unitPrice: number | null
+    totalAmount: number | null
+    purchasePrice: number | null
+    debtDate: Date | null
+    customerName: string | null
+    notes: string | null
+    status: string | null
+    paidDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    productId: string | null
+    batchId: string | null
+    companyId: string | null
+  }
+
+  export type DebtMaxAggregateOutputType = {
+    id: string | null
+    quantity: number | null
+    unitPrice: number | null
+    totalAmount: number | null
+    purchasePrice: number | null
+    debtDate: Date | null
+    customerName: string | null
+    notes: string | null
+    status: string | null
+    paidDate: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    productId: string | null
+    batchId: string | null
+    companyId: string | null
+  }
+
+  export type DebtCountAggregateOutputType = {
+    id: number
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: number
+    customerName: number
+    notes: number
+    status: number
+    paidDate: number
+    createdAt: number
+    updatedAt: number
+    productId: number
+    batchId: number
+    companyId: number
+    _all: number
+  }
+
+
+  export type DebtAvgAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    totalAmount?: true
+    purchasePrice?: true
+  }
+
+  export type DebtSumAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    totalAmount?: true
+    purchasePrice?: true
+  }
+
+  export type DebtMinAggregateInputType = {
+    id?: true
+    quantity?: true
+    unitPrice?: true
+    totalAmount?: true
+    purchasePrice?: true
+    debtDate?: true
+    customerName?: true
+    notes?: true
+    status?: true
+    paidDate?: true
+    createdAt?: true
+    updatedAt?: true
+    productId?: true
+    batchId?: true
+    companyId?: true
+  }
+
+  export type DebtMaxAggregateInputType = {
+    id?: true
+    quantity?: true
+    unitPrice?: true
+    totalAmount?: true
+    purchasePrice?: true
+    debtDate?: true
+    customerName?: true
+    notes?: true
+    status?: true
+    paidDate?: true
+    createdAt?: true
+    updatedAt?: true
+    productId?: true
+    batchId?: true
+    companyId?: true
+  }
+
+  export type DebtCountAggregateInputType = {
+    id?: true
+    quantity?: true
+    unitPrice?: true
+    totalAmount?: true
+    purchasePrice?: true
+    debtDate?: true
+    customerName?: true
+    notes?: true
+    status?: true
+    paidDate?: true
+    createdAt?: true
+    updatedAt?: true
+    productId?: true
+    batchId?: true
+    companyId?: true
+    _all?: true
+  }
+
+  export type DebtAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Debt to aggregate.
+     */
+    where?: DebtWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Debts to fetch.
+     */
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DebtWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Debts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Debts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Debts
+    **/
+    _count?: true | DebtCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DebtAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DebtSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DebtMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DebtMaxAggregateInputType
+  }
+
+  export type GetDebtAggregateType<T extends DebtAggregateArgs> = {
+        [P in keyof T & keyof AggregateDebt]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDebt[P]>
+      : GetScalarType<T[P], AggregateDebt[P]>
+  }
+
+
+
+
+  export type DebtGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebtWhereInput
+    orderBy?: DebtOrderByWithAggregationInput | DebtOrderByWithAggregationInput[]
+    by: DebtScalarFieldEnum[] | DebtScalarFieldEnum
+    having?: DebtScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DebtCountAggregateInputType | true
+    _avg?: DebtAvgAggregateInputType
+    _sum?: DebtSumAggregateInputType
+    _min?: DebtMinAggregateInputType
+    _max?: DebtMaxAggregateInputType
+  }
+
+  export type DebtGroupByOutputType = {
+    id: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date
+    customerName: string | null
+    notes: string | null
+    status: string
+    paidDate: Date | null
+    createdAt: Date
+    updatedAt: Date
+    productId: string
+    batchId: string
+    companyId: string
+    _count: DebtCountAggregateOutputType | null
+    _avg: DebtAvgAggregateOutputType | null
+    _sum: DebtSumAggregateOutputType | null
+    _min: DebtMinAggregateOutputType | null
+    _max: DebtMaxAggregateOutputType | null
+  }
+
+  type GetDebtGroupByPayload<T extends DebtGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DebtGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DebtGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DebtGroupByOutputType[P]>
+            : GetScalarType<T[P], DebtGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DebtSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalAmount?: boolean
+    purchasePrice?: boolean
+    debtDate?: boolean
+    customerName?: boolean
+    notes?: boolean
+    status?: boolean
+    paidDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    productId?: boolean
+    batchId?: boolean
+    companyId?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["debt"]>
+
+  export type DebtSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalAmount?: boolean
+    purchasePrice?: boolean
+    debtDate?: boolean
+    customerName?: boolean
+    notes?: boolean
+    status?: boolean
+    paidDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    productId?: boolean
+    batchId?: boolean
+    companyId?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["debt"]>
+
+  export type DebtSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalAmount?: boolean
+    purchasePrice?: boolean
+    debtDate?: boolean
+    customerName?: boolean
+    notes?: boolean
+    status?: boolean
+    paidDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    productId?: boolean
+    batchId?: boolean
+    companyId?: boolean
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["debt"]>
+
+  export type DebtSelectScalar = {
+    id?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalAmount?: boolean
+    purchasePrice?: boolean
+    debtDate?: boolean
+    customerName?: boolean
+    notes?: boolean
+    status?: boolean
+    paidDate?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    productId?: boolean
+    batchId?: boolean
+    companyId?: boolean
+  }
+
+  export type DebtOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "unitPrice" | "totalAmount" | "purchasePrice" | "debtDate" | "customerName" | "notes" | "status" | "paidDate" | "createdAt" | "updatedAt" | "productId" | "batchId" | "companyId", ExtArgs["result"]["debt"]>
+  export type DebtInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+  export type DebtIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+  export type DebtIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+
+  export type $DebtPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Debt"
+    objects: {
+      product: Prisma.$ProductPayload<ExtArgs>
+      batch: Prisma.$BatchPayload<ExtArgs>
+      company: Prisma.$CompanyPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      quantity: number
+      unitPrice: number
+      totalAmount: number
+      purchasePrice: number
+      debtDate: Date
+      customerName: string | null
+      notes: string | null
+      status: string
+      paidDate: Date | null
+      createdAt: Date
+      updatedAt: Date
+      productId: string
+      batchId: string
+      companyId: string
+    }, ExtArgs["result"]["debt"]>
+    composites: {}
+  }
+
+  type DebtGetPayload<S extends boolean | null | undefined | DebtDefaultArgs> = $Result.GetResult<Prisma.$DebtPayload, S>
+
+  type DebtCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DebtFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DebtCountAggregateInputType | true
+    }
+
+  export interface DebtDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Debt'], meta: { name: 'Debt' } }
+    /**
+     * Find zero or one Debt that matches the filter.
+     * @param {DebtFindUniqueArgs} args - Arguments to find a Debt
+     * @example
+     * // Get one Debt
+     * const debt = await prisma.debt.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DebtFindUniqueArgs>(args: SelectSubset<T, DebtFindUniqueArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Debt that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DebtFindUniqueOrThrowArgs} args - Arguments to find a Debt
+     * @example
+     * // Get one Debt
+     * const debt = await prisma.debt.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DebtFindUniqueOrThrowArgs>(args: SelectSubset<T, DebtFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Debt that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtFindFirstArgs} args - Arguments to find a Debt
+     * @example
+     * // Get one Debt
+     * const debt = await prisma.debt.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DebtFindFirstArgs>(args?: SelectSubset<T, DebtFindFirstArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Debt that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtFindFirstOrThrowArgs} args - Arguments to find a Debt
+     * @example
+     * // Get one Debt
+     * const debt = await prisma.debt.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DebtFindFirstOrThrowArgs>(args?: SelectSubset<T, DebtFindFirstOrThrowArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Debts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Debts
+     * const debts = await prisma.debt.findMany()
+     * 
+     * // Get first 10 Debts
+     * const debts = await prisma.debt.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const debtWithIdOnly = await prisma.debt.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DebtFindManyArgs>(args?: SelectSubset<T, DebtFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Debt.
+     * @param {DebtCreateArgs} args - Arguments to create a Debt.
+     * @example
+     * // Create one Debt
+     * const Debt = await prisma.debt.create({
+     *   data: {
+     *     // ... data to create a Debt
+     *   }
+     * })
+     * 
+     */
+    create<T extends DebtCreateArgs>(args: SelectSubset<T, DebtCreateArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Debts.
+     * @param {DebtCreateManyArgs} args - Arguments to create many Debts.
+     * @example
+     * // Create many Debts
+     * const debt = await prisma.debt.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DebtCreateManyArgs>(args?: SelectSubset<T, DebtCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Debts and returns the data saved in the database.
+     * @param {DebtCreateManyAndReturnArgs} args - Arguments to create many Debts.
+     * @example
+     * // Create many Debts
+     * const debt = await prisma.debt.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Debts and only return the `id`
+     * const debtWithIdOnly = await prisma.debt.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DebtCreateManyAndReturnArgs>(args?: SelectSubset<T, DebtCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Debt.
+     * @param {DebtDeleteArgs} args - Arguments to delete one Debt.
+     * @example
+     * // Delete one Debt
+     * const Debt = await prisma.debt.delete({
+     *   where: {
+     *     // ... filter to delete one Debt
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DebtDeleteArgs>(args: SelectSubset<T, DebtDeleteArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Debt.
+     * @param {DebtUpdateArgs} args - Arguments to update one Debt.
+     * @example
+     * // Update one Debt
+     * const debt = await prisma.debt.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DebtUpdateArgs>(args: SelectSubset<T, DebtUpdateArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Debts.
+     * @param {DebtDeleteManyArgs} args - Arguments to filter Debts to delete.
+     * @example
+     * // Delete a few Debts
+     * const { count } = await prisma.debt.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DebtDeleteManyArgs>(args?: SelectSubset<T, DebtDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Debts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Debts
+     * const debt = await prisma.debt.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DebtUpdateManyArgs>(args: SelectSubset<T, DebtUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Debts and returns the data updated in the database.
+     * @param {DebtUpdateManyAndReturnArgs} args - Arguments to update many Debts.
+     * @example
+     * // Update many Debts
+     * const debt = await prisma.debt.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Debts and only return the `id`
+     * const debtWithIdOnly = await prisma.debt.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DebtUpdateManyAndReturnArgs>(args: SelectSubset<T, DebtUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Debt.
+     * @param {DebtUpsertArgs} args - Arguments to update or create a Debt.
+     * @example
+     * // Update or create a Debt
+     * const debt = await prisma.debt.upsert({
+     *   create: {
+     *     // ... data to create a Debt
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Debt we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DebtUpsertArgs>(args: SelectSubset<T, DebtUpsertArgs<ExtArgs>>): Prisma__DebtClient<$Result.GetResult<Prisma.$DebtPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Debts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtCountArgs} args - Arguments to filter Debts to count.
+     * @example
+     * // Count the number of Debts
+     * const count = await prisma.debt.count({
+     *   where: {
+     *     // ... the filter for the Debts we want to count
+     *   }
+     * })
+    **/
+    count<T extends DebtCountArgs>(
+      args?: Subset<T, DebtCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DebtCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Debt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DebtAggregateArgs>(args: Subset<T, DebtAggregateArgs>): Prisma.PrismaPromise<GetDebtAggregateType<T>>
+
+    /**
+     * Group by Debt.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebtGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DebtGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DebtGroupByArgs['orderBy'] }
+        : { orderBy?: DebtGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DebtGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDebtGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Debt model
+   */
+  readonly fields: DebtFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Debt.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DebtClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    batch<T extends BatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BatchDefaultArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Debt model
+   */
+  interface DebtFieldRefs {
+    readonly id: FieldRef<"Debt", 'String'>
+    readonly quantity: FieldRef<"Debt", 'Int'>
+    readonly unitPrice: FieldRef<"Debt", 'Float'>
+    readonly totalAmount: FieldRef<"Debt", 'Float'>
+    readonly purchasePrice: FieldRef<"Debt", 'Float'>
+    readonly debtDate: FieldRef<"Debt", 'DateTime'>
+    readonly customerName: FieldRef<"Debt", 'String'>
+    readonly notes: FieldRef<"Debt", 'String'>
+    readonly status: FieldRef<"Debt", 'String'>
+    readonly paidDate: FieldRef<"Debt", 'DateTime'>
+    readonly createdAt: FieldRef<"Debt", 'DateTime'>
+    readonly updatedAt: FieldRef<"Debt", 'DateTime'>
+    readonly productId: FieldRef<"Debt", 'String'>
+    readonly batchId: FieldRef<"Debt", 'String'>
+    readonly companyId: FieldRef<"Debt", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Debt findUnique
+   */
+  export type DebtFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter, which Debt to fetch.
+     */
+    where: DebtWhereUniqueInput
+  }
+
+  /**
+   * Debt findUniqueOrThrow
+   */
+  export type DebtFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter, which Debt to fetch.
+     */
+    where: DebtWhereUniqueInput
+  }
+
+  /**
+   * Debt findFirst
+   */
+  export type DebtFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter, which Debt to fetch.
+     */
+    where?: DebtWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Debts to fetch.
+     */
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Debts.
+     */
+    cursor?: DebtWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Debts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Debts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Debts.
+     */
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Debt findFirstOrThrow
+   */
+  export type DebtFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter, which Debt to fetch.
+     */
+    where?: DebtWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Debts to fetch.
+     */
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Debts.
+     */
+    cursor?: DebtWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Debts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Debts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Debts.
+     */
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Debt findMany
+   */
+  export type DebtFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter, which Debts to fetch.
+     */
+    where?: DebtWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Debts to fetch.
+     */
+    orderBy?: DebtOrderByWithRelationInput | DebtOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Debts.
+     */
+    cursor?: DebtWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Debts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Debts.
+     */
+    skip?: number
+    distinct?: DebtScalarFieldEnum | DebtScalarFieldEnum[]
+  }
+
+  /**
+   * Debt create
+   */
+  export type DebtCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Debt.
+     */
+    data: XOR<DebtCreateInput, DebtUncheckedCreateInput>
+  }
+
+  /**
+   * Debt createMany
+   */
+  export type DebtCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Debts.
+     */
+    data: DebtCreateManyInput | DebtCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Debt createManyAndReturn
+   */
+  export type DebtCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * The data used to create many Debts.
+     */
+    data: DebtCreateManyInput | DebtCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Debt update
+   */
+  export type DebtUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Debt.
+     */
+    data: XOR<DebtUpdateInput, DebtUncheckedUpdateInput>
+    /**
+     * Choose, which Debt to update.
+     */
+    where: DebtWhereUniqueInput
+  }
+
+  /**
+   * Debt updateMany
+   */
+  export type DebtUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Debts.
+     */
+    data: XOR<DebtUpdateManyMutationInput, DebtUncheckedUpdateManyInput>
+    /**
+     * Filter which Debts to update
+     */
+    where?: DebtWhereInput
+    /**
+     * Limit how many Debts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Debt updateManyAndReturn
+   */
+  export type DebtUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * The data used to update Debts.
+     */
+    data: XOR<DebtUpdateManyMutationInput, DebtUncheckedUpdateManyInput>
+    /**
+     * Filter which Debts to update
+     */
+    where?: DebtWhereInput
+    /**
+     * Limit how many Debts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Debt upsert
+   */
+  export type DebtUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Debt to update in case it exists.
+     */
+    where: DebtWhereUniqueInput
+    /**
+     * In case the Debt found by the `where` argument doesn't exist, create a new Debt with this data.
+     */
+    create: XOR<DebtCreateInput, DebtUncheckedCreateInput>
+    /**
+     * In case the Debt was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DebtUpdateInput, DebtUncheckedUpdateInput>
+  }
+
+  /**
+   * Debt delete
+   */
+  export type DebtDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
+    /**
+     * Filter which Debt to delete.
+     */
+    where: DebtWhereUniqueInput
+  }
+
+  /**
+   * Debt deleteMany
+   */
+  export type DebtDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Debts to delete
+     */
+    where?: DebtWhereInput
+    /**
+     * Limit how many Debts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Debt without action
+   */
+  export type DebtDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Debt
+     */
+    select?: DebtSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Debt
+     */
+    omit?: DebtOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebtInclude<ExtArgs> | null
   }
 
 
@@ -13517,6 +15317,1307 @@ export namespace Prisma {
 
 
   /**
+   * Model Refund
+   */
+
+  export type AggregateRefund = {
+    _count: RefundCountAggregateOutputType | null
+    _avg: RefundAvgAggregateOutputType | null
+    _sum: RefundSumAggregateOutputType | null
+    _min: RefundMinAggregateOutputType | null
+    _max: RefundMaxAggregateOutputType | null
+  }
+
+  export type RefundAvgAggregateOutputType = {
+    quantity: number | null
+    unitPrice: Decimal | null
+    totalRefundAmount: Decimal | null
+  }
+
+  export type RefundSumAggregateOutputType = {
+    quantity: number | null
+    unitPrice: Decimal | null
+    totalRefundAmount: Decimal | null
+  }
+
+  export type RefundMinAggregateOutputType = {
+    id: string | null
+    refundNumber: string | null
+    originalSaleId: string | null
+    productId: string | null
+    batchId: string | null
+    quantity: number | null
+    unitPrice: Decimal | null
+    totalRefundAmount: Decimal | null
+    refundType: $Enums.RefundType | null
+    reason: $Enums.RefundReason | null
+    customReason: string | null
+    refundDate: Date | null
+    processedBy: string | null
+    itemCondition: $Enums.ItemCondition | null
+    returnToInventory: boolean | null
+    companyId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RefundMaxAggregateOutputType = {
+    id: string | null
+    refundNumber: string | null
+    originalSaleId: string | null
+    productId: string | null
+    batchId: string | null
+    quantity: number | null
+    unitPrice: Decimal | null
+    totalRefundAmount: Decimal | null
+    refundType: $Enums.RefundType | null
+    reason: $Enums.RefundReason | null
+    customReason: string | null
+    refundDate: Date | null
+    processedBy: string | null
+    itemCondition: $Enums.ItemCondition | null
+    returnToInventory: boolean | null
+    companyId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RefundCountAggregateOutputType = {
+    id: number
+    refundNumber: number
+    originalSaleId: number
+    productId: number
+    batchId: number
+    quantity: number
+    unitPrice: number
+    totalRefundAmount: number
+    refundType: number
+    reason: number
+    customReason: number
+    refundDate: number
+    processedBy: number
+    itemCondition: number
+    returnToInventory: number
+    companyId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RefundAvgAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    totalRefundAmount?: true
+  }
+
+  export type RefundSumAggregateInputType = {
+    quantity?: true
+    unitPrice?: true
+    totalRefundAmount?: true
+  }
+
+  export type RefundMinAggregateInputType = {
+    id?: true
+    refundNumber?: true
+    originalSaleId?: true
+    productId?: true
+    batchId?: true
+    quantity?: true
+    unitPrice?: true
+    totalRefundAmount?: true
+    refundType?: true
+    reason?: true
+    customReason?: true
+    refundDate?: true
+    processedBy?: true
+    itemCondition?: true
+    returnToInventory?: true
+    companyId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RefundMaxAggregateInputType = {
+    id?: true
+    refundNumber?: true
+    originalSaleId?: true
+    productId?: true
+    batchId?: true
+    quantity?: true
+    unitPrice?: true
+    totalRefundAmount?: true
+    refundType?: true
+    reason?: true
+    customReason?: true
+    refundDate?: true
+    processedBy?: true
+    itemCondition?: true
+    returnToInventory?: true
+    companyId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RefundCountAggregateInputType = {
+    id?: true
+    refundNumber?: true
+    originalSaleId?: true
+    productId?: true
+    batchId?: true
+    quantity?: true
+    unitPrice?: true
+    totalRefundAmount?: true
+    refundType?: true
+    reason?: true
+    customReason?: true
+    refundDate?: true
+    processedBy?: true
+    itemCondition?: true
+    returnToInventory?: true
+    companyId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RefundAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Refund to aggregate.
+     */
+    where?: RefundWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Refunds to fetch.
+     */
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RefundWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Refunds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Refunds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Refunds
+    **/
+    _count?: true | RefundCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RefundAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RefundSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RefundMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RefundMaxAggregateInputType
+  }
+
+  export type GetRefundAggregateType<T extends RefundAggregateArgs> = {
+        [P in keyof T & keyof AggregateRefund]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRefund[P]>
+      : GetScalarType<T[P], AggregateRefund[P]>
+  }
+
+
+
+
+  export type RefundGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefundWhereInput
+    orderBy?: RefundOrderByWithAggregationInput | RefundOrderByWithAggregationInput[]
+    by: RefundScalarFieldEnum[] | RefundScalarFieldEnum
+    having?: RefundScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RefundCountAggregateInputType | true
+    _avg?: RefundAvgAggregateInputType
+    _sum?: RefundSumAggregateInputType
+    _min?: RefundMinAggregateInputType
+    _max?: RefundMaxAggregateInputType
+  }
+
+  export type RefundGroupByOutputType = {
+    id: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal
+    totalRefundAmount: Decimal
+    refundType: $Enums.RefundType
+    reason: $Enums.RefundReason
+    customReason: string | null
+    refundDate: Date
+    processedBy: string
+    itemCondition: $Enums.ItemCondition
+    returnToInventory: boolean
+    companyId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: RefundCountAggregateOutputType | null
+    _avg: RefundAvgAggregateOutputType | null
+    _sum: RefundSumAggregateOutputType | null
+    _min: RefundMinAggregateOutputType | null
+    _max: RefundMaxAggregateOutputType | null
+  }
+
+  type GetRefundGroupByPayload<T extends RefundGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RefundGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RefundGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RefundGroupByOutputType[P]>
+            : GetScalarType<T[P], RefundGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RefundSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    refundNumber?: boolean
+    originalSaleId?: boolean
+    productId?: boolean
+    batchId?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalRefundAmount?: boolean
+    refundType?: boolean
+    reason?: boolean
+    customReason?: boolean
+    refundDate?: boolean
+    processedBy?: boolean
+    itemCondition?: boolean
+    returnToInventory?: boolean
+    companyId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["refund"]>
+
+  export type RefundSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    refundNumber?: boolean
+    originalSaleId?: boolean
+    productId?: boolean
+    batchId?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalRefundAmount?: boolean
+    refundType?: boolean
+    reason?: boolean
+    customReason?: boolean
+    refundDate?: boolean
+    processedBy?: boolean
+    itemCondition?: boolean
+    returnToInventory?: boolean
+    companyId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["refund"]>
+
+  export type RefundSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    refundNumber?: boolean
+    originalSaleId?: boolean
+    productId?: boolean
+    batchId?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalRefundAmount?: boolean
+    refundType?: boolean
+    reason?: boolean
+    customReason?: boolean
+    refundDate?: boolean
+    processedBy?: boolean
+    itemCondition?: boolean
+    returnToInventory?: boolean
+    companyId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["refund"]>
+
+  export type RefundSelectScalar = {
+    id?: boolean
+    refundNumber?: boolean
+    originalSaleId?: boolean
+    productId?: boolean
+    batchId?: boolean
+    quantity?: boolean
+    unitPrice?: boolean
+    totalRefundAmount?: boolean
+    refundType?: boolean
+    reason?: boolean
+    customReason?: boolean
+    refundDate?: boolean
+    processedBy?: boolean
+    itemCondition?: boolean
+    returnToInventory?: boolean
+    companyId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RefundOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "refundNumber" | "originalSaleId" | "productId" | "batchId" | "quantity" | "unitPrice" | "totalRefundAmount" | "refundType" | "reason" | "customReason" | "refundDate" | "processedBy" | "itemCondition" | "returnToInventory" | "companyId" | "createdAt" | "updatedAt", ExtArgs["result"]["refund"]>
+  export type RefundInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RefundIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RefundIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    originalSale?: boolean | SaleDefaultArgs<ExtArgs>
+    product?: boolean | ProductDefaultArgs<ExtArgs>
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    processedByUser?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RefundPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Refund"
+    objects: {
+      originalSale: Prisma.$SalePayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs>
+      batch: Prisma.$BatchPayload<ExtArgs>
+      company: Prisma.$CompanyPayload<ExtArgs>
+      processedByUser: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      refundNumber: string
+      originalSaleId: string
+      productId: string
+      batchId: string
+      quantity: number
+      unitPrice: Prisma.Decimal
+      totalRefundAmount: Prisma.Decimal
+      refundType: $Enums.RefundType
+      reason: $Enums.RefundReason
+      customReason: string | null
+      refundDate: Date
+      processedBy: string
+      itemCondition: $Enums.ItemCondition
+      returnToInventory: boolean
+      companyId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["refund"]>
+    composites: {}
+  }
+
+  type RefundGetPayload<S extends boolean | null | undefined | RefundDefaultArgs> = $Result.GetResult<Prisma.$RefundPayload, S>
+
+  type RefundCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RefundFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RefundCountAggregateInputType | true
+    }
+
+  export interface RefundDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Refund'], meta: { name: 'Refund' } }
+    /**
+     * Find zero or one Refund that matches the filter.
+     * @param {RefundFindUniqueArgs} args - Arguments to find a Refund
+     * @example
+     * // Get one Refund
+     * const refund = await prisma.refund.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RefundFindUniqueArgs>(args: SelectSubset<T, RefundFindUniqueArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Refund that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RefundFindUniqueOrThrowArgs} args - Arguments to find a Refund
+     * @example
+     * // Get one Refund
+     * const refund = await prisma.refund.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RefundFindUniqueOrThrowArgs>(args: SelectSubset<T, RefundFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Refund that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundFindFirstArgs} args - Arguments to find a Refund
+     * @example
+     * // Get one Refund
+     * const refund = await prisma.refund.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RefundFindFirstArgs>(args?: SelectSubset<T, RefundFindFirstArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Refund that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundFindFirstOrThrowArgs} args - Arguments to find a Refund
+     * @example
+     * // Get one Refund
+     * const refund = await prisma.refund.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RefundFindFirstOrThrowArgs>(args?: SelectSubset<T, RefundFindFirstOrThrowArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Refunds that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Refunds
+     * const refunds = await prisma.refund.findMany()
+     * 
+     * // Get first 10 Refunds
+     * const refunds = await prisma.refund.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const refundWithIdOnly = await prisma.refund.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RefundFindManyArgs>(args?: SelectSubset<T, RefundFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Refund.
+     * @param {RefundCreateArgs} args - Arguments to create a Refund.
+     * @example
+     * // Create one Refund
+     * const Refund = await prisma.refund.create({
+     *   data: {
+     *     // ... data to create a Refund
+     *   }
+     * })
+     * 
+     */
+    create<T extends RefundCreateArgs>(args: SelectSubset<T, RefundCreateArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Refunds.
+     * @param {RefundCreateManyArgs} args - Arguments to create many Refunds.
+     * @example
+     * // Create many Refunds
+     * const refund = await prisma.refund.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RefundCreateManyArgs>(args?: SelectSubset<T, RefundCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Refunds and returns the data saved in the database.
+     * @param {RefundCreateManyAndReturnArgs} args - Arguments to create many Refunds.
+     * @example
+     * // Create many Refunds
+     * const refund = await prisma.refund.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Refunds and only return the `id`
+     * const refundWithIdOnly = await prisma.refund.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RefundCreateManyAndReturnArgs>(args?: SelectSubset<T, RefundCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Refund.
+     * @param {RefundDeleteArgs} args - Arguments to delete one Refund.
+     * @example
+     * // Delete one Refund
+     * const Refund = await prisma.refund.delete({
+     *   where: {
+     *     // ... filter to delete one Refund
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RefundDeleteArgs>(args: SelectSubset<T, RefundDeleteArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Refund.
+     * @param {RefundUpdateArgs} args - Arguments to update one Refund.
+     * @example
+     * // Update one Refund
+     * const refund = await prisma.refund.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RefundUpdateArgs>(args: SelectSubset<T, RefundUpdateArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Refunds.
+     * @param {RefundDeleteManyArgs} args - Arguments to filter Refunds to delete.
+     * @example
+     * // Delete a few Refunds
+     * const { count } = await prisma.refund.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RefundDeleteManyArgs>(args?: SelectSubset<T, RefundDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Refunds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Refunds
+     * const refund = await prisma.refund.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RefundUpdateManyArgs>(args: SelectSubset<T, RefundUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Refunds and returns the data updated in the database.
+     * @param {RefundUpdateManyAndReturnArgs} args - Arguments to update many Refunds.
+     * @example
+     * // Update many Refunds
+     * const refund = await prisma.refund.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Refunds and only return the `id`
+     * const refundWithIdOnly = await prisma.refund.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RefundUpdateManyAndReturnArgs>(args: SelectSubset<T, RefundUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Refund.
+     * @param {RefundUpsertArgs} args - Arguments to update or create a Refund.
+     * @example
+     * // Update or create a Refund
+     * const refund = await prisma.refund.upsert({
+     *   create: {
+     *     // ... data to create a Refund
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Refund we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RefundUpsertArgs>(args: SelectSubset<T, RefundUpsertArgs<ExtArgs>>): Prisma__RefundClient<$Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Refunds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundCountArgs} args - Arguments to filter Refunds to count.
+     * @example
+     * // Count the number of Refunds
+     * const count = await prisma.refund.count({
+     *   where: {
+     *     // ... the filter for the Refunds we want to count
+     *   }
+     * })
+    **/
+    count<T extends RefundCountArgs>(
+      args?: Subset<T, RefundCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RefundCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Refund.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RefundAggregateArgs>(args: Subset<T, RefundAggregateArgs>): Prisma.PrismaPromise<GetRefundAggregateType<T>>
+
+    /**
+     * Group by Refund.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RefundGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RefundGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RefundGroupByArgs['orderBy'] }
+        : { orderBy?: RefundGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RefundGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRefundGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Refund model
+   */
+  readonly fields: RefundFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Refund.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RefundClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    originalSale<T extends SaleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SaleDefaultArgs<ExtArgs>>): Prisma__SaleClient<$Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    batch<T extends BatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BatchDefaultArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    processedByUser<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Refund model
+   */
+  interface RefundFieldRefs {
+    readonly id: FieldRef<"Refund", 'String'>
+    readonly refundNumber: FieldRef<"Refund", 'String'>
+    readonly originalSaleId: FieldRef<"Refund", 'String'>
+    readonly productId: FieldRef<"Refund", 'String'>
+    readonly batchId: FieldRef<"Refund", 'String'>
+    readonly quantity: FieldRef<"Refund", 'Int'>
+    readonly unitPrice: FieldRef<"Refund", 'Decimal'>
+    readonly totalRefundAmount: FieldRef<"Refund", 'Decimal'>
+    readonly refundType: FieldRef<"Refund", 'RefundType'>
+    readonly reason: FieldRef<"Refund", 'RefundReason'>
+    readonly customReason: FieldRef<"Refund", 'String'>
+    readonly refundDate: FieldRef<"Refund", 'DateTime'>
+    readonly processedBy: FieldRef<"Refund", 'String'>
+    readonly itemCondition: FieldRef<"Refund", 'ItemCondition'>
+    readonly returnToInventory: FieldRef<"Refund", 'Boolean'>
+    readonly companyId: FieldRef<"Refund", 'String'>
+    readonly createdAt: FieldRef<"Refund", 'DateTime'>
+    readonly updatedAt: FieldRef<"Refund", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Refund findUnique
+   */
+  export type RefundFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter, which Refund to fetch.
+     */
+    where: RefundWhereUniqueInput
+  }
+
+  /**
+   * Refund findUniqueOrThrow
+   */
+  export type RefundFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter, which Refund to fetch.
+     */
+    where: RefundWhereUniqueInput
+  }
+
+  /**
+   * Refund findFirst
+   */
+  export type RefundFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter, which Refund to fetch.
+     */
+    where?: RefundWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Refunds to fetch.
+     */
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Refunds.
+     */
+    cursor?: RefundWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Refunds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Refunds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Refunds.
+     */
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
+   * Refund findFirstOrThrow
+   */
+  export type RefundFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter, which Refund to fetch.
+     */
+    where?: RefundWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Refunds to fetch.
+     */
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Refunds.
+     */
+    cursor?: RefundWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Refunds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Refunds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Refunds.
+     */
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
+   * Refund findMany
+   */
+  export type RefundFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter, which Refunds to fetch.
+     */
+    where?: RefundWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Refunds to fetch.
+     */
+    orderBy?: RefundOrderByWithRelationInput | RefundOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Refunds.
+     */
+    cursor?: RefundWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Refunds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Refunds.
+     */
+    skip?: number
+    distinct?: RefundScalarFieldEnum | RefundScalarFieldEnum[]
+  }
+
+  /**
+   * Refund create
+   */
+  export type RefundCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Refund.
+     */
+    data: XOR<RefundCreateInput, RefundUncheckedCreateInput>
+  }
+
+  /**
+   * Refund createMany
+   */
+  export type RefundCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Refunds.
+     */
+    data: RefundCreateManyInput | RefundCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Refund createManyAndReturn
+   */
+  export type RefundCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * The data used to create many Refunds.
+     */
+    data: RefundCreateManyInput | RefundCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Refund update
+   */
+  export type RefundUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Refund.
+     */
+    data: XOR<RefundUpdateInput, RefundUncheckedUpdateInput>
+    /**
+     * Choose, which Refund to update.
+     */
+    where: RefundWhereUniqueInput
+  }
+
+  /**
+   * Refund updateMany
+   */
+  export type RefundUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Refunds.
+     */
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyInput>
+    /**
+     * Filter which Refunds to update
+     */
+    where?: RefundWhereInput
+    /**
+     * Limit how many Refunds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Refund updateManyAndReturn
+   */
+  export type RefundUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * The data used to update Refunds.
+     */
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyInput>
+    /**
+     * Filter which Refunds to update
+     */
+    where?: RefundWhereInput
+    /**
+     * Limit how many Refunds to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Refund upsert
+   */
+  export type RefundUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Refund to update in case it exists.
+     */
+    where: RefundWhereUniqueInput
+    /**
+     * In case the Refund found by the `where` argument doesn't exist, create a new Refund with this data.
+     */
+    create: XOR<RefundCreateInput, RefundUncheckedCreateInput>
+    /**
+     * In case the Refund was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RefundUpdateInput, RefundUncheckedUpdateInput>
+  }
+
+  /**
+   * Refund delete
+   */
+  export type RefundDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+    /**
+     * Filter which Refund to delete.
+     */
+    where: RefundWhereUniqueInput
+  }
+
+  /**
+   * Refund deleteMany
+   */
+  export type RefundDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Refunds to delete
+     */
+    where?: RefundWhereInput
+    /**
+     * Limit how many Refunds to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Refund without action
+   */
+  export type RefundDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Refund
+     */
+    select?: RefundSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Refund
+     */
+    omit?: RefundOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefundInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -13626,6 +16727,27 @@ export namespace Prisma {
   export type SaleScalarFieldEnum = (typeof SaleScalarFieldEnum)[keyof typeof SaleScalarFieldEnum]
 
 
+  export const DebtScalarFieldEnum: {
+    id: 'id',
+    quantity: 'quantity',
+    unitPrice: 'unitPrice',
+    totalAmount: 'totalAmount',
+    purchasePrice: 'purchasePrice',
+    debtDate: 'debtDate',
+    customerName: 'customerName',
+    notes: 'notes',
+    status: 'status',
+    paidDate: 'paidDate',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    productId: 'productId',
+    batchId: 'batchId',
+    companyId: 'companyId'
+  };
+
+  export type DebtScalarFieldEnum = (typeof DebtScalarFieldEnum)[keyof typeof DebtScalarFieldEnum]
+
+
   export const MonthlyReportScalarFieldEnum: {
     id: 'id',
     year: 'year',
@@ -13678,6 +16800,30 @@ export namespace Prisma {
   };
 
   export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+  export const RefundScalarFieldEnum: {
+    id: 'id',
+    refundNumber: 'refundNumber',
+    originalSaleId: 'originalSaleId',
+    productId: 'productId',
+    batchId: 'batchId',
+    quantity: 'quantity',
+    unitPrice: 'unitPrice',
+    totalRefundAmount: 'totalRefundAmount',
+    refundType: 'refundType',
+    reason: 'reason',
+    customReason: 'customReason',
+    refundDate: 'refundDate',
+    processedBy: 'processedBy',
+    itemCondition: 'itemCondition',
+    returnToInventory: 'returnToInventory',
+    companyId: 'companyId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RefundScalarFieldEnum = (typeof RefundScalarFieldEnum)[keyof typeof RefundScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -13800,6 +16946,62 @@ export namespace Prisma {
    */
   export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RefundType'
+   */
+  export type EnumRefundTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundType'>
+    
+
+
+  /**
+   * Reference to a field of type 'RefundType[]'
+   */
+  export type ListEnumRefundTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RefundReason'
+   */
+  export type EnumRefundReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'RefundReason[]'
+   */
+  export type ListEnumRefundReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundReason[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ItemCondition'
+   */
+  export type EnumItemConditionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemCondition'>
+    
+
+
+  /**
+   * Reference to a field of type 'ItemCondition[]'
+   */
+  export type ListEnumItemConditionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemCondition[]'>
+    
   /**
    * Deep Input Types
    */
@@ -13818,6 +17020,8 @@ export namespace Prisma {
     products?: ProductListRelationFilter
     batches?: BatchListRelationFilter
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     monthlyReports?: MonthlyReportListRelationFilter
   }
 
@@ -13831,6 +17035,8 @@ export namespace Prisma {
     products?: ProductOrderByRelationAggregateInput
     batches?: BatchOrderByRelationAggregateInput
     sales?: SaleOrderByRelationAggregateInput
+    debts?: DebtOrderByRelationAggregateInput
+    refunds?: RefundOrderByRelationAggregateInput
     monthlyReports?: MonthlyReportOrderByRelationAggregateInput
   }
 
@@ -13847,6 +17053,8 @@ export namespace Prisma {
     products?: ProductListRelationFilter
     batches?: BatchListRelationFilter
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     monthlyReports?: MonthlyReportListRelationFilter
   }, "id" | "name">
 
@@ -13884,6 +17092,7 @@ export namespace Prisma {
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    processedRefunds?: RefundListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -13897,6 +17106,7 @@ export namespace Prisma {
     company?: CompanyOrderByWithRelationInput
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
+    processedRefunds?: RefundOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -13913,6 +17123,7 @@ export namespace Prisma {
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    processedRefunds?: RefundListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -14032,6 +17243,8 @@ export namespace Prisma {
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     batches?: BatchListRelationFilter
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
   }
 
@@ -14054,6 +17267,8 @@ export namespace Prisma {
     category?: CategoryOrderByWithRelationInput
     batches?: BatchOrderByRelationAggregateInput
     sales?: SaleOrderByRelationAggregateInput
+    debts?: DebtOrderByRelationAggregateInput
+    refunds?: RefundOrderByRelationAggregateInput
     company?: CompanyOrderByWithRelationInput
   }
 
@@ -14079,6 +17294,8 @@ export namespace Prisma {
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     batches?: BatchListRelationFilter
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
   }, "id">
 
@@ -14145,6 +17362,8 @@ export namespace Prisma {
     companyId?: StringFilter<"Batch"> | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
   }
 
@@ -14164,6 +17383,8 @@ export namespace Prisma {
     companyId?: SortOrder
     product?: ProductOrderByWithRelationInput
     sales?: SaleOrderByRelationAggregateInput
+    debts?: DebtOrderByRelationAggregateInput
+    refunds?: RefundOrderByRelationAggregateInput
     company?: CompanyOrderByWithRelationInput
   }
 
@@ -14186,6 +17407,8 @@ export namespace Prisma {
     companyId?: StringFilter<"Batch"> | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     sales?: SaleListRelationFilter
+    debts?: DebtListRelationFilter
+    refunds?: RefundListRelationFilter
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
   }, "id">
 
@@ -14250,6 +17473,7 @@ export namespace Prisma {
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    refunds?: RefundListRelationFilter
   }
 
   export type SaleOrderByWithRelationInput = {
@@ -14270,6 +17494,7 @@ export namespace Prisma {
     product?: ProductOrderByWithRelationInput
     batch?: BatchOrderByWithRelationInput
     company?: CompanyOrderByWithRelationInput
+    refunds?: RefundOrderByRelationAggregateInput
   }
 
   export type SaleWhereUniqueInput = Prisma.AtLeast<{
@@ -14293,6 +17518,7 @@ export namespace Prisma {
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    refunds?: RefundListRelationFilter
   }, "id">
 
   export type SaleOrderByWithAggregationInput = {
@@ -14335,6 +17561,119 @@ export namespace Prisma {
     productId?: StringWithAggregatesFilter<"Sale"> | string
     batchId?: StringWithAggregatesFilter<"Sale"> | string
     companyId?: StringWithAggregatesFilter<"Sale"> | string
+  }
+
+  export type DebtWhereInput = {
+    AND?: DebtWhereInput | DebtWhereInput[]
+    OR?: DebtWhereInput[]
+    NOT?: DebtWhereInput | DebtWhereInput[]
+    id?: StringFilter<"Debt"> | string
+    quantity?: IntFilter<"Debt"> | number
+    unitPrice?: FloatFilter<"Debt"> | number
+    totalAmount?: FloatFilter<"Debt"> | number
+    purchasePrice?: FloatFilter<"Debt"> | number
+    debtDate?: DateTimeFilter<"Debt"> | Date | string
+    customerName?: StringNullableFilter<"Debt"> | string | null
+    notes?: StringNullableFilter<"Debt"> | string | null
+    status?: StringFilter<"Debt"> | string
+    paidDate?: DateTimeNullableFilter<"Debt"> | Date | string | null
+    createdAt?: DateTimeFilter<"Debt"> | Date | string
+    updatedAt?: DateTimeFilter<"Debt"> | Date | string
+    productId?: StringFilter<"Debt"> | string
+    batchId?: StringFilter<"Debt"> | string
+    companyId?: StringFilter<"Debt"> | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+  }
+
+  export type DebtOrderByWithRelationInput = {
+    id?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+    debtDate?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    paidDate?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    companyId?: SortOrder
+    product?: ProductOrderByWithRelationInput
+    batch?: BatchOrderByWithRelationInput
+    company?: CompanyOrderByWithRelationInput
+  }
+
+  export type DebtWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DebtWhereInput | DebtWhereInput[]
+    OR?: DebtWhereInput[]
+    NOT?: DebtWhereInput | DebtWhereInput[]
+    quantity?: IntFilter<"Debt"> | number
+    unitPrice?: FloatFilter<"Debt"> | number
+    totalAmount?: FloatFilter<"Debt"> | number
+    purchasePrice?: FloatFilter<"Debt"> | number
+    debtDate?: DateTimeFilter<"Debt"> | Date | string
+    customerName?: StringNullableFilter<"Debt"> | string | null
+    notes?: StringNullableFilter<"Debt"> | string | null
+    status?: StringFilter<"Debt"> | string
+    paidDate?: DateTimeNullableFilter<"Debt"> | Date | string | null
+    createdAt?: DateTimeFilter<"Debt"> | Date | string
+    updatedAt?: DateTimeFilter<"Debt"> | Date | string
+    productId?: StringFilter<"Debt"> | string
+    batchId?: StringFilter<"Debt"> | string
+    companyId?: StringFilter<"Debt"> | string
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+  }, "id">
+
+  export type DebtOrderByWithAggregationInput = {
+    id?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+    debtDate?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    paidDate?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    companyId?: SortOrder
+    _count?: DebtCountOrderByAggregateInput
+    _avg?: DebtAvgOrderByAggregateInput
+    _max?: DebtMaxOrderByAggregateInput
+    _min?: DebtMinOrderByAggregateInput
+    _sum?: DebtSumOrderByAggregateInput
+  }
+
+  export type DebtScalarWhereWithAggregatesInput = {
+    AND?: DebtScalarWhereWithAggregatesInput | DebtScalarWhereWithAggregatesInput[]
+    OR?: DebtScalarWhereWithAggregatesInput[]
+    NOT?: DebtScalarWhereWithAggregatesInput | DebtScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Debt"> | string
+    quantity?: IntWithAggregatesFilter<"Debt"> | number
+    unitPrice?: FloatWithAggregatesFilter<"Debt"> | number
+    totalAmount?: FloatWithAggregatesFilter<"Debt"> | number
+    purchasePrice?: FloatWithAggregatesFilter<"Debt"> | number
+    debtDate?: DateTimeWithAggregatesFilter<"Debt"> | Date | string
+    customerName?: StringNullableWithAggregatesFilter<"Debt"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"Debt"> | string | null
+    status?: StringWithAggregatesFilter<"Debt"> | string
+    paidDate?: DateTimeNullableWithAggregatesFilter<"Debt"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Debt"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Debt"> | Date | string
+    productId?: StringWithAggregatesFilter<"Debt"> | string
+    batchId?: StringWithAggregatesFilter<"Debt"> | string
+    companyId?: StringWithAggregatesFilter<"Debt"> | string
   }
 
   export type MonthlyReportWhereInput = {
@@ -14611,6 +17950,140 @@ export namespace Prisma {
     expires?: DateTimeWithAggregatesFilter<"VerificationToken"> | Date | string
   }
 
+  export type RefundWhereInput = {
+    AND?: RefundWhereInput | RefundWhereInput[]
+    OR?: RefundWhereInput[]
+    NOT?: RefundWhereInput | RefundWhereInput[]
+    id?: StringFilter<"Refund"> | string
+    refundNumber?: StringFilter<"Refund"> | string
+    originalSaleId?: StringFilter<"Refund"> | string
+    productId?: StringFilter<"Refund"> | string
+    batchId?: StringFilter<"Refund"> | string
+    quantity?: IntFilter<"Refund"> | number
+    unitPrice?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFilter<"Refund"> | $Enums.RefundType
+    reason?: EnumRefundReasonFilter<"Refund"> | $Enums.RefundReason
+    customReason?: StringNullableFilter<"Refund"> | string | null
+    refundDate?: DateTimeFilter<"Refund"> | Date | string
+    processedBy?: StringFilter<"Refund"> | string
+    itemCondition?: EnumItemConditionFilter<"Refund"> | $Enums.ItemCondition
+    returnToInventory?: BoolFilter<"Refund"> | boolean
+    companyId?: StringFilter<"Refund"> | string
+    createdAt?: DateTimeFilter<"Refund"> | Date | string
+    updatedAt?: DateTimeFilter<"Refund"> | Date | string
+    originalSale?: XOR<SaleScalarRelationFilter, SaleWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    processedByUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type RefundOrderByWithRelationInput = {
+    id?: SortOrder
+    refundNumber?: SortOrder
+    originalSaleId?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+    refundType?: SortOrder
+    reason?: SortOrder
+    customReason?: SortOrderInput | SortOrder
+    refundDate?: SortOrder
+    processedBy?: SortOrder
+    itemCondition?: SortOrder
+    returnToInventory?: SortOrder
+    companyId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    originalSale?: SaleOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+    batch?: BatchOrderByWithRelationInput
+    company?: CompanyOrderByWithRelationInput
+    processedByUser?: UserOrderByWithRelationInput
+  }
+
+  export type RefundWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    refundNumber?: string
+    AND?: RefundWhereInput | RefundWhereInput[]
+    OR?: RefundWhereInput[]
+    NOT?: RefundWhereInput | RefundWhereInput[]
+    originalSaleId?: StringFilter<"Refund"> | string
+    productId?: StringFilter<"Refund"> | string
+    batchId?: StringFilter<"Refund"> | string
+    quantity?: IntFilter<"Refund"> | number
+    unitPrice?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFilter<"Refund"> | $Enums.RefundType
+    reason?: EnumRefundReasonFilter<"Refund"> | $Enums.RefundReason
+    customReason?: StringNullableFilter<"Refund"> | string | null
+    refundDate?: DateTimeFilter<"Refund"> | Date | string
+    processedBy?: StringFilter<"Refund"> | string
+    itemCondition?: EnumItemConditionFilter<"Refund"> | $Enums.ItemCondition
+    returnToInventory?: BoolFilter<"Refund"> | boolean
+    companyId?: StringFilter<"Refund"> | string
+    createdAt?: DateTimeFilter<"Refund"> | Date | string
+    updatedAt?: DateTimeFilter<"Refund"> | Date | string
+    originalSale?: XOR<SaleScalarRelationFilter, SaleWhereInput>
+    product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    processedByUser?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "refundNumber">
+
+  export type RefundOrderByWithAggregationInput = {
+    id?: SortOrder
+    refundNumber?: SortOrder
+    originalSaleId?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+    refundType?: SortOrder
+    reason?: SortOrder
+    customReason?: SortOrderInput | SortOrder
+    refundDate?: SortOrder
+    processedBy?: SortOrder
+    itemCondition?: SortOrder
+    returnToInventory?: SortOrder
+    companyId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RefundCountOrderByAggregateInput
+    _avg?: RefundAvgOrderByAggregateInput
+    _max?: RefundMaxOrderByAggregateInput
+    _min?: RefundMinOrderByAggregateInput
+    _sum?: RefundSumOrderByAggregateInput
+  }
+
+  export type RefundScalarWhereWithAggregatesInput = {
+    AND?: RefundScalarWhereWithAggregatesInput | RefundScalarWhereWithAggregatesInput[]
+    OR?: RefundScalarWhereWithAggregatesInput[]
+    NOT?: RefundScalarWhereWithAggregatesInput | RefundScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Refund"> | string
+    refundNumber?: StringWithAggregatesFilter<"Refund"> | string
+    originalSaleId?: StringWithAggregatesFilter<"Refund"> | string
+    productId?: StringWithAggregatesFilter<"Refund"> | string
+    batchId?: StringWithAggregatesFilter<"Refund"> | string
+    quantity?: IntWithAggregatesFilter<"Refund"> | number
+    unitPrice?: DecimalWithAggregatesFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalWithAggregatesFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeWithAggregatesFilter<"Refund"> | $Enums.RefundType
+    reason?: EnumRefundReasonWithAggregatesFilter<"Refund"> | $Enums.RefundReason
+    customReason?: StringNullableWithAggregatesFilter<"Refund"> | string | null
+    refundDate?: DateTimeWithAggregatesFilter<"Refund"> | Date | string
+    processedBy?: StringWithAggregatesFilter<"Refund"> | string
+    itemCondition?: EnumItemConditionWithAggregatesFilter<"Refund"> | $Enums.ItemCondition
+    returnToInventory?: BoolWithAggregatesFilter<"Refund"> | boolean
+    companyId?: StringWithAggregatesFilter<"Refund"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Refund"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Refund"> | Date | string
+  }
+
   export type CompanyCreateInput = {
     id?: string
     name: string
@@ -14621,6 +18094,8 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -14634,6 +18109,8 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
@@ -14647,6 +18124,8 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -14660,6 +18139,8 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -14694,6 +18175,7 @@ export namespace Prisma {
     company: CompanyCreateNestedOneWithoutUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -14706,6 +18188,7 @@ export namespace Prisma {
     companyId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundUncheckedCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserUpdateInput = {
@@ -14718,6 +18201,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneRequiredWithoutUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -14730,6 +18214,7 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUncheckedUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -14851,6 +18336,8 @@ export namespace Prisma {
     category: CategoryCreateNestedOneWithoutProductsInput
     batches?: BatchCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
     company: CompanyCreateNestedOneWithoutProductsInput
   }
 
@@ -14872,6 +18359,8 @@ export namespace Prisma {
     companyId: string
     batches?: BatchUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -14891,6 +18380,8 @@ export namespace Prisma {
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     batches?: BatchUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
     company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -14912,6 +18403,8 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -14980,6 +18473,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutBatchesInput
     sales?: SaleCreateNestedManyWithoutBatchInput
+    debts?: DebtCreateNestedManyWithoutBatchInput
+    refunds?: RefundCreateNestedManyWithoutBatchInput
     company: CompanyCreateNestedOneWithoutBatchesInput
   }
 
@@ -14998,6 +18493,8 @@ export namespace Prisma {
     productId: string
     companyId: string
     sales?: SaleUncheckedCreateNestedManyWithoutBatchInput
+    debts?: DebtUncheckedCreateNestedManyWithoutBatchInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutBatchInput
   }
 
   export type BatchUpdateInput = {
@@ -15014,6 +18511,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutBatchesNestedInput
     sales?: SaleUpdateManyWithoutBatchNestedInput
+    debts?: DebtUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUpdateManyWithoutBatchNestedInput
     company?: CompanyUpdateOneRequiredWithoutBatchesNestedInput
   }
 
@@ -15032,6 +18531,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     sales?: SaleUncheckedUpdateManyWithoutBatchNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutBatchNestedInput
   }
 
   export type BatchCreateManyInput = {
@@ -15095,6 +18596,7 @@ export namespace Prisma {
     product: ProductCreateNestedOneWithoutSalesInput
     batch: BatchCreateNestedOneWithoutSalesInput
     company: CompanyCreateNestedOneWithoutSalesInput
+    refunds?: RefundCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleUncheckedCreateInput = {
@@ -15112,6 +18614,7 @@ export namespace Prisma {
     productId: string
     batchId: string
     companyId: string
+    refunds?: RefundUncheckedCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleUpdateInput = {
@@ -15129,6 +18632,7 @@ export namespace Prisma {
     product?: ProductUpdateOneRequiredWithoutSalesNestedInput
     batch?: BatchUpdateOneRequiredWithoutSalesNestedInput
     company?: CompanyUpdateOneRequiredWithoutSalesNestedInput
+    refunds?: RefundUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateInput = {
@@ -15146,6 +18650,7 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     batchId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
+    refunds?: RefundUncheckedUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleCreateManyInput = {
@@ -15189,6 +18694,129 @@ export namespace Prisma {
     saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtCreateInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutDebtsInput
+    batch: BatchCreateNestedOneWithoutDebtsInput
+    company: CompanyCreateNestedOneWithoutDebtsInput
+  }
+
+  export type DebtUncheckedCreateInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    batchId: string
+    companyId: string
+  }
+
+  export type DebtUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutDebtsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutDebtsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutDebtsNestedInput
+  }
+
+  export type DebtUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtCreateManyInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    batchId: string
+    companyId: string
+  }
+
+  export type DebtUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DebtUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
@@ -15487,6 +19115,148 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RefundCreateInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originalSale: SaleCreateNestedOneWithoutRefundsInput
+    product: ProductCreateNestedOneWithoutRefundsInput
+    batch: BatchCreateNestedOneWithoutRefundsInput
+    company: CompanyCreateNestedOneWithoutRefundsInput
+    processedByUser: UserCreateNestedOneWithoutProcessedRefundsInput
+  }
+
+  export type RefundUncheckedCreateInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originalSale?: SaleUpdateOneRequiredWithoutRefundsNestedInput
+    product?: ProductUpdateOneRequiredWithoutRefundsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutRefundsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutRefundsNestedInput
+    processedByUser?: UserUpdateOneRequiredWithoutProcessedRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundCreateManyInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -15543,6 +19313,18 @@ export namespace Prisma {
     none?: SaleWhereInput
   }
 
+  export type DebtListRelationFilter = {
+    every?: DebtWhereInput
+    some?: DebtWhereInput
+    none?: DebtWhereInput
+  }
+
+  export type RefundListRelationFilter = {
+    every?: RefundWhereInput
+    some?: RefundWhereInput
+    none?: RefundWhereInput
+  }
+
   export type MonthlyReportListRelationFilter = {
     every?: MonthlyReportWhereInput
     some?: MonthlyReportWhereInput
@@ -15566,6 +19348,14 @@ export namespace Prisma {
   }
 
   export type SaleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DebtOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RefundOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16016,6 +19806,99 @@ export namespace Prisma {
     profitMargin?: SortOrder
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type DebtCountOrderByAggregateInput = {
+    id?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+    debtDate?: SortOrder
+    customerName?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    paidDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    companyId?: SortOrder
+  }
+
+  export type DebtAvgOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+  }
+
+  export type DebtMaxOrderByAggregateInput = {
+    id?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+    debtDate?: SortOrder
+    customerName?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    paidDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    companyId?: SortOrder
+  }
+
+  export type DebtMinOrderByAggregateInput = {
+    id?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+    debtDate?: SortOrder
+    customerName?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    paidDate?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    companyId?: SortOrder
+  }
+
+  export type DebtSumOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalAmount?: SortOrder
+    purchasePrice?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -16274,6 +20157,164 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type EnumRefundTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundType | EnumRefundTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundTypeFilter<$PrismaModel> | $Enums.RefundType
+  }
+
+  export type EnumRefundReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundReason | EnumRefundReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundReasonFilter<$PrismaModel> | $Enums.RefundReason
+  }
+
+  export type EnumItemConditionFilter<$PrismaModel = never> = {
+    equals?: $Enums.ItemCondition | EnumItemConditionFieldRefInput<$PrismaModel>
+    in?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    not?: NestedEnumItemConditionFilter<$PrismaModel> | $Enums.ItemCondition
+  }
+
+  export type SaleScalarRelationFilter = {
+    is?: SaleWhereInput
+    isNot?: SaleWhereInput
+  }
+
+  export type RefundCountOrderByAggregateInput = {
+    id?: SortOrder
+    refundNumber?: SortOrder
+    originalSaleId?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+    refundType?: SortOrder
+    reason?: SortOrder
+    customReason?: SortOrder
+    refundDate?: SortOrder
+    processedBy?: SortOrder
+    itemCondition?: SortOrder
+    returnToInventory?: SortOrder
+    companyId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RefundAvgOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+  }
+
+  export type RefundMaxOrderByAggregateInput = {
+    id?: SortOrder
+    refundNumber?: SortOrder
+    originalSaleId?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+    refundType?: SortOrder
+    reason?: SortOrder
+    customReason?: SortOrder
+    refundDate?: SortOrder
+    processedBy?: SortOrder
+    itemCondition?: SortOrder
+    returnToInventory?: SortOrder
+    companyId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RefundMinOrderByAggregateInput = {
+    id?: SortOrder
+    refundNumber?: SortOrder
+    originalSaleId?: SortOrder
+    productId?: SortOrder
+    batchId?: SortOrder
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+    refundType?: SortOrder
+    reason?: SortOrder
+    customReason?: SortOrder
+    refundDate?: SortOrder
+    processedBy?: SortOrder
+    itemCondition?: SortOrder
+    returnToInventory?: SortOrder
+    companyId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RefundSumOrderByAggregateInput = {
+    quantity?: SortOrder
+    unitPrice?: SortOrder
+    totalRefundAmount?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type EnumRefundTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundType | EnumRefundTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundTypeWithAggregatesFilter<$PrismaModel> | $Enums.RefundType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRefundTypeFilter<$PrismaModel>
+    _max?: NestedEnumRefundTypeFilter<$PrismaModel>
+  }
+
+  export type EnumRefundReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundReason | EnumRefundReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundReasonWithAggregatesFilter<$PrismaModel> | $Enums.RefundReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRefundReasonFilter<$PrismaModel>
+    _max?: NestedEnumRefundReasonFilter<$PrismaModel>
+  }
+
+  export type EnumItemConditionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ItemCondition | EnumItemConditionFieldRefInput<$PrismaModel>
+    in?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    not?: NestedEnumItemConditionWithAggregatesFilter<$PrismaModel> | $Enums.ItemCondition
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumItemConditionFilter<$PrismaModel>
+    _max?: NestedEnumItemConditionFilter<$PrismaModel>
+  }
+
   export type UserCreateNestedManyWithoutCompanyInput = {
     create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput> | UserCreateWithoutCompanyInput[] | UserUncheckedCreateWithoutCompanyInput[]
     connectOrCreate?: UserCreateOrConnectWithoutCompanyInput | UserCreateOrConnectWithoutCompanyInput[]
@@ -16307,6 +20348,20 @@ export namespace Prisma {
     connectOrCreate?: SaleCreateOrConnectWithoutCompanyInput | SaleCreateOrConnectWithoutCompanyInput[]
     createMany?: SaleCreateManyCompanyInputEnvelope
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
+  }
+
+  export type DebtCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput> | DebtCreateWithoutCompanyInput[] | DebtUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutCompanyInput | DebtCreateOrConnectWithoutCompanyInput[]
+    createMany?: DebtCreateManyCompanyInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput> | RefundCreateWithoutCompanyInput[] | RefundUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutCompanyInput | RefundCreateOrConnectWithoutCompanyInput[]
+    createMany?: RefundCreateManyCompanyInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type MonthlyReportCreateNestedManyWithoutCompanyInput = {
@@ -16349,6 +20404,20 @@ export namespace Prisma {
     connectOrCreate?: SaleCreateOrConnectWithoutCompanyInput | SaleCreateOrConnectWithoutCompanyInput[]
     createMany?: SaleCreateManyCompanyInputEnvelope
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
+  }
+
+  export type DebtUncheckedCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput> | DebtCreateWithoutCompanyInput[] | DebtUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutCompanyInput | DebtCreateOrConnectWithoutCompanyInput[]
+    createMany?: DebtCreateManyCompanyInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundUncheckedCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput> | RefundCreateWithoutCompanyInput[] | RefundUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutCompanyInput | RefundCreateOrConnectWithoutCompanyInput[]
+    createMany?: RefundCreateManyCompanyInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput = {
@@ -16436,6 +20505,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput> | DebtCreateWithoutCompanyInput[] | DebtUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutCompanyInput | DebtCreateOrConnectWithoutCompanyInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutCompanyInput | DebtUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: DebtCreateManyCompanyInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutCompanyInput | DebtUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutCompanyInput | DebtUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput> | RefundCreateWithoutCompanyInput[] | RefundUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutCompanyInput | RefundCreateOrConnectWithoutCompanyInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutCompanyInput | RefundUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: RefundCreateManyCompanyInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutCompanyInput | RefundUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutCompanyInput | RefundUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type MonthlyReportUpdateManyWithoutCompanyNestedInput = {
     create?: XOR<MonthlyReportCreateWithoutCompanyInput, MonthlyReportUncheckedCreateWithoutCompanyInput> | MonthlyReportCreateWithoutCompanyInput[] | MonthlyReportUncheckedCreateWithoutCompanyInput[]
     connectOrCreate?: MonthlyReportCreateOrConnectWithoutCompanyInput | MonthlyReportCreateOrConnectWithoutCompanyInput[]
@@ -16520,6 +20617,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUncheckedUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput> | DebtCreateWithoutCompanyInput[] | DebtUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutCompanyInput | DebtCreateOrConnectWithoutCompanyInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutCompanyInput | DebtUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: DebtCreateManyCompanyInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutCompanyInput | DebtUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutCompanyInput | DebtUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUncheckedUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput> | RefundCreateWithoutCompanyInput[] | RefundUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutCompanyInput | RefundCreateOrConnectWithoutCompanyInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutCompanyInput | RefundUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: RefundCreateManyCompanyInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutCompanyInput | RefundUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutCompanyInput | RefundUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput = {
     create?: XOR<MonthlyReportCreateWithoutCompanyInput, MonthlyReportUncheckedCreateWithoutCompanyInput> | MonthlyReportCreateWithoutCompanyInput[] | MonthlyReportUncheckedCreateWithoutCompanyInput[]
     connectOrCreate?: MonthlyReportCreateOrConnectWithoutCompanyInput | MonthlyReportCreateOrConnectWithoutCompanyInput[]
@@ -16554,6 +20679,13 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
+  export type RefundCreateNestedManyWithoutProcessedByUserInput = {
+    create?: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput> | RefundCreateWithoutProcessedByUserInput[] | RefundUncheckedCreateWithoutProcessedByUserInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProcessedByUserInput | RefundCreateOrConnectWithoutProcessedByUserInput[]
+    createMany?: RefundCreateManyProcessedByUserInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -16566,6 +20698,13 @@ export namespace Prisma {
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
     createMany?: SessionCreateManyUserInputEnvelope
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type RefundUncheckedCreateNestedManyWithoutProcessedByUserInput = {
+    create?: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput> | RefundCreateWithoutProcessedByUserInput[] | RefundUncheckedCreateWithoutProcessedByUserInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProcessedByUserInput | RefundCreateOrConnectWithoutProcessedByUserInput[]
+    createMany?: RefundCreateManyProcessedByUserInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -16608,6 +20747,20 @@ export namespace Prisma {
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
+  export type RefundUpdateManyWithoutProcessedByUserNestedInput = {
+    create?: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput> | RefundCreateWithoutProcessedByUserInput[] | RefundUncheckedCreateWithoutProcessedByUserInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProcessedByUserInput | RefundCreateOrConnectWithoutProcessedByUserInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutProcessedByUserInput | RefundUpsertWithWhereUniqueWithoutProcessedByUserInput[]
+    createMany?: RefundCreateManyProcessedByUserInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutProcessedByUserInput | RefundUpdateWithWhereUniqueWithoutProcessedByUserInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutProcessedByUserInput | RefundUpdateManyWithWhereWithoutProcessedByUserInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -16634,6 +20787,20 @@ export namespace Prisma {
     update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type RefundUncheckedUpdateManyWithoutProcessedByUserNestedInput = {
+    create?: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput> | RefundCreateWithoutProcessedByUserInput[] | RefundUncheckedCreateWithoutProcessedByUserInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProcessedByUserInput | RefundCreateOrConnectWithoutProcessedByUserInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutProcessedByUserInput | RefundUpsertWithWhereUniqueWithoutProcessedByUserInput[]
+    createMany?: RefundCreateManyProcessedByUserInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutProcessedByUserInput | RefundUpdateWithWhereUniqueWithoutProcessedByUserInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutProcessedByUserInput | RefundUpdateManyWithWhereWithoutProcessedByUserInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
   }
 
   export type ProductCreateNestedManyWithoutCategoryInput = {
@@ -16712,6 +20879,20 @@ export namespace Prisma {
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
   }
 
+  export type DebtCreateNestedManyWithoutProductInput = {
+    create?: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput> | DebtCreateWithoutProductInput[] | DebtUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutProductInput | DebtCreateOrConnectWithoutProductInput[]
+    createMany?: DebtCreateManyProductInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundCreateNestedManyWithoutProductInput = {
+    create?: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput> | RefundCreateWithoutProductInput[] | RefundUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProductInput | RefundCreateOrConnectWithoutProductInput[]
+    createMany?: RefundCreateManyProductInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+  }
+
   export type CompanyCreateNestedOneWithoutProductsInput = {
     create?: XOR<CompanyCreateWithoutProductsInput, CompanyUncheckedCreateWithoutProductsInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutProductsInput
@@ -16730,6 +20911,20 @@ export namespace Prisma {
     connectOrCreate?: SaleCreateOrConnectWithoutProductInput | SaleCreateOrConnectWithoutProductInput[]
     createMany?: SaleCreateManyProductInputEnvelope
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
+  }
+
+  export type DebtUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput> | DebtCreateWithoutProductInput[] | DebtUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutProductInput | DebtCreateOrConnectWithoutProductInput[]
+    createMany?: DebtCreateManyProductInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput> | RefundCreateWithoutProductInput[] | RefundUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProductInput | RefundCreateOrConnectWithoutProductInput[]
+    createMany?: RefundCreateManyProductInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -16784,6 +20979,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUpdateManyWithoutProductNestedInput = {
+    create?: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput> | DebtCreateWithoutProductInput[] | DebtUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutProductInput | DebtCreateOrConnectWithoutProductInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutProductInput | DebtUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: DebtCreateManyProductInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutProductInput | DebtUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutProductInput | DebtUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUpdateManyWithoutProductNestedInput = {
+    create?: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput> | RefundCreateWithoutProductInput[] | RefundUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProductInput | RefundCreateOrConnectWithoutProductInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutProductInput | RefundUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: RefundCreateManyProductInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutProductInput | RefundUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutProductInput | RefundUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type CompanyUpdateOneRequiredWithoutProductsNestedInput = {
     create?: XOR<CompanyCreateWithoutProductsInput, CompanyUncheckedCreateWithoutProductsInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutProductsInput
@@ -16820,6 +21043,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput> | DebtCreateWithoutProductInput[] | DebtUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutProductInput | DebtCreateOrConnectWithoutProductInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutProductInput | DebtUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: DebtCreateManyProductInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutProductInput | DebtUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutProductInput | DebtUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput> | RefundCreateWithoutProductInput[] | RefundUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutProductInput | RefundCreateOrConnectWithoutProductInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutProductInput | RefundUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: RefundCreateManyProductInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutProductInput | RefundUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutProductInput | RefundUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type ProductCreateNestedOneWithoutBatchesInput = {
     create?: XOR<ProductCreateWithoutBatchesInput, ProductUncheckedCreateWithoutBatchesInput>
     connectOrCreate?: ProductCreateOrConnectWithoutBatchesInput
@@ -16833,6 +21084,20 @@ export namespace Prisma {
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
   }
 
+  export type DebtCreateNestedManyWithoutBatchInput = {
+    create?: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput> | DebtCreateWithoutBatchInput[] | DebtUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutBatchInput | DebtCreateOrConnectWithoutBatchInput[]
+    createMany?: DebtCreateManyBatchInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundCreateNestedManyWithoutBatchInput = {
+    create?: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput> | RefundCreateWithoutBatchInput[] | RefundUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutBatchInput | RefundCreateOrConnectWithoutBatchInput[]
+    createMany?: RefundCreateManyBatchInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+  }
+
   export type CompanyCreateNestedOneWithoutBatchesInput = {
     create?: XOR<CompanyCreateWithoutBatchesInput, CompanyUncheckedCreateWithoutBatchesInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutBatchesInput
@@ -16844,6 +21109,20 @@ export namespace Prisma {
     connectOrCreate?: SaleCreateOrConnectWithoutBatchInput | SaleCreateOrConnectWithoutBatchInput[]
     createMany?: SaleCreateManyBatchInputEnvelope
     connect?: SaleWhereUniqueInput | SaleWhereUniqueInput[]
+  }
+
+  export type DebtUncheckedCreateNestedManyWithoutBatchInput = {
+    create?: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput> | DebtCreateWithoutBatchInput[] | DebtUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutBatchInput | DebtCreateOrConnectWithoutBatchInput[]
+    createMany?: DebtCreateManyBatchInputEnvelope
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+  }
+
+  export type RefundUncheckedCreateNestedManyWithoutBatchInput = {
+    create?: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput> | RefundCreateWithoutBatchInput[] | RefundUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutBatchInput | RefundCreateOrConnectWithoutBatchInput[]
+    createMany?: RefundCreateManyBatchInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type ProductUpdateOneRequiredWithoutBatchesNestedInput = {
@@ -16868,6 +21147,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput> | DebtCreateWithoutBatchInput[] | DebtUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutBatchInput | DebtCreateOrConnectWithoutBatchInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutBatchInput | DebtUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: DebtCreateManyBatchInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutBatchInput | DebtUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutBatchInput | DebtUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput> | RefundCreateWithoutBatchInput[] | RefundUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutBatchInput | RefundCreateOrConnectWithoutBatchInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutBatchInput | RefundUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: RefundCreateManyBatchInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutBatchInput | RefundUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutBatchInput | RefundUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type CompanyUpdateOneRequiredWithoutBatchesNestedInput = {
     create?: XOR<CompanyCreateWithoutBatchesInput, CompanyUncheckedCreateWithoutBatchesInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutBatchesInput
@@ -16890,6 +21197,34 @@ export namespace Prisma {
     deleteMany?: SaleScalarWhereInput | SaleScalarWhereInput[]
   }
 
+  export type DebtUncheckedUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput> | DebtCreateWithoutBatchInput[] | DebtUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: DebtCreateOrConnectWithoutBatchInput | DebtCreateOrConnectWithoutBatchInput[]
+    upsert?: DebtUpsertWithWhereUniqueWithoutBatchInput | DebtUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: DebtCreateManyBatchInputEnvelope
+    set?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    disconnect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    delete?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    connect?: DebtWhereUniqueInput | DebtWhereUniqueInput[]
+    update?: DebtUpdateWithWhereUniqueWithoutBatchInput | DebtUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: DebtUpdateManyWithWhereWithoutBatchInput | DebtUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: DebtScalarWhereInput | DebtScalarWhereInput[]
+  }
+
+  export type RefundUncheckedUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput> | RefundCreateWithoutBatchInput[] | RefundUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutBatchInput | RefundCreateOrConnectWithoutBatchInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutBatchInput | RefundUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: RefundCreateManyBatchInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutBatchInput | RefundUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutBatchInput | RefundUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
   export type ProductCreateNestedOneWithoutSalesInput = {
     create?: XOR<ProductCreateWithoutSalesInput, ProductUncheckedCreateWithoutSalesInput>
     connectOrCreate?: ProductCreateOrConnectWithoutSalesInput
@@ -16906,6 +21241,20 @@ export namespace Prisma {
     create?: XOR<CompanyCreateWithoutSalesInput, CompanyUncheckedCreateWithoutSalesInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutSalesInput
     connect?: CompanyWhereUniqueInput
+  }
+
+  export type RefundCreateNestedManyWithoutOriginalSaleInput = {
+    create?: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput> | RefundCreateWithoutOriginalSaleInput[] | RefundUncheckedCreateWithoutOriginalSaleInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutOriginalSaleInput | RefundCreateOrConnectWithoutOriginalSaleInput[]
+    createMany?: RefundCreateManyOriginalSaleInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+  }
+
+  export type RefundUncheckedCreateNestedManyWithoutOriginalSaleInput = {
+    create?: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput> | RefundCreateWithoutOriginalSaleInput[] | RefundUncheckedCreateWithoutOriginalSaleInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutOriginalSaleInput | RefundCreateOrConnectWithoutOriginalSaleInput[]
+    createMany?: RefundCreateManyOriginalSaleInputEnvelope
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
   }
 
   export type ProductUpdateOneRequiredWithoutSalesNestedInput = {
@@ -16930,6 +21279,80 @@ export namespace Prisma {
     upsert?: CompanyUpsertWithoutSalesInput
     connect?: CompanyWhereUniqueInput
     update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutSalesInput, CompanyUpdateWithoutSalesInput>, CompanyUncheckedUpdateWithoutSalesInput>
+  }
+
+  export type RefundUpdateManyWithoutOriginalSaleNestedInput = {
+    create?: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput> | RefundCreateWithoutOriginalSaleInput[] | RefundUncheckedCreateWithoutOriginalSaleInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutOriginalSaleInput | RefundCreateOrConnectWithoutOriginalSaleInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutOriginalSaleInput | RefundUpsertWithWhereUniqueWithoutOriginalSaleInput[]
+    createMany?: RefundCreateManyOriginalSaleInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutOriginalSaleInput | RefundUpdateWithWhereUniqueWithoutOriginalSaleInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutOriginalSaleInput | RefundUpdateManyWithWhereWithoutOriginalSaleInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
+  export type RefundUncheckedUpdateManyWithoutOriginalSaleNestedInput = {
+    create?: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput> | RefundCreateWithoutOriginalSaleInput[] | RefundUncheckedCreateWithoutOriginalSaleInput[]
+    connectOrCreate?: RefundCreateOrConnectWithoutOriginalSaleInput | RefundCreateOrConnectWithoutOriginalSaleInput[]
+    upsert?: RefundUpsertWithWhereUniqueWithoutOriginalSaleInput | RefundUpsertWithWhereUniqueWithoutOriginalSaleInput[]
+    createMany?: RefundCreateManyOriginalSaleInputEnvelope
+    set?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    disconnect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    delete?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    connect?: RefundWhereUniqueInput | RefundWhereUniqueInput[]
+    update?: RefundUpdateWithWhereUniqueWithoutOriginalSaleInput | RefundUpdateWithWhereUniqueWithoutOriginalSaleInput[]
+    updateMany?: RefundUpdateManyWithWhereWithoutOriginalSaleInput | RefundUpdateManyWithWhereWithoutOriginalSaleInput[]
+    deleteMany?: RefundScalarWhereInput | RefundScalarWhereInput[]
+  }
+
+  export type ProductCreateNestedOneWithoutDebtsInput = {
+    create?: XOR<ProductCreateWithoutDebtsInput, ProductUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutDebtsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type BatchCreateNestedOneWithoutDebtsInput = {
+    create?: XOR<BatchCreateWithoutDebtsInput, BatchUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutDebtsInput
+    connect?: BatchWhereUniqueInput
+  }
+
+  export type CompanyCreateNestedOneWithoutDebtsInput = {
+    create?: XOR<CompanyCreateWithoutDebtsInput, CompanyUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutDebtsInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type ProductUpdateOneRequiredWithoutDebtsNestedInput = {
+    create?: XOR<ProductCreateWithoutDebtsInput, ProductUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutDebtsInput
+    upsert?: ProductUpsertWithoutDebtsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutDebtsInput, ProductUpdateWithoutDebtsInput>, ProductUncheckedUpdateWithoutDebtsInput>
+  }
+
+  export type BatchUpdateOneRequiredWithoutDebtsNestedInput = {
+    create?: XOR<BatchCreateWithoutDebtsInput, BatchUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutDebtsInput
+    upsert?: BatchUpsertWithoutDebtsInput
+    connect?: BatchWhereUniqueInput
+    update?: XOR<XOR<BatchUpdateToOneWithWhereWithoutDebtsInput, BatchUpdateWithoutDebtsInput>, BatchUncheckedUpdateWithoutDebtsInput>
+  }
+
+  export type CompanyUpdateOneRequiredWithoutDebtsNestedInput = {
+    create?: XOR<CompanyCreateWithoutDebtsInput, CompanyUncheckedCreateWithoutDebtsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutDebtsInput
+    upsert?: CompanyUpsertWithoutDebtsInput
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutDebtsInput, CompanyUpdateWithoutDebtsInput>, CompanyUncheckedUpdateWithoutDebtsInput>
   }
 
   export type CompanyCreateNestedOneWithoutMonthlyReportsInput = {
@@ -16984,6 +21407,96 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutSessionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type SaleCreateNestedOneWithoutRefundsInput = {
+    create?: XOR<SaleCreateWithoutRefundsInput, SaleUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: SaleCreateOrConnectWithoutRefundsInput
+    connect?: SaleWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutRefundsInput = {
+    create?: XOR<ProductCreateWithoutRefundsInput, ProductUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutRefundsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type BatchCreateNestedOneWithoutRefundsInput = {
+    create?: XOR<BatchCreateWithoutRefundsInput, BatchUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutRefundsInput
+    connect?: BatchWhereUniqueInput
+  }
+
+  export type CompanyCreateNestedOneWithoutRefundsInput = {
+    create?: XOR<CompanyCreateWithoutRefundsInput, CompanyUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutRefundsInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutProcessedRefundsInput = {
+    create?: XOR<UserCreateWithoutProcessedRefundsInput, UserUncheckedCreateWithoutProcessedRefundsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProcessedRefundsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type EnumRefundTypeFieldUpdateOperationsInput = {
+    set?: $Enums.RefundType
+  }
+
+  export type EnumRefundReasonFieldUpdateOperationsInput = {
+    set?: $Enums.RefundReason
+  }
+
+  export type EnumItemConditionFieldUpdateOperationsInput = {
+    set?: $Enums.ItemCondition
+  }
+
+  export type SaleUpdateOneRequiredWithoutRefundsNestedInput = {
+    create?: XOR<SaleCreateWithoutRefundsInput, SaleUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: SaleCreateOrConnectWithoutRefundsInput
+    upsert?: SaleUpsertWithoutRefundsInput
+    connect?: SaleWhereUniqueInput
+    update?: XOR<XOR<SaleUpdateToOneWithWhereWithoutRefundsInput, SaleUpdateWithoutRefundsInput>, SaleUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type ProductUpdateOneRequiredWithoutRefundsNestedInput = {
+    create?: XOR<ProductCreateWithoutRefundsInput, ProductUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutRefundsInput
+    upsert?: ProductUpsertWithoutRefundsInput
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutRefundsInput, ProductUpdateWithoutRefundsInput>, ProductUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type BatchUpdateOneRequiredWithoutRefundsNestedInput = {
+    create?: XOR<BatchCreateWithoutRefundsInput, BatchUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutRefundsInput
+    upsert?: BatchUpsertWithoutRefundsInput
+    connect?: BatchWhereUniqueInput
+    update?: XOR<XOR<BatchUpdateToOneWithWhereWithoutRefundsInput, BatchUpdateWithoutRefundsInput>, BatchUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type CompanyUpdateOneRequiredWithoutRefundsNestedInput = {
+    create?: XOR<CompanyCreateWithoutRefundsInput, CompanyUncheckedCreateWithoutRefundsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutRefundsInput
+    upsert?: CompanyUpsertWithoutRefundsInput
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutRefundsInput, CompanyUpdateWithoutRefundsInput>, CompanyUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutProcessedRefundsNestedInput = {
+    create?: XOR<UserCreateWithoutProcessedRefundsInput, UserUncheckedCreateWithoutProcessedRefundsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProcessedRefundsInput
+    upsert?: UserUpsertWithoutProcessedRefundsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProcessedRefundsInput, UserUpdateWithoutProcessedRefundsInput>, UserUncheckedUpdateWithoutProcessedRefundsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -17138,6 +21651,31 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -17201,6 +21739,84 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type NestedEnumRefundTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundType | EnumRefundTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundTypeFilter<$PrismaModel> | $Enums.RefundType
+  }
+
+  export type NestedEnumRefundReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundReason | EnumRefundReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundReasonFilter<$PrismaModel> | $Enums.RefundReason
+  }
+
+  export type NestedEnumItemConditionFilter<$PrismaModel = never> = {
+    equals?: $Enums.ItemCondition | EnumItemConditionFieldRefInput<$PrismaModel>
+    in?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    not?: NestedEnumItemConditionFilter<$PrismaModel> | $Enums.ItemCondition
+  }
+
+  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRefundTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundType | EnumRefundTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundType[] | ListEnumRefundTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundTypeWithAggregatesFilter<$PrismaModel> | $Enums.RefundType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRefundTypeFilter<$PrismaModel>
+    _max?: NestedEnumRefundTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRefundReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RefundReason | EnumRefundReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RefundReason[] | ListEnumRefundReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRefundReasonWithAggregatesFilter<$PrismaModel> | $Enums.RefundReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRefundReasonFilter<$PrismaModel>
+    _max?: NestedEnumRefundReasonFilter<$PrismaModel>
+  }
+
+  export type NestedEnumItemConditionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ItemCondition | EnumItemConditionFieldRefInput<$PrismaModel>
+    in?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ItemCondition[] | ListEnumItemConditionFieldRefInput<$PrismaModel>
+    not?: NestedEnumItemConditionWithAggregatesFilter<$PrismaModel> | $Enums.ItemCondition
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumItemConditionFilter<$PrismaModel>
+    _max?: NestedEnumItemConditionFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutCompanyInput = {
     id?: string
     email: string
@@ -17210,6 +21826,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserUncheckedCreateWithoutCompanyInput = {
@@ -17221,6 +21838,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundUncheckedCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserCreateOrConnectWithoutCompanyInput = {
@@ -17280,6 +21898,8 @@ export namespace Prisma {
     category: CategoryCreateNestedOneWithoutProductsInput
     batches?: BatchCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCompanyInput = {
@@ -17299,6 +21919,8 @@ export namespace Prisma {
     categoryId: string
     batches?: BatchUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCompanyInput = {
@@ -17325,6 +21947,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutBatchesInput
     sales?: SaleCreateNestedManyWithoutBatchInput
+    debts?: DebtCreateNestedManyWithoutBatchInput
+    refunds?: RefundCreateNestedManyWithoutBatchInput
   }
 
   export type BatchUncheckedCreateWithoutCompanyInput = {
@@ -17341,6 +21965,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     productId: string
     sales?: SaleUncheckedCreateNestedManyWithoutBatchInput
+    debts?: DebtUncheckedCreateNestedManyWithoutBatchInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutBatchInput
   }
 
   export type BatchCreateOrConnectWithoutCompanyInput = {
@@ -17367,6 +21993,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutSalesInput
     batch: BatchCreateNestedOneWithoutSalesInput
+    refunds?: RefundCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleUncheckedCreateWithoutCompanyInput = {
@@ -17383,6 +22010,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     productId: string
     batchId: string
+    refunds?: RefundUncheckedCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleCreateOrConnectWithoutCompanyInput = {
@@ -17392,6 +22020,100 @@ export namespace Prisma {
 
   export type SaleCreateManyCompanyInputEnvelope = {
     data: SaleCreateManyCompanyInput | SaleCreateManyCompanyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DebtCreateWithoutCompanyInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutDebtsInput
+    batch: BatchCreateNestedOneWithoutDebtsInput
+  }
+
+  export type DebtUncheckedCreateWithoutCompanyInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    batchId: string
+  }
+
+  export type DebtCreateOrConnectWithoutCompanyInput = {
+    where: DebtWhereUniqueInput
+    create: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type DebtCreateManyCompanyInputEnvelope = {
+    data: DebtCreateManyCompanyInput | DebtCreateManyCompanyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RefundCreateWithoutCompanyInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originalSale: SaleCreateNestedOneWithoutRefundsInput
+    product: ProductCreateNestedOneWithoutRefundsInput
+    batch: BatchCreateNestedOneWithoutRefundsInput
+    processedByUser: UserCreateNestedOneWithoutProcessedRefundsInput
+  }
+
+  export type RefundUncheckedCreateWithoutCompanyInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundCreateOrConnectWithoutCompanyInput = {
+    where: RefundWhereUniqueInput
+    create: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type RefundCreateManyCompanyInputEnvelope = {
+    data: RefundCreateManyCompanyInput | RefundCreateManyCompanyInput[]
     skipDuplicates?: boolean
   }
 
@@ -17597,6 +22319,83 @@ export namespace Prisma {
     companyId?: StringFilter<"Sale"> | string
   }
 
+  export type DebtUpsertWithWhereUniqueWithoutCompanyInput = {
+    where: DebtWhereUniqueInput
+    update: XOR<DebtUpdateWithoutCompanyInput, DebtUncheckedUpdateWithoutCompanyInput>
+    create: XOR<DebtCreateWithoutCompanyInput, DebtUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type DebtUpdateWithWhereUniqueWithoutCompanyInput = {
+    where: DebtWhereUniqueInput
+    data: XOR<DebtUpdateWithoutCompanyInput, DebtUncheckedUpdateWithoutCompanyInput>
+  }
+
+  export type DebtUpdateManyWithWhereWithoutCompanyInput = {
+    where: DebtScalarWhereInput
+    data: XOR<DebtUpdateManyMutationInput, DebtUncheckedUpdateManyWithoutCompanyInput>
+  }
+
+  export type DebtScalarWhereInput = {
+    AND?: DebtScalarWhereInput | DebtScalarWhereInput[]
+    OR?: DebtScalarWhereInput[]
+    NOT?: DebtScalarWhereInput | DebtScalarWhereInput[]
+    id?: StringFilter<"Debt"> | string
+    quantity?: IntFilter<"Debt"> | number
+    unitPrice?: FloatFilter<"Debt"> | number
+    totalAmount?: FloatFilter<"Debt"> | number
+    purchasePrice?: FloatFilter<"Debt"> | number
+    debtDate?: DateTimeFilter<"Debt"> | Date | string
+    customerName?: StringNullableFilter<"Debt"> | string | null
+    notes?: StringNullableFilter<"Debt"> | string | null
+    status?: StringFilter<"Debt"> | string
+    paidDate?: DateTimeNullableFilter<"Debt"> | Date | string | null
+    createdAt?: DateTimeFilter<"Debt"> | Date | string
+    updatedAt?: DateTimeFilter<"Debt"> | Date | string
+    productId?: StringFilter<"Debt"> | string
+    batchId?: StringFilter<"Debt"> | string
+    companyId?: StringFilter<"Debt"> | string
+  }
+
+  export type RefundUpsertWithWhereUniqueWithoutCompanyInput = {
+    where: RefundWhereUniqueInput
+    update: XOR<RefundUpdateWithoutCompanyInput, RefundUncheckedUpdateWithoutCompanyInput>
+    create: XOR<RefundCreateWithoutCompanyInput, RefundUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type RefundUpdateWithWhereUniqueWithoutCompanyInput = {
+    where: RefundWhereUniqueInput
+    data: XOR<RefundUpdateWithoutCompanyInput, RefundUncheckedUpdateWithoutCompanyInput>
+  }
+
+  export type RefundUpdateManyWithWhereWithoutCompanyInput = {
+    where: RefundScalarWhereInput
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyWithoutCompanyInput>
+  }
+
+  export type RefundScalarWhereInput = {
+    AND?: RefundScalarWhereInput | RefundScalarWhereInput[]
+    OR?: RefundScalarWhereInput[]
+    NOT?: RefundScalarWhereInput | RefundScalarWhereInput[]
+    id?: StringFilter<"Refund"> | string
+    refundNumber?: StringFilter<"Refund"> | string
+    originalSaleId?: StringFilter<"Refund"> | string
+    productId?: StringFilter<"Refund"> | string
+    batchId?: StringFilter<"Refund"> | string
+    quantity?: IntFilter<"Refund"> | number
+    unitPrice?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFilter<"Refund"> | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFilter<"Refund"> | $Enums.RefundType
+    reason?: EnumRefundReasonFilter<"Refund"> | $Enums.RefundReason
+    customReason?: StringNullableFilter<"Refund"> | string | null
+    refundDate?: DateTimeFilter<"Refund"> | Date | string
+    processedBy?: StringFilter<"Refund"> | string
+    itemCondition?: EnumItemConditionFilter<"Refund"> | $Enums.ItemCondition
+    returnToInventory?: BoolFilter<"Refund"> | boolean
+    companyId?: StringFilter<"Refund"> | string
+    createdAt?: DateTimeFilter<"Refund"> | Date | string
+    updatedAt?: DateTimeFilter<"Refund"> | Date | string
+  }
+
   export type MonthlyReportUpsertWithWhereUniqueWithoutCompanyInput = {
     where: MonthlyReportWhereUniqueInput
     update: XOR<MonthlyReportUpdateWithoutCompanyInput, MonthlyReportUncheckedUpdateWithoutCompanyInput>
@@ -17639,6 +22438,8 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -17651,6 +22452,8 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
@@ -17719,6 +22522,56 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RefundCreateWithoutProcessedByUserInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originalSale: SaleCreateNestedOneWithoutRefundsInput
+    product: ProductCreateNestedOneWithoutRefundsInput
+    batch: BatchCreateNestedOneWithoutRefundsInput
+    company: CompanyCreateNestedOneWithoutRefundsInput
+  }
+
+  export type RefundUncheckedCreateWithoutProcessedByUserInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundCreateOrConnectWithoutProcessedByUserInput = {
+    where: RefundWhereUniqueInput
+    create: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput>
+  }
+
+  export type RefundCreateManyProcessedByUserInputEnvelope = {
+    data: RefundCreateManyProcessedByUserInput | RefundCreateManyProcessedByUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CompanyUpsertWithoutUsersInput = {
     update: XOR<CompanyUpdateWithoutUsersInput, CompanyUncheckedUpdateWithoutUsersInput>
     create: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
@@ -17739,6 +22592,8 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -17751,6 +22606,8 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -17814,6 +22671,22 @@ export namespace Prisma {
     expires?: DateTimeFilter<"Session"> | Date | string
   }
 
+  export type RefundUpsertWithWhereUniqueWithoutProcessedByUserInput = {
+    where: RefundWhereUniqueInput
+    update: XOR<RefundUpdateWithoutProcessedByUserInput, RefundUncheckedUpdateWithoutProcessedByUserInput>
+    create: XOR<RefundCreateWithoutProcessedByUserInput, RefundUncheckedCreateWithoutProcessedByUserInput>
+  }
+
+  export type RefundUpdateWithWhereUniqueWithoutProcessedByUserInput = {
+    where: RefundWhereUniqueInput
+    data: XOR<RefundUpdateWithoutProcessedByUserInput, RefundUncheckedUpdateWithoutProcessedByUserInput>
+  }
+
+  export type RefundUpdateManyWithWhereWithoutProcessedByUserInput = {
+    where: RefundScalarWhereInput
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyWithoutProcessedByUserInput>
+  }
+
   export type ProductCreateWithoutCategoryInput = {
     id?: string
     sku: string
@@ -17830,6 +22703,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     batches?: BatchCreateNestedManyWithoutProductInput
     sales?: SaleCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
     company: CompanyCreateNestedOneWithoutProductsInput
   }
 
@@ -17850,6 +22725,8 @@ export namespace Prisma {
     companyId: string
     batches?: BatchUncheckedCreateNestedManyWithoutProductInput
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCategoryInput = {
@@ -17871,6 +22748,8 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -17883,6 +22762,8 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
@@ -17927,6 +22808,8 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -17939,6 +22822,8 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -17980,6 +22865,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sales?: SaleCreateNestedManyWithoutBatchInput
+    debts?: DebtCreateNestedManyWithoutBatchInput
+    refunds?: RefundCreateNestedManyWithoutBatchInput
     company: CompanyCreateNestedOneWithoutBatchesInput
   }
 
@@ -17997,6 +22884,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     companyId: string
     sales?: SaleUncheckedCreateNestedManyWithoutBatchInput
+    debts?: DebtUncheckedCreateNestedManyWithoutBatchInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutBatchInput
   }
 
   export type BatchCreateOrConnectWithoutProductInput = {
@@ -18023,6 +22912,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     batch: BatchCreateNestedOneWithoutSalesInput
     company: CompanyCreateNestedOneWithoutSalesInput
+    refunds?: RefundCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleUncheckedCreateWithoutProductInput = {
@@ -18039,6 +22929,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     batchId: string
     companyId: string
+    refunds?: RefundUncheckedCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleCreateOrConnectWithoutProductInput = {
@@ -18051,6 +22942,100 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DebtCreateWithoutProductInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    batch: BatchCreateNestedOneWithoutDebtsInput
+    company: CompanyCreateNestedOneWithoutDebtsInput
+  }
+
+  export type DebtUncheckedCreateWithoutProductInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    batchId: string
+    companyId: string
+  }
+
+  export type DebtCreateOrConnectWithoutProductInput = {
+    where: DebtWhereUniqueInput
+    create: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput>
+  }
+
+  export type DebtCreateManyProductInputEnvelope = {
+    data: DebtCreateManyProductInput | DebtCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RefundCreateWithoutProductInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originalSale: SaleCreateNestedOneWithoutRefundsInput
+    batch: BatchCreateNestedOneWithoutRefundsInput
+    company: CompanyCreateNestedOneWithoutRefundsInput
+    processedByUser: UserCreateNestedOneWithoutProcessedRefundsInput
+  }
+
+  export type RefundUncheckedCreateWithoutProductInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundCreateOrConnectWithoutProductInput = {
+    where: RefundWhereUniqueInput
+    create: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput>
+  }
+
+  export type RefundCreateManyProductInputEnvelope = {
+    data: RefundCreateManyProductInput | RefundCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CompanyCreateWithoutProductsInput = {
     id?: string
     name: string
@@ -18060,6 +23045,8 @@ export namespace Prisma {
     categories?: CategoryCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -18072,6 +23059,8 @@ export namespace Prisma {
     categories?: CategoryUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
@@ -18143,6 +23132,38 @@ export namespace Prisma {
     data: XOR<SaleUpdateManyMutationInput, SaleUncheckedUpdateManyWithoutProductInput>
   }
 
+  export type DebtUpsertWithWhereUniqueWithoutProductInput = {
+    where: DebtWhereUniqueInput
+    update: XOR<DebtUpdateWithoutProductInput, DebtUncheckedUpdateWithoutProductInput>
+    create: XOR<DebtCreateWithoutProductInput, DebtUncheckedCreateWithoutProductInput>
+  }
+
+  export type DebtUpdateWithWhereUniqueWithoutProductInput = {
+    where: DebtWhereUniqueInput
+    data: XOR<DebtUpdateWithoutProductInput, DebtUncheckedUpdateWithoutProductInput>
+  }
+
+  export type DebtUpdateManyWithWhereWithoutProductInput = {
+    where: DebtScalarWhereInput
+    data: XOR<DebtUpdateManyMutationInput, DebtUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type RefundUpsertWithWhereUniqueWithoutProductInput = {
+    where: RefundWhereUniqueInput
+    update: XOR<RefundUpdateWithoutProductInput, RefundUncheckedUpdateWithoutProductInput>
+    create: XOR<RefundCreateWithoutProductInput, RefundUncheckedCreateWithoutProductInput>
+  }
+
+  export type RefundUpdateWithWhereUniqueWithoutProductInput = {
+    where: RefundWhereUniqueInput
+    data: XOR<RefundUpdateWithoutProductInput, RefundUncheckedUpdateWithoutProductInput>
+  }
+
+  export type RefundUpdateManyWithWhereWithoutProductInput = {
+    where: RefundScalarWhereInput
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyWithoutProductInput>
+  }
+
   export type CompanyUpsertWithoutProductsInput = {
     update: XOR<CompanyUpdateWithoutProductsInput, CompanyUncheckedUpdateWithoutProductsInput>
     create: XOR<CompanyCreateWithoutProductsInput, CompanyUncheckedCreateWithoutProductsInput>
@@ -18163,6 +23184,8 @@ export namespace Prisma {
     categories?: CategoryUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18175,6 +23198,8 @@ export namespace Prisma {
     categories?: CategoryUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18194,6 +23219,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutProductsInput
     sales?: SaleCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
     company: CompanyCreateNestedOneWithoutProductsInput
   }
 
@@ -18214,6 +23241,8 @@ export namespace Prisma {
     categoryId: string
     companyId: string
     sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutBatchesInput = {
@@ -18235,6 +23264,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutSalesInput
     company: CompanyCreateNestedOneWithoutSalesInput
+    refunds?: RefundCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleUncheckedCreateWithoutBatchInput = {
@@ -18251,6 +23281,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     productId: string
     companyId: string
+    refunds?: RefundUncheckedCreateNestedManyWithoutOriginalSaleInput
   }
 
   export type SaleCreateOrConnectWithoutBatchInput = {
@@ -18263,6 +23294,100 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DebtCreateWithoutBatchInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutDebtsInput
+    company: CompanyCreateNestedOneWithoutDebtsInput
+  }
+
+  export type DebtUncheckedCreateWithoutBatchInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    companyId: string
+  }
+
+  export type DebtCreateOrConnectWithoutBatchInput = {
+    where: DebtWhereUniqueInput
+    create: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput>
+  }
+
+  export type DebtCreateManyBatchInputEnvelope = {
+    data: DebtCreateManyBatchInput | DebtCreateManyBatchInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RefundCreateWithoutBatchInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    originalSale: SaleCreateNestedOneWithoutRefundsInput
+    product: ProductCreateNestedOneWithoutRefundsInput
+    company: CompanyCreateNestedOneWithoutRefundsInput
+    processedByUser: UserCreateNestedOneWithoutProcessedRefundsInput
+  }
+
+  export type RefundUncheckedCreateWithoutBatchInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundCreateOrConnectWithoutBatchInput = {
+    where: RefundWhereUniqueInput
+    create: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput>
+  }
+
+  export type RefundCreateManyBatchInputEnvelope = {
+    data: RefundCreateManyBatchInput | RefundCreateManyBatchInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CompanyCreateWithoutBatchesInput = {
     id?: string
     name: string
@@ -18272,6 +23397,8 @@ export namespace Prisma {
     categories?: CategoryCreateNestedManyWithoutCompanyInput
     products?: ProductCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -18284,6 +23411,8 @@ export namespace Prisma {
     categories?: CategoryUncheckedCreateNestedManyWithoutCompanyInput
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
@@ -18319,6 +23448,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
     company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -18339,6 +23470,8 @@ export namespace Prisma {
     categoryId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type SaleUpsertWithWhereUniqueWithoutBatchInput = {
@@ -18355,6 +23488,38 @@ export namespace Prisma {
   export type SaleUpdateManyWithWhereWithoutBatchInput = {
     where: SaleScalarWhereInput
     data: XOR<SaleUpdateManyMutationInput, SaleUncheckedUpdateManyWithoutBatchInput>
+  }
+
+  export type DebtUpsertWithWhereUniqueWithoutBatchInput = {
+    where: DebtWhereUniqueInput
+    update: XOR<DebtUpdateWithoutBatchInput, DebtUncheckedUpdateWithoutBatchInput>
+    create: XOR<DebtCreateWithoutBatchInput, DebtUncheckedCreateWithoutBatchInput>
+  }
+
+  export type DebtUpdateWithWhereUniqueWithoutBatchInput = {
+    where: DebtWhereUniqueInput
+    data: XOR<DebtUpdateWithoutBatchInput, DebtUncheckedUpdateWithoutBatchInput>
+  }
+
+  export type DebtUpdateManyWithWhereWithoutBatchInput = {
+    where: DebtScalarWhereInput
+    data: XOR<DebtUpdateManyMutationInput, DebtUncheckedUpdateManyWithoutBatchInput>
+  }
+
+  export type RefundUpsertWithWhereUniqueWithoutBatchInput = {
+    where: RefundWhereUniqueInput
+    update: XOR<RefundUpdateWithoutBatchInput, RefundUncheckedUpdateWithoutBatchInput>
+    create: XOR<RefundCreateWithoutBatchInput, RefundUncheckedCreateWithoutBatchInput>
+  }
+
+  export type RefundUpdateWithWhereUniqueWithoutBatchInput = {
+    where: RefundWhereUniqueInput
+    data: XOR<RefundUpdateWithoutBatchInput, RefundUncheckedUpdateWithoutBatchInput>
+  }
+
+  export type RefundUpdateManyWithWhereWithoutBatchInput = {
+    where: RefundScalarWhereInput
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyWithoutBatchInput>
   }
 
   export type CompanyUpsertWithoutBatchesInput = {
@@ -18377,6 +23542,8 @@ export namespace Prisma {
     categories?: CategoryUpdateManyWithoutCompanyNestedInput
     products?: ProductUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18389,6 +23556,8 @@ export namespace Prisma {
     categories?: CategoryUncheckedUpdateManyWithoutCompanyNestedInput
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18408,6 +23577,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     category: CategoryCreateNestedOneWithoutProductsInput
     batches?: BatchCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
     company: CompanyCreateNestedOneWithoutProductsInput
   }
 
@@ -18428,6 +23599,8 @@ export namespace Prisma {
     categoryId: string
     companyId: string
     batches?: BatchUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSalesInput = {
@@ -18448,6 +23621,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     product: ProductCreateNestedOneWithoutBatchesInput
+    debts?: DebtCreateNestedManyWithoutBatchInput
+    refunds?: RefundCreateNestedManyWithoutBatchInput
     company: CompanyCreateNestedOneWithoutBatchesInput
   }
 
@@ -18465,6 +23640,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     productId: string
     companyId: string
+    debts?: DebtUncheckedCreateNestedManyWithoutBatchInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutBatchInput
   }
 
   export type BatchCreateOrConnectWithoutSalesInput = {
@@ -18481,6 +23658,8 @@ export namespace Prisma {
     categories?: CategoryCreateNestedManyWithoutCompanyInput
     products?: ProductCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
   }
 
@@ -18493,12 +23672,64 @@ export namespace Prisma {
     categories?: CategoryUncheckedCreateNestedManyWithoutCompanyInput
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
     monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyCreateOrConnectWithoutSalesInput = {
     where: CompanyWhereUniqueInput
     create: XOR<CompanyCreateWithoutSalesInput, CompanyUncheckedCreateWithoutSalesInput>
+  }
+
+  export type RefundCreateWithoutOriginalSaleInput = {
+    id?: string
+    refundNumber: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutRefundsInput
+    batch: BatchCreateNestedOneWithoutRefundsInput
+    company: CompanyCreateNestedOneWithoutRefundsInput
+    processedByUser: UserCreateNestedOneWithoutProcessedRefundsInput
+  }
+
+  export type RefundUncheckedCreateWithoutOriginalSaleInput = {
+    id?: string
+    refundNumber: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundCreateOrConnectWithoutOriginalSaleInput = {
+    where: RefundWhereUniqueInput
+    create: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput>
+  }
+
+  export type RefundCreateManyOriginalSaleInputEnvelope = {
+    data: RefundCreateManyOriginalSaleInput | RefundCreateManyOriginalSaleInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProductUpsertWithoutSalesInput = {
@@ -18528,6 +23759,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     batches?: BatchUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
     company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -18548,6 +23781,8 @@ export namespace Prisma {
     categoryId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
     batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type BatchUpsertWithoutSalesInput = {
@@ -18574,6 +23809,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutBatchesNestedInput
+    debts?: DebtUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUpdateManyWithoutBatchNestedInput
     company?: CompanyUpdateOneRequiredWithoutBatchesNestedInput
   }
 
@@ -18591,6 +23828,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
+    debts?: DebtUncheckedUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutBatchNestedInput
   }
 
   export type CompanyUpsertWithoutSalesInput = {
@@ -18613,6 +23852,8 @@ export namespace Prisma {
     categories?: CategoryUpdateManyWithoutCompanyNestedInput
     products?: ProductUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18625,6 +23866,284 @@ export namespace Prisma {
     categories?: CategoryUncheckedUpdateManyWithoutCompanyNestedInput
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
+    monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
+  }
+
+  export type RefundUpsertWithWhereUniqueWithoutOriginalSaleInput = {
+    where: RefundWhereUniqueInput
+    update: XOR<RefundUpdateWithoutOriginalSaleInput, RefundUncheckedUpdateWithoutOriginalSaleInput>
+    create: XOR<RefundCreateWithoutOriginalSaleInput, RefundUncheckedCreateWithoutOriginalSaleInput>
+  }
+
+  export type RefundUpdateWithWhereUniqueWithoutOriginalSaleInput = {
+    where: RefundWhereUniqueInput
+    data: XOR<RefundUpdateWithoutOriginalSaleInput, RefundUncheckedUpdateWithoutOriginalSaleInput>
+  }
+
+  export type RefundUpdateManyWithWhereWithoutOriginalSaleInput = {
+    where: RefundScalarWhereInput
+    data: XOR<RefundUpdateManyMutationInput, RefundUncheckedUpdateManyWithoutOriginalSaleInput>
+  }
+
+  export type ProductCreateWithoutDebtsInput = {
+    id?: string
+    sku: string
+    name: string
+    description?: string | null
+    sellingPrice: number
+    totalStock?: number
+    minStockLevel?: number
+    location?: string | null
+    imageUrl?: string | null
+    fitment?: string | null
+    supplier?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    category: CategoryCreateNestedOneWithoutProductsInput
+    batches?: BatchCreateNestedManyWithoutProductInput
+    sales?: SaleCreateNestedManyWithoutProductInput
+    refunds?: RefundCreateNestedManyWithoutProductInput
+    company: CompanyCreateNestedOneWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateWithoutDebtsInput = {
+    id?: string
+    sku: string
+    name: string
+    description?: string | null
+    sellingPrice: number
+    totalStock?: number
+    minStockLevel?: number
+    location?: string | null
+    imageUrl?: string | null
+    fitment?: string | null
+    supplier?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    categoryId: string
+    companyId: string
+    batches?: BatchUncheckedCreateNestedManyWithoutProductInput
+    sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutDebtsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutDebtsInput, ProductUncheckedCreateWithoutDebtsInput>
+  }
+
+  export type BatchCreateWithoutDebtsInput = {
+    id?: string
+    purchaseDate: Date | string
+    purchasePrice: number
+    initialQuantity: number
+    currentQuantity: number
+    status?: string
+    supplier?: string | null
+    invoiceNumber?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutBatchesInput
+    sales?: SaleCreateNestedManyWithoutBatchInput
+    refunds?: RefundCreateNestedManyWithoutBatchInput
+    company: CompanyCreateNestedOneWithoutBatchesInput
+  }
+
+  export type BatchUncheckedCreateWithoutDebtsInput = {
+    id?: string
+    purchaseDate: Date | string
+    purchasePrice: number
+    initialQuantity: number
+    currentQuantity: number
+    status?: string
+    supplier?: string | null
+    invoiceNumber?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    companyId: string
+    sales?: SaleUncheckedCreateNestedManyWithoutBatchInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutBatchInput
+  }
+
+  export type BatchCreateOrConnectWithoutDebtsInput = {
+    where: BatchWhereUniqueInput
+    create: XOR<BatchCreateWithoutDebtsInput, BatchUncheckedCreateWithoutDebtsInput>
+  }
+
+  export type CompanyCreateWithoutDebtsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutCompanyInput
+    categories?: CategoryCreateNestedManyWithoutCompanyInput
+    products?: ProductCreateNestedManyWithoutCompanyInput
+    batches?: BatchCreateNestedManyWithoutCompanyInput
+    sales?: SaleCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
+    monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyUncheckedCreateWithoutDebtsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutCompanyInput
+    products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
+    batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
+    sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
+    monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyCreateOrConnectWithoutDebtsInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutDebtsInput, CompanyUncheckedCreateWithoutDebtsInput>
+  }
+
+  export type ProductUpsertWithoutDebtsInput = {
+    update: XOR<ProductUpdateWithoutDebtsInput, ProductUncheckedUpdateWithoutDebtsInput>
+    create: XOR<ProductCreateWithoutDebtsInput, ProductUncheckedCreateWithoutDebtsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutDebtsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutDebtsInput, ProductUncheckedUpdateWithoutDebtsInput>
+  }
+
+  export type ProductUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sku?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sellingPrice?: FloatFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    minStockLevel?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fitment?: NullableStringFieldUpdateOperationsInput | string | null
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
+    batches?: BatchUpdateManyWithoutProductNestedInput
+    sales?: SaleUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
+    company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sku?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sellingPrice?: FloatFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    minStockLevel?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fitment?: NullableStringFieldUpdateOperationsInput | string | null
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type BatchUpsertWithoutDebtsInput = {
+    update: XOR<BatchUpdateWithoutDebtsInput, BatchUncheckedUpdateWithoutDebtsInput>
+    create: XOR<BatchCreateWithoutDebtsInput, BatchUncheckedCreateWithoutDebtsInput>
+    where?: BatchWhereInput
+  }
+
+  export type BatchUpdateToOneWithWhereWithoutDebtsInput = {
+    where?: BatchWhereInput
+    data: XOR<BatchUpdateWithoutDebtsInput, BatchUncheckedUpdateWithoutDebtsInput>
+  }
+
+  export type BatchUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    initialQuantity?: IntFieldUpdateOperationsInput | number
+    currentQuantity?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutBatchesNestedInput
+    sales?: SaleUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUpdateManyWithoutBatchNestedInput
+    company?: CompanyUpdateOneRequiredWithoutBatchesNestedInput
+  }
+
+  export type BatchUncheckedUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    initialQuantity?: IntFieldUpdateOperationsInput | number
+    currentQuantity?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    sales?: SaleUncheckedUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutBatchNestedInput
+  }
+
+  export type CompanyUpsertWithoutDebtsInput = {
+    update: XOR<CompanyUpdateWithoutDebtsInput, CompanyUncheckedUpdateWithoutDebtsInput>
+    create: XOR<CompanyCreateWithoutDebtsInput, CompanyUncheckedCreateWithoutDebtsInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutDebtsInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutDebtsInput, CompanyUncheckedUpdateWithoutDebtsInput>
+  }
+
+  export type CompanyUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutCompanyNestedInput
+    categories?: CategoryUpdateManyWithoutCompanyNestedInput
+    products?: ProductUpdateManyWithoutCompanyNestedInput
+    batches?: BatchUpdateManyWithoutCompanyNestedInput
+    sales?: SaleUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
+    monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutDebtsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutCompanyNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
+    batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
     monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
@@ -18638,6 +24157,8 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutCompanyInput
     batches?: BatchCreateNestedManyWithoutCompanyInput
     sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    refunds?: RefundCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyUncheckedCreateWithoutMonthlyReportsInput = {
@@ -18650,6 +24171,8 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
     batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
     sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    refunds?: RefundUncheckedCreateNestedManyWithoutCompanyInput
   }
 
   export type CompanyCreateOrConnectWithoutMonthlyReportsInput = {
@@ -18678,6 +24201,8 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutCompanyNestedInput
     batches?: BatchUpdateManyWithoutCompanyNestedInput
     sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUpdateManyWithoutCompanyNestedInput
   }
 
   export type CompanyUncheckedUpdateWithoutMonthlyReportsInput = {
@@ -18690,6 +24215,8 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
     batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
     sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutCompanyNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -18701,6 +24228,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutUsersInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -18712,6 +24240,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     companyId: string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundUncheckedCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -18739,6 +24268,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutUsersNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -18750,6 +24280,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     companyId?: StringFieldUpdateOperationsInput | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUncheckedUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -18761,6 +24292,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -18772,6 +24304,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     companyId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    processedRefunds?: RefundUncheckedCreateNestedManyWithoutProcessedByUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -18799,6 +24332,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -18810,6 +24344,415 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     companyId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUncheckedUpdateManyWithoutProcessedByUserNestedInput
+  }
+
+  export type SaleCreateWithoutRefundsInput = {
+    id?: string
+    quantity: number
+    salePrice: number
+    purchasePrice: number
+    profit: number
+    profitMargin: number
+    saleDate: Date | string
+    customerId?: string | null
+    invoiceNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutSalesInput
+    batch: BatchCreateNestedOneWithoutSalesInput
+    company: CompanyCreateNestedOneWithoutSalesInput
+  }
+
+  export type SaleUncheckedCreateWithoutRefundsInput = {
+    id?: string
+    quantity: number
+    salePrice: number
+    purchasePrice: number
+    profit: number
+    profitMargin: number
+    saleDate: Date | string
+    customerId?: string | null
+    invoiceNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    batchId: string
+    companyId: string
+  }
+
+  export type SaleCreateOrConnectWithoutRefundsInput = {
+    where: SaleWhereUniqueInput
+    create: XOR<SaleCreateWithoutRefundsInput, SaleUncheckedCreateWithoutRefundsInput>
+  }
+
+  export type ProductCreateWithoutRefundsInput = {
+    id?: string
+    sku: string
+    name: string
+    description?: string | null
+    sellingPrice: number
+    totalStock?: number
+    minStockLevel?: number
+    location?: string | null
+    imageUrl?: string | null
+    fitment?: string | null
+    supplier?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    category: CategoryCreateNestedOneWithoutProductsInput
+    batches?: BatchCreateNestedManyWithoutProductInput
+    sales?: SaleCreateNestedManyWithoutProductInput
+    debts?: DebtCreateNestedManyWithoutProductInput
+    company: CompanyCreateNestedOneWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateWithoutRefundsInput = {
+    id?: string
+    sku: string
+    name: string
+    description?: string | null
+    sellingPrice: number
+    totalStock?: number
+    minStockLevel?: number
+    location?: string | null
+    imageUrl?: string | null
+    fitment?: string | null
+    supplier?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    categoryId: string
+    companyId: string
+    batches?: BatchUncheckedCreateNestedManyWithoutProductInput
+    sales?: SaleUncheckedCreateNestedManyWithoutProductInput
+    debts?: DebtUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutRefundsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutRefundsInput, ProductUncheckedCreateWithoutRefundsInput>
+  }
+
+  export type BatchCreateWithoutRefundsInput = {
+    id?: string
+    purchaseDate: Date | string
+    purchasePrice: number
+    initialQuantity: number
+    currentQuantity: number
+    status?: string
+    supplier?: string | null
+    invoiceNumber?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    product: ProductCreateNestedOneWithoutBatchesInput
+    sales?: SaleCreateNestedManyWithoutBatchInput
+    debts?: DebtCreateNestedManyWithoutBatchInput
+    company: CompanyCreateNestedOneWithoutBatchesInput
+  }
+
+  export type BatchUncheckedCreateWithoutRefundsInput = {
+    id?: string
+    purchaseDate: Date | string
+    purchasePrice: number
+    initialQuantity: number
+    currentQuantity: number
+    status?: string
+    supplier?: string | null
+    invoiceNumber?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    companyId: string
+    sales?: SaleUncheckedCreateNestedManyWithoutBatchInput
+    debts?: DebtUncheckedCreateNestedManyWithoutBatchInput
+  }
+
+  export type BatchCreateOrConnectWithoutRefundsInput = {
+    where: BatchWhereUniqueInput
+    create: XOR<BatchCreateWithoutRefundsInput, BatchUncheckedCreateWithoutRefundsInput>
+  }
+
+  export type CompanyCreateWithoutRefundsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutCompanyInput
+    categories?: CategoryCreateNestedManyWithoutCompanyInput
+    products?: ProductCreateNestedManyWithoutCompanyInput
+    batches?: BatchCreateNestedManyWithoutCompanyInput
+    sales?: SaleCreateNestedManyWithoutCompanyInput
+    debts?: DebtCreateNestedManyWithoutCompanyInput
+    monthlyReports?: MonthlyReportCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyUncheckedCreateWithoutRefundsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutCompanyInput
+    products?: ProductUncheckedCreateNestedManyWithoutCompanyInput
+    batches?: BatchUncheckedCreateNestedManyWithoutCompanyInput
+    sales?: SaleUncheckedCreateNestedManyWithoutCompanyInput
+    debts?: DebtUncheckedCreateNestedManyWithoutCompanyInput
+    monthlyReports?: MonthlyReportUncheckedCreateNestedManyWithoutCompanyInput
+  }
+
+  export type CompanyCreateOrConnectWithoutRefundsInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutRefundsInput, CompanyUncheckedCreateWithoutRefundsInput>
+  }
+
+  export type UserCreateWithoutProcessedRefundsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutUsersInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutProcessedRefundsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    companyId: string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutProcessedRefundsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProcessedRefundsInput, UserUncheckedCreateWithoutProcessedRefundsInput>
+  }
+
+  export type SaleUpsertWithoutRefundsInput = {
+    update: XOR<SaleUpdateWithoutRefundsInput, SaleUncheckedUpdateWithoutRefundsInput>
+    create: XOR<SaleCreateWithoutRefundsInput, SaleUncheckedCreateWithoutRefundsInput>
+    where?: SaleWhereInput
+  }
+
+  export type SaleUpdateToOneWithWhereWithoutRefundsInput = {
+    where?: SaleWhereInput
+    data: XOR<SaleUpdateWithoutRefundsInput, SaleUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type SaleUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    salePrice?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    profit?: FloatFieldUpdateOperationsInput | number
+    profitMargin?: FloatFieldUpdateOperationsInput | number
+    saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutSalesNestedInput
+    batch?: BatchUpdateOneRequiredWithoutSalesNestedInput
+    company?: CompanyUpdateOneRequiredWithoutSalesNestedInput
+  }
+
+  export type SaleUncheckedUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    salePrice?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    profit?: FloatFieldUpdateOperationsInput | number
+    profitMargin?: FloatFieldUpdateOperationsInput | number
+    saleDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProductUpsertWithoutRefundsInput = {
+    update: XOR<ProductUpdateWithoutRefundsInput, ProductUncheckedUpdateWithoutRefundsInput>
+    create: XOR<ProductCreateWithoutRefundsInput, ProductUncheckedCreateWithoutRefundsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutRefundsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutRefundsInput, ProductUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type ProductUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sku?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sellingPrice?: FloatFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    minStockLevel?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fitment?: NullableStringFieldUpdateOperationsInput | string | null
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
+    batches?: BatchUpdateManyWithoutProductNestedInput
+    sales?: SaleUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sku?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sellingPrice?: FloatFieldUpdateOperationsInput | number
+    totalStock?: IntFieldUpdateOperationsInput | number
+    minStockLevel?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    fitment?: NullableStringFieldUpdateOperationsInput | string | null
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type BatchUpsertWithoutRefundsInput = {
+    update: XOR<BatchUpdateWithoutRefundsInput, BatchUncheckedUpdateWithoutRefundsInput>
+    create: XOR<BatchCreateWithoutRefundsInput, BatchUncheckedCreateWithoutRefundsInput>
+    where?: BatchWhereInput
+  }
+
+  export type BatchUpdateToOneWithWhereWithoutRefundsInput = {
+    where?: BatchWhereInput
+    data: XOR<BatchUpdateWithoutRefundsInput, BatchUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type BatchUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    initialQuantity?: IntFieldUpdateOperationsInput | number
+    currentQuantity?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutBatchesNestedInput
+    sales?: SaleUpdateManyWithoutBatchNestedInput
+    debts?: DebtUpdateManyWithoutBatchNestedInput
+    company?: CompanyUpdateOneRequiredWithoutBatchesNestedInput
+  }
+
+  export type BatchUncheckedUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purchaseDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    initialQuantity?: IntFieldUpdateOperationsInput | number
+    currentQuantity?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    supplier?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    sales?: SaleUncheckedUpdateManyWithoutBatchNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutBatchNestedInput
+  }
+
+  export type CompanyUpsertWithoutRefundsInput = {
+    update: XOR<CompanyUpdateWithoutRefundsInput, CompanyUncheckedUpdateWithoutRefundsInput>
+    create: XOR<CompanyCreateWithoutRefundsInput, CompanyUncheckedCreateWithoutRefundsInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutRefundsInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutRefundsInput, CompanyUncheckedUpdateWithoutRefundsInput>
+  }
+
+  export type CompanyUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutCompanyNestedInput
+    categories?: CategoryUpdateManyWithoutCompanyNestedInput
+    products?: ProductUpdateManyWithoutCompanyNestedInput
+    batches?: BatchUpdateManyWithoutCompanyNestedInput
+    sales?: SaleUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUpdateManyWithoutCompanyNestedInput
+    monthlyReports?: MonthlyReportUpdateManyWithoutCompanyNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutCompanyNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCompanyNestedInput
+    batches?: BatchUncheckedUpdateManyWithoutCompanyNestedInput
+    sales?: SaleUncheckedUpdateManyWithoutCompanyNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutCompanyNestedInput
+    monthlyReports?: MonthlyReportUncheckedUpdateManyWithoutCompanyNestedInput
+  }
+
+  export type UserUpsertWithoutProcessedRefundsInput = {
+    update: XOR<UserUpdateWithoutProcessedRefundsInput, UserUncheckedUpdateWithoutProcessedRefundsInput>
+    create: XOR<UserCreateWithoutProcessedRefundsInput, UserUncheckedCreateWithoutProcessedRefundsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProcessedRefundsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProcessedRefundsInput, UserUncheckedUpdateWithoutProcessedRefundsInput>
+  }
+
+  export type UserUpdateWithoutProcessedRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutUsersNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProcessedRefundsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyCompanyInput = {
@@ -18878,6 +24821,43 @@ export namespace Prisma {
     batchId: string
   }
 
+  export type DebtCreateManyCompanyInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    batchId: string
+  }
+
+  export type RefundCreateManyCompanyInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MonthlyReportCreateManyCompanyInput = {
     id?: string
     year: number
@@ -18900,6 +24880,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompanyInput = {
@@ -18911,6 +24892,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    processedRefunds?: RefundUncheckedUpdateManyWithoutProcessedByUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutCompanyInput = {
@@ -18968,6 +24950,8 @@ export namespace Prisma {
     category?: CategoryUpdateOneRequiredWithoutProductsNestedInput
     batches?: BatchUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCompanyInput = {
@@ -18987,6 +24971,8 @@ export namespace Prisma {
     categoryId?: StringFieldUpdateOperationsInput | string
     batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutCompanyInput = {
@@ -19020,6 +25006,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutBatchesNestedInput
     sales?: SaleUpdateManyWithoutBatchNestedInput
+    debts?: DebtUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUpdateManyWithoutBatchNestedInput
   }
 
   export type BatchUncheckedUpdateWithoutCompanyInput = {
@@ -19036,6 +25024,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     sales?: SaleUncheckedUpdateManyWithoutBatchNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutBatchNestedInput
   }
 
   export type BatchUncheckedUpdateManyWithoutCompanyInput = {
@@ -19067,6 +25057,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutSalesNestedInput
     batch?: BatchUpdateOneRequiredWithoutSalesNestedInput
+    refunds?: RefundUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateWithoutCompanyInput = {
@@ -19083,6 +25074,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     batchId?: StringFieldUpdateOperationsInput | string
+    refunds?: RefundUncheckedUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateManyWithoutCompanyInput = {
@@ -19099,6 +25091,117 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     batchId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutDebtsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutDebtsNestedInput
+  }
+
+  export type DebtUncheckedUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtUncheckedUpdateManyWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RefundUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originalSale?: SaleUpdateOneRequiredWithoutRefundsNestedInput
+    product?: ProductUpdateOneRequiredWithoutRefundsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutRefundsNestedInput
+    processedByUser?: UserUpdateOneRequiredWithoutProcessedRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MonthlyReportUpdateWithoutCompanyInput = {
@@ -19158,6 +25261,26 @@ export namespace Prisma {
     id?: string
     sessionToken: string
     expires: Date | string
+  }
+
+  export type RefundCreateManyProcessedByUserInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -19220,6 +25343,66 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RefundUpdateWithoutProcessedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originalSale?: SaleUpdateOneRequiredWithoutRefundsNestedInput
+    product?: ProductUpdateOneRequiredWithoutRefundsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutRefundsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateWithoutProcessedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyWithoutProcessedByUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProductCreateManyCategoryInput = {
     id?: string
     sku: string
@@ -19253,6 +25436,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     batches?: BatchUpdateManyWithoutProductNestedInput
     sales?: SaleUpdateManyWithoutProductNestedInput
+    debts?: DebtUpdateManyWithoutProductNestedInput
+    refunds?: RefundUpdateManyWithoutProductNestedInput
     company?: CompanyUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -19273,6 +25458,8 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
     batches?: BatchUncheckedUpdateManyWithoutProductNestedInput
     sales?: SaleUncheckedUpdateManyWithoutProductNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutProductNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutCategoryInput = {
@@ -19323,6 +25510,43 @@ export namespace Prisma {
     companyId: string
   }
 
+  export type DebtCreateManyProductInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    batchId: string
+    companyId: string
+  }
+
+  export type RefundCreateManyProductInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type BatchUpdateWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
     purchaseDate?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19336,6 +25560,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sales?: SaleUpdateManyWithoutBatchNestedInput
+    debts?: DebtUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUpdateManyWithoutBatchNestedInput
     company?: CompanyUpdateOneRequiredWithoutBatchesNestedInput
   }
 
@@ -19353,6 +25579,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     companyId?: StringFieldUpdateOperationsInput | string
     sales?: SaleUncheckedUpdateManyWithoutBatchNestedInput
+    debts?: DebtUncheckedUpdateManyWithoutBatchNestedInput
+    refunds?: RefundUncheckedUpdateManyWithoutBatchNestedInput
   }
 
   export type BatchUncheckedUpdateManyWithoutProductInput = {
@@ -19384,6 +25612,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     batch?: BatchUpdateOneRequiredWithoutSalesNestedInput
     company?: CompanyUpdateOneRequiredWithoutSalesNestedInput
+    refunds?: RefundUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateWithoutProductInput = {
@@ -19400,6 +25629,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     batchId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
+    refunds?: RefundUncheckedUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateManyWithoutProductInput = {
@@ -19418,6 +25648,117 @@ export namespace Prisma {
     companyId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type DebtUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    batch?: BatchUpdateOneRequiredWithoutDebtsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutDebtsNestedInput
+  }
+
+  export type DebtUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RefundUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originalSale?: SaleUpdateOneRequiredWithoutRefundsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutRefundsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutRefundsNestedInput
+    processedByUser?: UserUpdateOneRequiredWithoutProcessedRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SaleCreateManyBatchInput = {
     id?: string
     quantity: number
@@ -19434,6 +25775,43 @@ export namespace Prisma {
     companyId: string
   }
 
+  export type DebtCreateManyBatchInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    totalAmount: number
+    purchasePrice: number
+    debtDate: Date | string
+    customerName?: string | null
+    notes?: string | null
+    status?: string
+    paidDate?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    productId: string
+    companyId: string
+  }
+
+  export type RefundCreateManyBatchInput = {
+    id?: string
+    refundNumber: string
+    originalSaleId: string
+    productId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type SaleUpdateWithoutBatchInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
@@ -19448,6 +25826,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutSalesNestedInput
     company?: CompanyUpdateOneRequiredWithoutSalesNestedInput
+    refunds?: RefundUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateWithoutBatchInput = {
@@ -19464,6 +25843,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
+    refunds?: RefundUncheckedUpdateManyWithoutOriginalSaleNestedInput
   }
 
   export type SaleUncheckedUpdateManyWithoutBatchInput = {
@@ -19480,6 +25860,197 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     productId?: StringFieldUpdateOperationsInput | string
     companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutDebtsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutDebtsNestedInput
+  }
+
+  export type DebtUncheckedUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebtUncheckedUpdateManyWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    purchasePrice?: FloatFieldUpdateOperationsInput | number
+    debtDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    paidDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type RefundUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    originalSale?: SaleUpdateOneRequiredWithoutRefundsNestedInput
+    product?: ProductUpdateOneRequiredWithoutRefundsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutRefundsNestedInput
+    processedByUser?: UserUpdateOneRequiredWithoutProcessedRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    originalSaleId?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundCreateManyOriginalSaleInput = {
+    id?: string
+    refundNumber: string
+    productId: string
+    batchId: string
+    quantity: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalRefundAmount: Decimal | DecimalJsLike | number | string
+    refundType?: $Enums.RefundType
+    reason?: $Enums.RefundReason
+    customReason?: string | null
+    refundDate?: Date | string
+    processedBy: string
+    itemCondition?: $Enums.ItemCondition
+    returnToInventory?: boolean
+    companyId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RefundUpdateWithoutOriginalSaleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    product?: ProductUpdateOneRequiredWithoutRefundsNestedInput
+    batch?: BatchUpdateOneRequiredWithoutRefundsNestedInput
+    company?: CompanyUpdateOneRequiredWithoutRefundsNestedInput
+    processedByUser?: UserUpdateOneRequiredWithoutProcessedRefundsNestedInput
+  }
+
+  export type RefundUncheckedUpdateWithoutOriginalSaleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefundUncheckedUpdateManyWithoutOriginalSaleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    refundNumber?: StringFieldUpdateOperationsInput | string
+    productId?: StringFieldUpdateOperationsInput | string
+    batchId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalRefundAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    refundType?: EnumRefundTypeFieldUpdateOperationsInput | $Enums.RefundType
+    reason?: EnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason
+    customReason?: NullableStringFieldUpdateOperationsInput | string | null
+    refundDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    processedBy?: StringFieldUpdateOperationsInput | string
+    itemCondition?: EnumItemConditionFieldUpdateOperationsInput | $Enums.ItemCondition
+    returnToInventory?: BoolFieldUpdateOperationsInput | boolean
+    companyId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

@@ -33,17 +33,15 @@ export default function LanguageProvider({ children }: { children: React.ReactNo
     
     setMounted(true);
     
-    // Get saved language from localStorage or use browser language if available
+    // Get saved language from localStorage or default to English
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage && ['en', 'ru', 'uz'].includes(savedLanguage)) {
       setLanguage(savedLanguage as Language);
       i18n.changeLanguage(savedLanguage);
     } else {
-      // Try to detect browser language
-      const browserLang = navigator.language.split('-')[0];
-      const supportedLang = ['en', 'ru', 'uz'].includes(browserLang) ? browserLang : 'en';
-      setLanguage(supportedLang as Language);
-      i18n.changeLanguage(supportedLang);
+      // Default to English instead of auto-detecting browser language
+      setLanguage('en');
+      i18n.changeLanguage('en');
     }
   }, [i18n]);
 

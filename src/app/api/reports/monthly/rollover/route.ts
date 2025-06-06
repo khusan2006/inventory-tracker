@@ -72,6 +72,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Month has already been rolled over' }, { status: 400 });
     }
 
+    // Check for pending debts - rollover cannot proceed if there are unpaid debts
+    const pendingDebts = await prisma.debt.findMany({
+      where: {
+        companyId: userCompanyId,
+        status: 'pending'
+      },
+      include: {
+        product: { select: { name: true, sku: true } }
+      }
+    });
+
+    if (pendingDebts.length > 0) {
+      const totalPendingAmount = pendingDebts.reduce((sum, debt) => sum + debt.totalAmount, 0);
+      return NextResponse.json({ 
+        error: 'Cannot rollover with pending debts',
+        details: `There are ${pendingDebts.length} pending debts totaling $${totalPendingAmount.toFixed(2)} that must be resolved before rollover.`,
+        pendingDebts: pendingDebts.map(debt => ({
+          id: debt.id,
+          productName: debt.product.name,
+          customerName: debt.customerName || 'Unknown',
+          amount: debt.totalAmount,
+          debtDate: debt.debtDate.toISOString()
+        }))
+      }, { status: 400 });
+    }
+
     // Calculate date range for the month being rolled over
     const startDate = new Date(rolloverYear, rolloverMonth, 1);
     const endDate = new Date(rolloverYear, rolloverMonth + 1, 0, 23, 59, 59, 999);

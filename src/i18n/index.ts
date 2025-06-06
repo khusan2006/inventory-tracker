@@ -20,9 +20,10 @@ i18n
         translation: {}
       }
     },
+    lng: 'en', // Set default language explicitly
     fallbackLng: 'en',
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'], // Only check localStorage, not browser settings
       caches: ['localStorage'],
     },
     interpolation: {

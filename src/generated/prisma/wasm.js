@@ -198,6 +198,24 @@ exports.Prisma.SaleScalarFieldEnum = {
   companyId: 'companyId'
 };
 
+exports.Prisma.DebtScalarFieldEnum = {
+  id: 'id',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  totalAmount: 'totalAmount',
+  purchasePrice: 'purchasePrice',
+  debtDate: 'debtDate',
+  customerName: 'customerName',
+  notes: 'notes',
+  status: 'status',
+  paidDate: 'paidDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  productId: 'productId',
+  batchId: 'batchId',
+  companyId: 'companyId'
+};
+
 exports.Prisma.MonthlyReportScalarFieldEnum = {
   id: 'id',
   year: 'year',
@@ -240,6 +258,27 @@ exports.Prisma.VerificationTokenScalarFieldEnum = {
   expires: 'expires'
 };
 
+exports.Prisma.RefundScalarFieldEnum = {
+  id: 'id',
+  refundNumber: 'refundNumber',
+  originalSaleId: 'originalSaleId',
+  productId: 'productId',
+  batchId: 'batchId',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  totalRefundAmount: 'totalRefundAmount',
+  refundType: 'refundType',
+  reason: 'reason',
+  customReason: 'customReason',
+  refundDate: 'refundDate',
+  processedBy: 'processedBy',
+  itemCondition: 'itemCondition',
+  returnToInventory: 'returnToInventory',
+  companyId: 'companyId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -264,7 +303,27 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.RefundType = exports.$Enums.RefundType = {
+  CASH: 'CASH',
+  STORE_CREDIT: 'STORE_CREDIT',
+  EXCHANGE: 'EXCHANGE'
+};
 
+exports.RefundReason = exports.$Enums.RefundReason = {
+  DEFECTIVE: 'DEFECTIVE',
+  WRONG_ITEM: 'WRONG_ITEM',
+  CUSTOMER_CHANGE_MIND: 'CUSTOMER_CHANGE_MIND',
+  DUPLICATE_ORDER: 'DUPLICATE_ORDER',
+  NOT_AS_DESCRIBED: 'NOT_AS_DESCRIBED',
+  OTHER: 'OTHER'
+};
+
+exports.ItemCondition = exports.$Enums.ItemCondition = {
+  NEW: 'NEW',
+  OPENED: 'OPENED',
+  DAMAGED: 'DAMAGED',
+  DEFECTIVE: 'DEFECTIVE'
+};
 
 exports.Prisma.ModelName = {
   Company: 'Company',
@@ -273,10 +332,12 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   Batch: 'Batch',
   Sale: 'Sale',
+  Debt: 'Debt',
   MonthlyReport: 'MonthlyReport',
   Account: 'Account',
   Session: 'Session',
-  VerificationToken: 'VerificationToken'
+  VerificationToken: 'VerificationToken',
+  Refund: 'Refund'
 };
 
 /**

@@ -12,6 +12,7 @@ import {
   FileText,
   ChevronDown,
   LogOut,
+  CreditCard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -47,6 +48,16 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
       name: t('admin.salesHistory'), 
       href: '/dashboard/sales',
       icon: <ShoppingCart size={20} />
+    },
+    { 
+      name: t('admin.debtsManagement'), 
+      href: '/dashboard/debts',
+      icon: <CreditCard size={20} />
+    },
+    { 
+      name: 'Refund Management', 
+      href: '/dashboard/refunds',
+      icon: <FileText size={20} />
     },
     { 
       name: t('admin.batchHistory'), 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Download, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
+import { CalendarDays, Download, RefreshCw, CheckCircle, AlertCircle, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
@@ -17,6 +17,8 @@ interface RolloverStatus {
   isPreviousMonthRolledOver: boolean;
   lastRolloverDate?: string;
   nextRolloverDate: string;
+  hasPendingDebts?: boolean;
+  pendingDebtsCount?: number;
 }
 
 export default function RolloverStatusCard() {
@@ -32,11 +34,19 @@ export default function RolloverStatusCard() {
   const fetchRolloverStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/cron/monthly-rollover');
-      if (!response.ok) {
+      
+      // Fetch both rollover status and pending debts
+      const [rolloverResponse, debtsResponse] = await Promise.all([
+        fetch('/api/cron/monthly-rollover'),
+        fetch('/api/debts/pending')
+      ]);
+      
+      if (!rolloverResponse.ok) {
         throw new Error('Failed to fetch rollover status');
       }
-      const data = await response.json();
+      
+      const rolloverData = await rolloverResponse.json();
+      const debtsData = debtsResponse.ok ? await debtsResponse.json() : { hasPendingDebts: false, pendingDebtsCount: 0 };
       
       // Calculate rollover status based on the API response
       const now = new Date();
@@ -51,8 +61,8 @@ export default function RolloverStatusCard() {
       }
 
       // Check if current user's company is in the rollover status
-      const userRolloverStatus = data.rolloverStatus?.find((status: any) => 
-        status.companyId === data.userCompanyId // We'll need to add this to the API
+      const userRolloverStatus = rolloverData.rolloverStatus?.find((status: any) => 
+        status.companyId === rolloverData.userCompanyId
       );
 
       setRolloverStatus({
@@ -63,7 +73,9 @@ export default function RolloverStatusCard() {
         isCurrentMonthRolledOver: false, // Current month doesn't get rolled over until next month
         isPreviousMonthRolledOver: userRolloverStatus?.isRolledOver || false,
         lastRolloverDate: userRolloverStatus?.lastRolloverDate,
-        nextRolloverDate: new Date(currentYear, currentMonth, 1).toISOString() // First day of next month
+        nextRolloverDate: new Date(currentYear, currentMonth, 1).toISOString(), // First day of next month
+        hasPendingDebts: debtsData.hasPendingDebts,
+        pendingDebtsCount: debtsData.pendingDebtsCount
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -187,6 +199,29 @@ export default function RolloverStatusCard() {
             {t('rollover.inProgress')}
           </Badge>
         </div>
+
+        {/* Debt Warning */}
+        {rolloverStatus.hasPendingDebts && (
+          <div className="pt-3 border-t border-orange-200">
+            <div className="flex items-center space-x-2 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-md border border-orange-200 dark:border-orange-800">
+              <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-orange-800 dark:text-orange-300">
+                  {t('debt.pendingDebtsExist')}
+                </p>
+                <p className="text-xs text-orange-600 dark:text-orange-400">
+                  {rolloverStatus.pendingDebtsCount} {rolloverStatus.pendingDebtsCount === 1 ? t('debt.pending').toLowerCase() : t('debt.pending').toLowerCase()}
+                </p>
+              </div>
+              <Link href="/dashboard/debts">
+                <Button variant="outline" size="sm" className="text-orange-600 border-orange-600 hover:bg-orange-50">
+                  <CreditCard className="w-3 h-3 mr-1" />
+                  {t('debt.debtsManagement')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Next Rollover Info */}
         <div className="pt-3 border-t">

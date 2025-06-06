@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, AlertTriangle, Calculator, CreditCard, RefreshCw } from 'lucide-react';
+import { X, AlertTriangle, Calculator, CreditCard, RefreshCw, FileText, Plus } from 'lucide-react';
 import { Batch } from '@/types/inventory';
 import { toast } from 'react-hot-toast';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
@@ -9,7 +9,8 @@ import { useProduct } from '@/hooks/useProducts';
 import { useProductBatches } from '@/hooks/useProductBatches';
 import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
-import { useTranslation } from '@/i18n/client';
+import { useTranslation } from 'react-i18next';
+import { useCreateDebt } from '@/hooks/useDebts';
 
 interface QuickSellModalProps {
   productId: string;
@@ -73,6 +74,9 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
   const [isSellingPriceInitialized, setIsSellingPriceInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedBatchesForSale, setSelectedBatchesForSale] = useState<BatchWithSale[]>([]);
+  const [isDebtMode, setIsDebtMode] = useState(false);
+  const [customerName, setCustomerName] = useState('');
+  const [debtNotes, setDebtNotes] = useState('');
   
   const queryClient = useQueryClient();
   
@@ -153,6 +157,9 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
     });
   };
   
+  // Mutation for creating debt records
+  const createDebtMutation = useCreateDebt();
+
   // Mutation for processing sales with optimistic updates
   const saleMutation = useMutation({
     mutationFn: async () => {
@@ -314,6 +321,49 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
     }
     
     saleMutation.mutate();
+  };
+
+  const handleDebt = () => {
+    setError(null);
+    
+    if (quantity <= 0) {
+      setError(t('sales.enterValidQuantity'));
+      return;
+    }
+    
+    if (sellingPrice === null) {
+      setError(t('sales.enterValidPrice'));
+      return;
+    }
+    
+    if (sellingPrice <= 0) {
+      setError(t('sales.enterValidPrice'));
+      return;
+    }
+    
+    if (quantity > totalAvailableStock) {
+      setError(t('sales.notEnoughStock', { available: totalAvailableStock }));
+      return;
+    }
+
+    // Prepare batch data for debt creation
+    const batchData = selectedBatchesForSale.map(batch => ({
+      batchId: batch.id,
+      quantity: batch.quantityToSell
+    }));
+
+    createDebtMutation.mutate({
+      productId,
+      quantity,
+      unitPrice: sellingPrice,
+      customerName: customerName.trim() || undefined,
+      notes: debtNotes.trim() || undefined,
+      batchData
+    }, {
+      onSuccess: () => {
+        onClose();
+      }
+    });
   };
   
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -517,7 +567,7 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center">
                   <Calculator size={16} className="mr-2" />
-                  {t('sales.saleSummary')}
+                  {isDebtMode ? t('debt.debtSummary') : t('sales.saleSummary')}
                 </h3>
                 
                 <div className="grid grid-cols-2 gap-2 text-sm">
@@ -537,26 +587,100 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
                   </div>
                 </div>
               </div>
+
+              {/* Debt Mode Fields */}
+              {isDebtMode && (
+                <div className="space-y-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <h3 className="text-sm font-medium text-orange-800 dark:text-orange-300 flex items-center">
+                    <FileText size={16} className="mr-2" />
+                    {t('debt.debtInformation')}
+                  </h3>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {t('debt.customerName')} ({t('common.optional')})
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder={t('debt.customerNamePlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {t('debt.notes')} ({t('common.optional')})
+                    </label>
+                    <textarea
+                      value={debtNotes}
+                      onChange={(e) => setDebtNotes(e.target.value)}
+                      placeholder={t('debt.notesPlaceholder')}
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm resize-none"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleSale}
-                disabled={saleMutation.isPending || totalAvailableStock === 0 || quantity <= 0 || sellingPrice === null || sellingPrice <= 0}
-                className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-medium rounded-md focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saleMutation.isPending ? (
-                  <>
-                    <RefreshCw size={16} className="mr-2 animate-spin" />
-                    {t('common.loading')}
-                  </>
+            <div className="mt-6 flex justify-between">
+              {/* Mode Toggle */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setIsDebtMode(!isDebtMode)}
+                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                    isDebtMode 
+                      ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' 
+                      : 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
+                  }`}
+                >
+                  <FileText size={14} className="mr-1" />
+                  {isDebtMode ? t('debt.switchToSale') : t('debt.addToDebtBook')}
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-2">
+                {isDebtMode ? (
+                  <button
+                    onClick={handleDebt}
+                    disabled={createDebtMutation.isPending || totalAvailableStock === 0 || quantity <= 0 || sellingPrice === null || sellingPrice <= 0}
+                    className="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 text-white font-medium rounded-md focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {createDebtMutation.isPending ? (
+                      <>
+                        <RefreshCw size={16} className="mr-2 animate-spin" />
+                        {t('common.loading')}
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={16} className="mr-2" />
+                        {t('debt.recordDebt')}
+                      </>
+                    )}
+                  </button>
                 ) : (
-                  <>
-                    <CreditCard size={16} className="mr-2" />
-                    {t('sales.recordSale')}
-                  </>
+                  <button
+                    onClick={handleSale}
+                    disabled={saleMutation.isPending || totalAvailableStock === 0 || quantity <= 0 || sellingPrice === null || sellingPrice <= 0}
+                    className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-medium rounded-md focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {saleMutation.isPending ? (
+                      <>
+                        <RefreshCw size={16} className="mr-2 animate-spin" />
+                        {t('common.loading')}
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={16} className="mr-2" />
+                        {t('sales.recordSale')}
+                      </>
+                    )}
+                  </button>
                 )}
-              </button>
+              </div>
             </div>
           </div>
         </div>
