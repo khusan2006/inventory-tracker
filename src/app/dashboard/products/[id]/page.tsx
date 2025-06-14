@@ -23,6 +23,7 @@ import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { QuantityControl } from '@/components/ui/quantity-control';
 
 // Define Product interface with the correct category type
 interface Product {
@@ -385,32 +386,13 @@ export default function ProductDetailPage() {
                   {t('sales.quantity')}
                 </label>
                 <div className="flex items-center">
-                  <button 
-                    onClick={() => setSimulationQuantity(Math.max(1, simulationQuantity - 1))}
-                    className="p-2 rounded-l-md bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
-                    disabled={simulationQuantity <= 1}
-                  >
-                    <MinusCircle size={16} />
-                  </button>
-                  <input 
-                    type="number" 
-                    min="1"
+                  <QuantityControl
                     value={simulationQuantity}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      if (!isNaN(val) && val >= 1) {
-                        setSimulationQuantity(val);
-                      }
-                    }}
-                    className="w-16 text-center py-2 border-y border-gray-300 dark:border-slate-600 dark:bg-slate-800 text-gray-900 dark:text-white"
+                    onChange={setSimulationQuantity}
+                    min={1}
+                    max={totalStock}
+                    className="w-full"
                   />
-                  <button 
-                    onClick={() => setSimulationQuantity(simulationQuantity + 1)}
-                    className="p-2 rounded-r-md bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600"
-                    disabled={simulationQuantity >= totalStock}
-                  >
-                    <Plus size={16} />
-                  </button>
                   <span className="ml-2 text-gray-600 dark:text-gray-400">
                     / {totalStock} {t('inventory.available')}
                   </span>

@@ -394,8 +394,8 @@ export default function RecordSalePage() {
                       {t('sales.quantityToSell')} <span className="text-red-600">*</span>
                     </label>
                     <div className="relative mt-1">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <ShoppingCart size={16} className="text-gray-500 dark:text-gray-400" />
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none h-3/4">
+                        <Package size={18} className="text-gray-500 dark:text-gray-400" />
                       </div>
                       <input
                         type="number"
@@ -403,7 +403,7 @@ export default function RecordSalePage() {
                         max={totalAvailableStock}
                         value={quantity}
                         onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
-                        className="w-full pl-9 pr-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {totalAvailableStock} {t('inventory.units')} {t('inventory.available')}

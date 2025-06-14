@@ -11,6 +11,7 @@ import { batchKeys } from '@/hooks/useBatches';
 import { productKeys } from '@/hooks/useProducts';
 import { useTranslation } from 'react-i18next';
 import { useCreateDebt } from '@/hooks/useDebts';
+import { QuantityControl } from '@/components/ui/quantity-control';
 
 interface QuickSellModalProps {
   productId: string;
@@ -477,14 +478,13 @@ export default function QuickSellModal({ productId, onClose, onSaleComplete }: Q
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {t('sales.quantityToSell')}
                 </label>
-                <input
-                  type="number"
+                <QuantityControl
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
-                  min="1"
+                  onChange={setQuantity}
+                  min={1}
                   max={totalAvailableStock}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                   disabled={totalAvailableStock === 0}
+                  className="w-full"
                 />
               </div>
               

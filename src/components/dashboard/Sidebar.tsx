@@ -193,18 +193,19 @@ export default function Sidebar({ className = "", isOpen, setMobileSidebarOpen }
   if (isMobile) {
     return (
       <React.Fragment>
-        {isOpen && setMobileSidebarOpen && (
-          <div 
-            className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm md:hidden"
-            onClick={() => setMobileSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
+        {/* Overlay with fade animation */}
         <div 
-          className={`fixed inset-y-0 left-0 z-40 transform transition-transform ease-in-out duration-300 md:hidden 
+          className={`fixed inset-0 z-30 bg-black/30 backdrop-blur-sm md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          onClick={() => setMobileSidebarOpen && setMobileSidebarOpen(false)}
+          aria-hidden="true"
+        />
+        {/* Sidebar with slide animation */}
+        <div 
+          className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 md:hidden
             ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             ${className || ''}`
           }
+          style={{ transitionProperty: 'transform, opacity', opacity: isOpen ? 1 : 0.7 }}
         >
           {sidebarContent}
         </div>

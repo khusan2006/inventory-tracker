@@ -341,11 +341,21 @@ export default function ProductsPage() {
     };
   }, []);
 
+  // Add state to track loading for product actions
+  const [loadingProductAction, setLoadingProductAction] = useState<{ [productId: string]: 'delete' | 'addBatch' | 'quickSell' | null }>({});
+
   const handleDeleteProduct = async (productId: string, productName: string) => {
+    setLoadingProductAction((prev) => ({ ...prev, [productId]: 'delete' }));
     const confirmation = window.confirm(t('inventory.deleteProductConfirmation', { productName }));
-    if (!confirmation) return;
+    if (!confirmation) {
+      setLoadingProductAction((prev) => ({ ...prev, [productId]: null }));
+      return;
+    }
     const warningConfirmation = window.confirm(t('inventory.deleteProductWarning'));
-    if (!warningConfirmation) return;
+    if (!warningConfirmation) {
+      setLoadingProductAction((prev) => ({ ...prev, [productId]: null }));
+      return;
+    }
     const toastId = toast.loading(t('common.loading'));
     try {
       const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
@@ -359,6 +369,8 @@ export default function ProductsPage() {
     } catch (err: any) {
       toast.error(`${t('common.error')}: ${err.message}`, { id: toastId });
       console.error("Failed to delete product:", err);
+    } finally {
+      setLoadingProductAction((prev) => ({ ...prev, [productId]: null }));
     }
   };
 
@@ -371,6 +383,25 @@ export default function ProductsPage() {
   };
 
   const [isFiltersOpen, setIsFiltersOpen] = useState(false); // ADDED: State for filters modal
+
+  // Add batch and quick sell handlers with loading state
+  const handleAddBatch = (product: {id: string, name: string}, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLoadingProductAction((prev) => ({ ...prev, [product.id]: 'addBatch' }));
+    setTimeout(() => {
+      handleViewBatches(product, e);
+      setLoadingProductAction((prev) => ({ ...prev, [product.id]: null }));
+    }, 300); // Simulate loading for UX
+  };
+
+  const handleQuickSellWithLoading = (product: {id: string, name: string}, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLoadingProductAction((prev) => ({ ...prev, [product.id]: 'quickSell' }));
+    setTimeout(() => {
+      handleQuickSell(product, e);
+      setLoadingProductAction((prev) => ({ ...prev, [product.id]: null }));
+    }, 300); // Simulate loading for UX
+  };
 
   // If loading, show skeleton placeholders
   if (isLoading) {
@@ -597,22 +628,26 @@ export default function ProductsPage() {
                           <button 
                             className="p-1.5 rounded-full bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
                             title={t('inventory.addBatchTitle')}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleViewBatches({id: product.id, name: product.name}, e);
-                            }}
+                            onClick={(e) => handleAddBatch({id: product.id, name: product.name}, e)}
+                            disabled={loadingProductAction[product.id] === 'addBatch'}
                           >
-                            <PlusCircle size={16} className="text-green-600 dark:text-green-400" />
+                            {loadingProductAction[product.id] === 'addBatch' ? (
+                              <span className="animate-spin border-t-2 border-b-2 border-green-600 rounded-full w-5 h-5 inline-block"></span>
+                            ) : (
+                              <PlusCircle size={16} className="text-green-600 dark:text-green-400" />
+                            )}
                           </button>
                           <button 
                             className="p-1.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/40 transition-colors"
                             title={t('sales.recordSaleTitle')}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleQuickSell({id: product.id, name: product.name}, e);
-                            }}
+                            onClick={(e) => handleQuickSellWithLoading({id: product.id, name: product.name}, e)}
+                            disabled={loadingProductAction[product.id] === 'quickSell'}
                           >
-                            <MinusCircle size={16} className="text-amber-600 dark:text-amber-400" />
+                            {loadingProductAction[product.id] === 'quickSell' ? (
+                              <span className="animate-spin border-t-2 border-b-2 border-amber-600 rounded-full w-5 h-5 inline-block"></span>
+                            ) : (
+                              <MinusCircle size={16} className="text-amber-600 dark:text-amber-400" />
+                            )}
                           </button>
                           
                           {/* More options dropdown */}
@@ -647,7 +682,11 @@ export default function ProductsPage() {
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem onClick={(e: React.MouseEvent) => { e.stopPropagation(); handleDeleteProduct(product.id, product.name); setActiveDropdown(null); }} className="text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/30 focus:text-red-700 dark:focus:text-red-300">
-                                    <Trash2 size={14} className="mr-2" />
+                                    {loadingProductAction[product.id] === 'delete' ? (
+                                      <span className="mr-2 animate-spin border-t-2 border-b-2 border-red-600 rounded-full w-4 h-4 inline-block"></span>
+                                    ) : (
+                                      <Trash2 size={14} className="mr-2" />
+                                    )}
                                     {t('common.delete')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -680,22 +719,26 @@ export default function ProductsPage() {
                       <button 
                         className="p-2 rounded-full bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
                         title={t('inventory.addBatchTitle')}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewBatches({id: product.id, name: product.name}, e);
-                        }}
+                        onClick={(e) => handleAddBatch({id: product.id, name: product.name}, e)}
+                        disabled={loadingProductAction[product.id] === 'addBatch'}
                       >
-                        <PlusCircle size={18} className="text-green-600 dark:text-green-400" />
+                        {loadingProductAction[product.id] === 'addBatch' ? (
+                          <span className="animate-spin border-t-2 border-b-2 border-green-600 rounded-full w-5 h-5 inline-block"></span>
+                        ) : (
+                          <PlusCircle size={18} className="text-green-600 dark:text-green-400" />
+                        )}
                       </button>
                       <button 
                         className="p-2 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/20 dark:hover:bg-amber-900/40 transition-colors"
                         title={t('sales.recordSaleTitle')}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleQuickSell({id: product.id, name: product.name}, e);
-                        }}
+                        onClick={(e) => handleQuickSellWithLoading({id: product.id, name: product.name}, e)}
+                        disabled={loadingProductAction[product.id] === 'quickSell'}
                       >
-                        <MinusCircle size={18} className="text-amber-600 dark:text-amber-400" />
+                        {loadingProductAction[product.id] === 'quickSell' ? (
+                          <span className="animate-spin border-t-2 border-b-2 border-amber-600 rounded-full w-5 h-5 inline-block"></span>
+                        ) : (
+                          <MinusCircle size={18} className="text-amber-600 dark:text-amber-400" />
+                        )}
                       </button>
                       <button 
                         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
@@ -714,8 +757,13 @@ export default function ProductsPage() {
                           e.stopPropagation();
                           handleDeleteProduct(product.id, product.name);
                         }}
+                        disabled={loadingProductAction[product.id] === 'delete'}
                       >
-                        <Trash2 size={18} className="text-red-600 dark:text-red-400" />
+                        {loadingProductAction[product.id] === 'delete' ? (
+                          <span className="animate-spin border-t-2 border-b-2 border-red-600 rounded-full w-5 h-5 inline-block"></span>
+                        ) : (
+                          <Trash2 size={18} className="text-red-600 dark:text-red-400" />
+                        )}
                       </button>
                     </div>
                   </div>
