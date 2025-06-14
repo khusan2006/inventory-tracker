@@ -89,7 +89,9 @@ const uzTranslation = {
     products: "Mahsulotlar",
     items_label: "mahsulot",
     categories_label: "kategoriya",
-    applyFilters: "Filtrlarni qo'llash"
+    applyFilters: "Filtrlarni qo'llash",
+    thousandAbbr: "ming",
+    millionAbbr: "mln"
   },
   home: {
     title: "Admin panel boshqaruvi",

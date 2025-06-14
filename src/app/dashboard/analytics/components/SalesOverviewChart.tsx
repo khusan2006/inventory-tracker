@@ -72,8 +72,8 @@ export default function SalesOverviewChart() {
             }
             if (context.parsed.y !== null) {
               label += new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
               }).format(context.parsed.y);
             }
             return label;
@@ -91,7 +91,7 @@ export default function SalesOverviewChart() {
         beginAtZero: true,
         ticks: {
           callback: function(value) {
-            return '$' + value.toLocaleString();
+            return value.toLocaleString();
           }
         }
       }

@@ -77,7 +77,9 @@ const ruTranslation = {
     menu: "Меню",
     back: "Назад",
     for: "для",
-    margin: "маржа"
+    margin: "маржа",
+    thousandAbbr: "тыс.",
+    millionAbbr: "млн."
   },
   home: {
     title: "Менеджер автозапчастей",

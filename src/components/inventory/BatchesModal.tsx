@@ -301,7 +301,6 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                     </label>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-                        $
                       </span>
                       <input
                         type="number"
@@ -472,10 +471,7 @@ export default function BatchesModal({ productId, productName, onClose }: Batche
                             </div>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                            <div className="flex items-center">
-                              <DollarSign size={14} className="mr-1 text-gray-400 dark:text-gray-500" />
-                              ${batch.purchasePrice.toFixed(2)}
-                            </div>
+                            {batch.purchasePrice.toFixed(2)}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                             {batch.initialQuantity}

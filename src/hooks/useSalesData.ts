@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { i18n } from '@/i18n/client';
 
 export interface SaleData {
   id: string;
@@ -21,10 +22,19 @@ export interface MonthlySalesData {
 
 // Format currency for display
 export const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD'
-  }).format(amount);
+  const absAmount = Math.abs(amount);
+  let formatted = '';
+  let suffix = '';
+  if (absAmount >= 1_000_000) {
+    formatted = Math.round(amount / 1_000_000).toString();
+    suffix = i18n.t ? i18n.t('common.millionAbbr') : 'M';
+  } else if (absAmount >= 1_000) {
+    formatted = Math.round(amount / 1_000).toString();
+    suffix = i18n.t ? i18n.t('common.thousandAbbr') : 'K';
+  } else {
+    formatted = Math.round(amount).toString();
+  }
+  return formatted + (suffix ? ' ' + suffix : '');
 };
 
 // Helper function to calculate relative time

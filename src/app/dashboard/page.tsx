@@ -66,7 +66,7 @@ export default function DashboardHomePage() {
   const statCardData = [
     { title: t('dashboard.stat.totalProducts'), value: stats?.totalProducts?.toString() ?? "-", icon: <Package size={24} />, color: "blue" as const, unit: t('common.items_label') },
     { title: t('dashboard.stat.totalCategories'), value: stats?.totalCategories?.toString() ?? "-", icon: <ListChecks size={24} />, color: "indigo" as const, unit: t('common.categories_label') },
-    { title: t('dashboard.stat.salesThisMonth'), value: stats?.salesThisMonth?.toLocaleString(i18n.language, { style: 'currency', currency: 'USD' }) ?? "-", icon: <DollarSign size={24} />, color: "green" as const /* unit is part of value */ },
+    { title: t('dashboard.stat.salesThisMonth'), value: stats?.salesThisMonth?.toLocaleString(i18n.language, { maximumFractionDigits: 2, minimumFractionDigits: 2 }) ?? "-", icon: <DollarSign size={24} />, color: "green" as const /* unit is part of value */ },
     { title: t('dashboard.stat.lowStockItems'), value: stats?.lowStockItems?.toString() ?? "-", icon: <AlertTriangle size={24} />, color: "amber" as const, unit: t('common.items_label') },
   ];
 

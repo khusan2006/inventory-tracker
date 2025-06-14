@@ -101,7 +101,7 @@ export default function SalesChart({ data }: SalesChartProps) {
                 displayColors: false,
                 callbacks: {
                   label: function(context: unknown) {
-                    return formatCurrency((context as { parsed: { y: number } }).parsed.y);
+                    return (context as { parsed: { y: number } }).parsed.y.toLocaleString();
                   }
                 }
               },
@@ -136,14 +136,13 @@ export default function SalesChart({ data }: SalesChartProps) {
                     const numericValue = Number(value);
                     // Format y-axis values differently on mobile
                     if (isSmallScreen) {
-                      // For mobile: abbreviate numbers (e.g., 1K, 2.5K)
                       if (numericValue >= 1000) {
-                        return '$' + (numericValue / 1000).toFixed(numericValue % 1000 === 0 ? 0 : 1) + 'K';
+                        return (numericValue / 1000).toFixed(numericValue % 1000 === 0 ? 0 : 1) + 'K';
                       }
-                      return '$' + numericValue;
+                      return numericValue;
                     }
                     // For desktop: full format with commas
-                    return '$' + numericValue.toLocaleString();
+                    return numericValue.toLocaleString();
                   }
                 },
                 beginAtZero: true,

@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast'; // Added for notifications
 import { useQueryClient } from '@tanstack/react-query'; // Added for query invalidation if needed
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"; // MODIFIED: Keep this import as is for now
+import { formatCurrency } from '@/lib/utils';
+import { useProductBatches } from '@/hooks/useProductBatches';
 
 
 
@@ -403,6 +405,41 @@ export default function ProductsPage() {
     }, 300); // Simulate loading for UX
   };
 
+  // Helper to get current month/year
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  // State to store all batches for all products
+  const [allBatches, setAllBatches] = useState<Record<string, any[]>>({});
+
+  useEffect(() => {
+    async function fetchAllBatches() {
+      const batchesByProduct: Record<string, any[]> = {};
+      for (const product of products) {
+        const res = await fetch(`/api/batches/quantities?productId=${product.id}`);
+        if (res.ok) {
+          const batches = await res.json();
+          batchesByProduct[product.id] = batches;
+        }
+      }
+      setAllBatches(batchesByProduct);
+    }
+    if (products.length > 0) fetchAllBatches();
+  }, [products]);
+
+  // Helper to calculate average price for current month
+  const getAvgPriceForCurrentMonth = (productId: string) => {
+    const batches = allBatches[productId] || [];
+    const monthBatches = batches.filter((batch: any) => {
+      const date = new Date(batch.purchaseDate);
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    });
+    if (monthBatches.length === 0) return 0;
+    const total = monthBatches.reduce((sum: number, batch: any) => sum + batch.purchasePrice, 0);
+    return total / monthBatches.length;
+  };
+
   // If loading, show skeleton placeholders
   if (isLoading) {
     return (
@@ -450,6 +487,13 @@ export default function ProductsPage() {
       localStorage.removeItem('inventoryFilters');
     }
     setIsFiltersOpen(false); // ADDED: Close modal on clear
+  };
+
+  const formatCurrencyLocalized = (amount: number) => {
+    const raw = formatCurrency(amount);
+    return raw
+      .replace('K', t('common.thousandAbbr'))
+      .replace('M', t('common.millionAbbr'));
   };
 
   return (
@@ -609,16 +653,10 @@ export default function ProductsPage() {
                         </button>
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300">
-                        {new Intl.NumberFormat('en-US', {
-                          style: 'currency',
-                          currency: 'USD'
-                        }).format(product.avgPurchasePrice || 0)}
+                        {formatCurrencyLocalized(getAvgPriceForCurrentMonth(product.id))}
                       </td>
                       <td className="px-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-200">
-                        {new Intl.NumberFormat('en-US', {
-                          style: 'currency',
-                          currency: 'USD'
-                        }).format(product.sellingPrice)}
+                        {formatCurrencyLocalized(product.sellingPrice)}
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-600 dark:text-gray-300 font-mono">
                         {product.sku}
@@ -791,10 +829,7 @@ export default function ProductsPage() {
                     <div className="text-right">
                       <span className="text-xs text-gray-500 dark:text-gray-400 block">{t('inventory.price')}</span>
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {new Intl.NumberFormat('en-US', {
-                          style: 'currency',
-                          currency: 'USD'
-                        }).format(product.sellingPrice)}
+                        {formatCurrencyLocalized(product.sellingPrice)}
                       </span>
                     </div>
                   </div>

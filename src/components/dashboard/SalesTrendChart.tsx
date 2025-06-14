@@ -117,7 +117,7 @@ const SalesTrendChart = () => {
         beginAtZero: true,
         ticks: {
           callback: function(value: string | number) {
-            if (typeof value === 'number') return '$' + value;
+            if (typeof value === 'number') return value;
             return value;
           },
           color: '#6b7280', // gray-500
@@ -155,7 +155,7 @@ const SalesTrendChart = () => {
             }
             const yValue = (context as { parsed?: { y?: number } }).parsed?.y;
             if (yValue !== null && yValue !== undefined) {
-              label += new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD' }).format(yValue);
+              label += new Intl.NumberFormat(i18n.language, { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(yValue);
             }
             return label;
           }

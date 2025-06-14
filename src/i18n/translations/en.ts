@@ -98,7 +98,9 @@ const enTranslation = {
     quantity: "Quantity",
     product: "Product",
     retry: "Retry",
-    customer: "Customer"
+    customer: "Customer",
+    thousandAbbr: "K",
+    millionAbbr: "M"
   },
   home: {
     title: "Auto Parts Manager",

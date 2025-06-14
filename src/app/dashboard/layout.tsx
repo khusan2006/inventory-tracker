@@ -23,14 +23,12 @@ export default function DashboardLayout({
       </div>
 
       {/* Mobile Sidebar */}
-      {mobileSidebarOpen && (
-        <div className="md:hidden fixed inset-0 flex z-40">
-          <Sidebar 
-            isOpen={mobileSidebarOpen} 
-            setMobileSidebarOpen={setMobileSidebarOpen} 
-          />
-        </div>
-      )}
+      <div className="md:hidden fixed inset-0 flex z-40 pointer-events-none">
+        <Sidebar 
+          isOpen={mobileSidebarOpen} 
+          setMobileSidebarOpen={setMobileSidebarOpen} 
+        />
+      </div>
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Header 

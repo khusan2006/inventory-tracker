@@ -50,14 +50,14 @@ export default function RecentActivity() {
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium leading-none">{activity.productName}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t('common.qty')}: {activity.quantity} · ${activity.salePrice.toFixed(2)} {t('common.each')}
+                  {t('common.qty')}: {activity.quantity} · {activity.salePrice.toFixed(2)} {t('common.each')}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {activity.timeAgo}
                 </p>
               </div>
               <div className="font-medium">
-                ${activity.revenue.toFixed(2)}
+                {activity.revenue.toFixed(2)}
               </div>
             </div>
           ))}

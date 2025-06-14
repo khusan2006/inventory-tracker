@@ -444,21 +444,21 @@ export default function RecordSalePage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">{t('sales.unitPrice')}:</span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        ${sellingPrice.toFixed(2)}
+                        {sellingPrice.toFixed(2)}
                       </span>
                     </div>
                     
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">{t('sales.totalRevenue')}:</span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        ${(quantity * sellingPrice).toFixed(2)}
+                        {(quantity * sellingPrice).toFixed(2)}
                       </span>
                     </div>
                     
                     <div className="pt-3 mt-3 border-t border-gray-200 dark:border-slate-600 flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">{t('sales.estimatedProfit')}:</span>
                       <span className="font-medium text-green-600 dark:text-green-400">
-                        ${profit.toFixed(2)} ({margin.toFixed(1)}%)
+                        {profit.toFixed(2)} ({margin.toFixed(1)}%)
                       </span>
                     </div>
                   </div>
@@ -495,13 +495,13 @@ export default function RecordSalePage() {
                                   {formatDate(batch.purchaseDate)}
                                 </td>
                                 <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                                  ${batch.purchasePrice.toFixed(2)}
+                                  {batch.purchasePrice.toFixed(2)}
                                 </td>
                                 <td className="px-3 py-2.5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                                   {batch.quantityToSell}
                                 </td>
                                 <td className="px-3 py-2.5 whitespace-nowrap text-sm text-green-600 dark:text-green-400">
-                                  ${((sellingPrice - batch.purchasePrice) * batch.quantityToSell).toFixed(2)}
+                                  {(sellingPrice - batch.purchasePrice).toFixed(2)}
                                 </td>
                               </tr>
                             ))}
